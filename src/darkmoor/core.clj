@@ -4,41 +4,44 @@
 ;OPENING SEQUENCE__________________________________________________________
 
 (defn open-title []
+  (print (str (char 27) "[2J")) ;clear screen using ANSI escape
   (with-open [rdr (io/reader "resources/title.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
-  (Thread/sleep 1500))
+  ;(Thread/sleep 1500)
+  (print (str (char 27) "[2J"))) ;clear screen using ANSI escape
 
 (defn open-intro []
   (with-open [rdr (io/reader "resources/intro.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
-  (Thread/sleep 2000))
+  ;(Thread/sleep 2000)
+  (print (str (char 27) "[2J"))) ;clear screen using ANSI escape
 
-(defn open-menu []
-  (with-open [rdr (io/reader "resources/menu.txt")]
+(defn open-main-menu []
+  (with-open [rdr (io/reader "resources/main-menu.txt")]
     (doseq [line (line-seq rdr)]
-      (println line))))
+      (println line)))
+  ;(Thread/sleep 2000)
+  (print (str (char 27) "[2J"))) ;clear screen using ANSI escape
 
 ;LEVEL BUILDING___________________________________________________________
-;;haha oh god what am i doing
 ;;1-temple 2-inn 3-general store 4-mansion 5-house 6-ruined building1 7-object in road
 
-;make a func out of these that take a vector set (level maps) and return their mappings
 (def loc-1-0
-  {:desc "You're inside the temple." :exit {:map loc-1 :start-coords {:row 0 :col 3}}})
+  {:desc "You're inside the temple." :exit-start-coords {:row 0 :col 3}})
 (def loc-2-0
-  {:desc "You're inside the inn." :exit {:map loc-2 :start-coords {:row 2 :col 0}}})
+  {:desc "You're inside the tavern." :exit-start-coords {:row 2 :col 0}})
 (def loc-2-1
   {:desc "You moved a bit."})
 (def loc-3-0
-  {:desc "You're inside the store." :exit {:map loc-3 :start-coords {:row 3 :col 1}}})
+  {:desc "You're inside the store." :exit-start-coords {:row 3 :col 1}})
 (def loc-4-0
-  {:desc "You're inside the mansion." :exit {:map loc-4 :start-coords {:row 1 :col 1}}})
+  {:desc "You're inside the mansion." :exit-start-coords {:row 1 :col 1}})
 (def loc-5-0
-  {:desc "You're inside the house." :exit {:map loc-5 :start-coords {:row 3 :col 2}}})
+  {:desc "You're inside the house." :exit-start-coords {:row 3 :col 2}})
 (def loc-6-0
-  {:desc "You're inside the ruins." :exit {:map loc-6 :start-coords {:row 2 :col 4}}})
+  {:desc "You're inside the ruins." :exit-start-coords {:row 1 :col 4}})
 
 (def l1m-indoors-1
   [[loc-1-0]])
@@ -59,13 +62,13 @@
   [[loc-6-0]])
 
 (def loc-0 
-  {:desc "You're in the mud. People are staring at you. " :obj "" :enemy "" })
+  {:desc "You're in the mud. People are staring at you. " :obj "" :enemy "" :exit false})
 
 (def loc-1
   {:desc "You're at a temple. " :obj "There's a murky fountain in front of you. You hope it's not supposed to be holy water. " :enemy "A cultist attacks you! " :enter {:map l1m-indoors-1 :start-coords {:row 0 :col 0}}})
 
 (def loc-2
-  {:desc "You're at the inn. It smells like stale beer. " :obj "A forgotten mug, broken by time, lies by the door. " :enemy "A drunk guy starts hurling insults at you. " :enter {:map l1m-indoors-2 :start-coords {:row 0 :col 0}}})
+  {:desc "You're at the tavern. It smells like stale beer. " :obj "A forgotten mug, broken by time, lies by the door. " :enemy "A drunk guy starts hurling insults at you. " :enter {:map l1m-indoors-2 :start-coords {:row 0 :col 0}}})
 
 (def loc-3
   {:desc "You're at the decrepit general store. " :obj "Barrels of decaying grains have been shoved against the wall. " :enemy "" :enter {:map l1m-indoors-3 :start-coords {:row 0 :col 0}}})
@@ -91,117 +94,155 @@
 ;PC LOCATION______________________________________________________________________
 
 (def init-pc-loc
-  {:row 2 :col 0})   
+  {:row 0 :col 0})   
 
-(def init-map
-  level-1-map)
+;it's a list
+(def init-map-stack
+  (list level-1-map))
 
-(defn get-pc-loc [pc-loc current-map]
-  (get-in current-map [(:row pc-loc) (:col pc-loc)]))
+(defn get-pc-loc [pc-loc map-stack]
+  (get-in (first map-stack) [(:row pc-loc) (:col pc-loc)]))
 
-(defn print-loc-desc [pc-loc current-map]
-  (println (:desc (get-pc-loc pc-loc current-map))))
+(defn print-loc-desc [pc-loc map-stack]
+  (println (:desc (get-pc-loc pc-loc map-stack))))
 
-(defn print-loc-obj [pc-loc current-map]
-  (if (:obj (get-pc-loc pc-loc current-map))
-  (println (:obj (get-pc-loc pc-loc current-map)))))
+(defn print-loc-obj [pc-loc map-stack]
+  (if (:obj (get-pc-loc pc-loc map-stack))
+    (println (:obj (get-pc-loc pc-loc map-stack)))))
 
-(defn print-loc-enemy [pc-loc current-map]
-  (if (:enemy (get-pc-loc pc-loc current-map))
-  (println (:enemy (get-pc-loc pc-loc current-map)))))
+(defn print-loc-enemy [pc-loc map-stack]
+  (if (:enemy (get-pc-loc pc-loc map-stack))
+    (println (:enemy (get-pc-loc pc-loc map-stack)))))
 
-;USER MOVEMENT COMMANDS______________________________________________________
+;MENU AND USER OPTIONS________________________________________________________________________________________
 
-;parses user input for movement
-(defn attempt-get-user-input [pc-loc]
+;moving normally________________________________________
+(defn parse-user-input [pc-loc map-stack]
   (let [input (read-line)]
-    (cond 
-      (= input "n") (do (println "") (assoc pc-loc :row (dec (:row pc-loc))))  
-      (= input "s") (do (println "") (assoc pc-loc :row (inc (:row pc-loc))))
-      (= input "e") (do (println "") (assoc pc-loc :col (inc (:col pc-loc))))
-      (= input "w") (do (println "") (assoc pc-loc :col (dec (:col pc-loc))))
-      (= input "q") (System/exit 0)
-      (= input "m") (do (open-menu) pc-loc)
-      :else (do (println "That was not a valid choice.") pc-loc))))
+    (cond
+      (= input "n") (do (println "You move North.") (Thread/sleep 1000) (assoc pc-loc :row (dec (:row pc-loc))))
+      (= input "s") (do (println "You move South.") (Thread/sleep 1000) (assoc pc-loc :row (inc (:row pc-loc))))
+      (= input "e") (do (println "You move East.") (Thread/sleep 1000) (assoc pc-loc :col (inc (:col pc-loc)))) 
+      (= input "w") (do (println "You move West.") (Thread/sleep 1000) (assoc pc-loc :col (dec (:col pc-loc)))) 
+      (= input "o") (do (print-loc-obj pc-loc map-stack) (Thread/sleep 2000) pc-loc)
+      (= input "m") (do (open-main-menu) (Thread/sleep 1000) pc-loc) 
+      (= input "l") (do (println "There are no enemies yet, so there is no loot.") (Thread/sleep 1000) pc-loc) 
+      (= input "i") (do (println "You do not have an inventory yet.") (Thread/sleep 1000) pc-loc)
+      (= input "q") (System/exit 0) 
+      :else (do (println "That's not a valid choice.") (Thread/sleep 1000) pc-loc))))
 
-;parses user input to enter new map
-(defn attempt-enter-building [pc-loc current-map]
+(defn print-user-menu []
+  (with-open [rdr (io/reader "resources/user-menu.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn check-move [pc-loc map-stack]
+  (print-user-menu)
+  (let [new-loc (parse-user-input pc-loc map-stack)]
+    (if (:desc (get-pc-loc new-loc map-stack))
+      [new-loc map-stack]
+      (do
+        (if (not= (first map-stack) level-1-map)
+          (println "There is a wall in that direction. You move back to where you were.")
+          (println "You find yourself at the edge of the village and turn back to where you started."))
+        (Thread/sleep 2000)
+        [pc-loc map-stack]))))
+
+;entering______________________________________________
+(defn push-map [pc-loc map-stack]
   (let [input (read-line)]
       (cond
-        (= input "y") (do 
-                        ;(println "Is this printing?")
-                        ;(print pc-loc)
-                        ;(print current-map)
-                        ;(print (get-pc-loc pc-loc current-map))
-                        (println "Entering building.") 
-                        ;(println (:start-coords (:enter (get-pc-loc pc-loc current-map))))
-                        [(:start-coords (:enter (get-pc-loc pc-loc current-map))) (:map (:enter (get-pc-loc pc-loc current-map)))])
-        (= input "x") (do (println "Not entering.") [pc-loc current-map])
-        :else (do (println "That was not a valid choice.") [pc-loc current-map]))))
+        ;new map is pushed on, so change is "true"
+        (= input "y") [
+                       (:start-coords (:enter (get-pc-loc pc-loc map-stack)))
+                       (conj map-stack
+                             (:map (:enter (get-pc-loc pc-loc map-stack))))
+                       true]
+        ;old map is returned, so change is "false"
+        (= input "x") [pc-loc map-stack false]
+        :else (do (println "That was not a valid choice.") (Thread/sleep 1000) [pc-loc map-stack false]))))
 
-(defn print-move-options []
-  (print "
-             ________________________
-           =(____   ___      __     _)=
-             |                      |
-             | Type n to move North |
-             | Type s to move South |
-             | Type e to move East  |
-             | Type w to move West  |
-             | Type m to open Menu  |
-             |__    ___   __    ___ |
-           =(________________________)=")
-  (println))
-
-;looks up where player can move based on map they are in
-(defn get-user-input [pc-loc current-map]
-  (print-move-options)
-  (let [new-loc (attempt-get-user-input pc-loc)]
-    ;(println new-loc)
-    ;(println (:desc (get-pc-loc new-loc current-map)))
-    (if (:desc (get-pc-loc new-loc current-map))
-      new-loc
-    (do
-      (println "You cannot go that way.")
-      ;(println (:desc (get-pc-loc new-loc current-map)))
-      pc-loc))))
-
-(defn print-enter-building []
+(defn print-enter [pc-loc map-stack]
   (print "
             ________________________
           =(____   ___      __     _)=
             |                      |
-            | Would you like to    |
-            | enter this building? |
+            | You can enter a new  |
+            |    area from here.   | 
             |                      |
-            | Type y to Enter      |
-            | Type x to move away  |
+            |   Type y to enter    |
+            |  or x to stay here.  |
             |__    ___   __    ___ |
           =(________________________)=")
   (println))
 
-;this is the main move func, calls get-user-input now
-(defn change-map [pc-loc current-map]
-  (if (:enter (get-pc-loc pc-loc current-map))
-    (do
-      (print-enter-building)
-      (let [[new-loc new-map] (attempt-enter-building pc-loc current-map)]
-        (if (= new-map current-map)
-          [(get-user-input pc-loc current-map) current-map]
-          [new-loc new-map])))
-    [(get-user-input pc-loc current-map) current-map]))
+(defn check-push-map [pc-loc map-stack]
+  (do
+    (print-enter pc-loc map-stack)
+    (push-map pc-loc map-stack)))
+
+(defn push-control [pc-loc map-stack]
+  (let [[new-loc new-map-stack true-false] (check-push-map pc-loc map-stack)]
+    ;will be true if a new map was pushed on 
+    (if true-false
+      ;load new map
+      [new-loc new-map-stack]
+      ;move normally
+      (check-move pc-loc map-stack))))
+
+;exiting_____________________________________________
+(defn pop-map [pc-loc map-stack]
+  (let [input (read-line)]
+    (cond
+      ;change is made (popping off a map), so "true"
+      (= input "y") [(:exit-start-coords (get-pc-loc pc-loc map-stack)) (rest map-stack) true]
+      ;no change is made to map, so "false"
+      (= input "x") [pc-loc map-stack false]
+      :else (do (println "That was not a valid choice. What else would you like to do at this location?") (Thread/sleep 2000) [pc-loc map-stack false]))))
+
+(defn print-exit []
+  (print  " 
+            ________________________
+          =(____   ___      __     _)=
+            |                      |
+            |  You can exit this   |
+            | this area from here. |
+            |                      |
+            |    Type y to exit    |
+            |    or x to stay.     |
+            |__    ___   __    ___ |
+          =(________________________)=")
+  (println))
+
+(defn check-pop-map [pc-loc map-stack]
+  (print-exit)
+  (pop-map pc-loc map-stack))
+
+(defn pop-control [pc-loc map-stack]
+  (let [[new-loc new-map-stack true-false] (check-pop-map pc-loc map-stack)]
+    ;will be true if a map was popped off
+    (if true-false
+      ;load new map
+      [new-loc new-map-stack]
+      ;move normally
+      (check-move pc-loc map-stack)))) 
+
+;getting and parsing user input_____________________________
+(defn display-menu [pc-loc map-stack]
+  (cond
+    (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack)
+    (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack)
+    :else (check-move pc-loc map-stack)))
 
 ;MAIN_____________________________________________________________________
 
 (defn -main []
   (open-title)
   (open-intro)
-  (open-menu)
-  (loop [pc-loc init-pc-loc current-map init-map]
-    ;new-loc is bound to first item in vector returned from change-map
-      (do (print-loc-desc pc-loc current-map)
-          (print-loc-obj pc-loc current-map)
-          (print-loc-enemy pc-loc current-map)
-          (let [[new-loc current-map]
-                (change-map pc-loc current-map)]
-            (recur new-loc current-map)))))
+  (open-main-menu)
+  (loop [pc-loc init-pc-loc map-stack init-map-stack]
+      (do (print (str (char 27) "[2J")) ;clear screen
+          (print-loc-desc pc-loc map-stack)
+          (print-loc-enemy pc-loc map-stack) 
+          (let [[new-loc map-stack] (display-menu pc-loc map-stack)]
+            (recur new-loc map-stack)))))
