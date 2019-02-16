@@ -196,105 +196,173 @@
 (defn get-obj-ref [pc-loc map-stack]
   (get (get-pc-loc pc-loc map-stack) :obj))
 
-(defn print-loc-obj [pc-loc map-stack]
-  "prints object descriptions that are in current location"
-  (if (= [] (get-obj pc-loc map-stack))
-    (println "You look around, but nothing catches your eye.")
-    (doseq [item (map :desc (get-obj pc-loc map-stack))]
-      (println item)))
-  (println))
-
-;INVENTORY________________________________________________________________________
-
 ;adding items to inventory____________________________________________________
 
-(defn print-add-item []
-  (print "
-            _________________________________
-          =(____   ___      __     ______   _)=
-            |                               |
-            |       Which item do you       |
-            |         want to add?          |
-            |                               |
-            |    Type 0 to add nothing.     |
-            |  Type 1 for the first item,   |
-            |   Type 2 for the 2nd item,    |
-            |             etc.              |
-            |__    ______    _______  ___   |
-          =(_________________________________)=")
-  (println))
-
 (defn add-obj-to-inv [pc-loc map-stack pc-inv int-input]
-  (println "That item has been added to your inventory.")
-  (conj pc-inv (nth (get-obj pc-loc map-stack) (dec int-input))))
+  (println)
+  (print "That item has been added to your inventory.")
+  (println)
+  (vec (conj pc-inv (nth (get-obj pc-loc map-stack) (dec int-input)))))
 
-(defn remove-obj-from-loc [pc-loc map-stack pc-inv int-input]
+(defn remove-obj-from-loc [pc-loc map-stack int-input]
   (let [pre-obj (subvec (get-obj pc-loc map-stack) 0 (dec int-input))
         post-obj  (subvec (get-obj pc-loc map-stack) int-input)]
     (dosync
       (ref-set (get-obj-ref pc-loc map-stack) (vec (concat pre-obj post-obj))))))
 
-(defn add-to-inv [pc-loc map-stack pc-inv pc-eq]
-  (print-add-item)
-  (print-loc-obj pc-loc map-stack)
-  (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (= int-input 0)
-        pc-inv
-        (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
-            (remove-obj-from-loc pc-loc map-stack pc-inv int-input)
+(defn add-to-inv [pc-loc map-stack pc-inv]
+  (if (= [] (get-obj pc-loc map-stack))
+    (do (println) (println "There is nothing here to add.") (println) (pause) pc-inv)
+    (do
+      (println) (println "What would you like to add? Enter the object number.") (println)
+      (let [input (read-line)]
+        (let [int-input (Integer/parseInt input)]
+          (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
+            ;(println new-pc-inv)
+            (remove-obj-from-loc pc-loc map-stack int-input)
             (pause)
-            new-pc-inv)))))
+            new-pc-inv))))))
+
+;print object options_____________________________________________________
+
+(defn print-obj-item [item]
+  (print "                    ")
+  (print item)
+  (println))
+
+(defn print-obj [pc-loc map-stack]
+  (if (= [] (get-obj pc-loc map-stack))
+    (println "                    You look around, but nothing catches your eye.")
+    (doseq [item (map :desc (get-obj pc-loc map-stack))]
+      (print-obj-item item))))
+
+(defn open-potions []
+  (with-open [rdr (io/reader "resources/potions.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-objects []
+  (with-open [rdr (io/reader "resources/objects.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn print-obj-commands [pc-loc map-stack]
+  (clear-screen)
+  (open-objects)
+  (print-obj pc-loc map-stack)
+  (open-potions))
+
+(defn obj-control [pc-loc map-stack pc-inv]
+  "prints object descriptions that are in current location"
+  (print-obj-commands pc-loc map-stack)
+  (let [input (read-line)]
+    (cond
+      (= input "x") [pc-inv]
+      (= input "a") (add-to-inv pc-loc map-stack pc-inv)
+      :else (do (println "That's not a valid choice.") (pause) pc-inv))))
+
+;INVENTORY________________________________________________________________________
 
 ;removing items from inventory_______________________________________________
 
-(defn add-item-to-loc [pc-loc map-stack pc-inv n]
-  (ref-set (get-obj-ref pc-loc map-stack) (conj (get-obj-ref pc-loc map-stack) (nth pc-inv (dec n)))))
+;FIXME not working, pc-inv and pc-eq would also need to be ref'd
+(defn add-item-to-loc [pc-loc map-stack pc-inv int-input]
+  (println "The problem is here?")
+  (dosync
+    (alter (get-obj-ref pc-loc map-stack) conj  (nth pc-inv (dec int-input)))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "removes a user-defined item from inventory"
   (println)
-  (println "What item do you want to drop?")
-  (let [n (read-line)]
-    (add-item-to-loc pc-loc map-stack pc-inv n)
-    (let [pre-inv (subvec pc-inv 0 (dec n))
-          post-inv (subvec pc-inv n)]
-      (vec (concat pre-inv post-inv)))))
+  (println "What item do you want to drop? Enter the item number.")
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+      (do
+        (add-item-to-loc pc-loc map-stack pc-inv int-input)
+        (let [pre-inv (subvec pc-inv 0 (dec int-input))
+              post-inv (subvec pc-inv int-input)]
+          (vec (concat pre-inv post-inv)))))))
 
 
-;print equipped 
+;equip and unequip___________________________________________________
+
+
+(defn print-eq [item]
+  (print "                    ")
+  (print (:desc item))
+  (println))
+
+(defn print-pc-eq [pc-eq]
+  (if (= pc-eq [])
+    (println "             You have no items equipped.")
+    (doseq [item pc-eq]
+      (print-eq item))))
+
+(defn equip-item [pc-inv pc-eq]
+  (println)
+  (if (= [] pc-inv)
+    (do (println "There is nothing to equip.") pc-eq)
+    (do
+      (println "What item do you want to equip? Enter the item number.")
+      (println) 
+      (let [input (read-line)]
+        (let [int-input (Integer/parseInt input)]
+          (vec (conj pc-eq (nth pc-inv (dec int-input)))))))))
+
+(defn unequip-item [pc-eq]
+  "removes a user-defined item from inventory"
+  (if (= [] pc-eq)
+    (do (println "There is nothing to unequip.") pc-eq)
+    (do
+      (println)
+      (println "What item do you want to unequip? Enter the item number.")
+      (println)
+      (let [input (read-line)]
+        (let [int-input (Integer/parseInt input)]
+          (let [pre-eq (subvec pc-eq 0 (dec int-input))
+                post-eq (subvec pc-eq int-input)]
+            (vec (concat pre-eq post-eq))))))))
 
 ;print inventory____________________________________________________
 
+;FIXME doesn't fucking work
 (defn in? [coll elem]  
   "true if coll contains elem"
   "in this case, coll is pc-eq and elem is pc-inv item"
   (some #(= elem %) coll))
 
+;FIXME doens't fucking work
+(defn list-contains? [coll value]
+  (let [s (seq coll)]
+    (if s
+      (if (= (first s) value) true (recur (rest s) value))
+      false)))
+
+;FIXME doesn't fucking work
 (defn is-it-eq [pc-eq item]
   "checks if an item is in pc-eq
   if yes, prints ' ** ' otherwise ' -- ' "
-  (if (in? pc-eq item) 
+  ;(if (in? pc-eq item) 
+  (if (list-contains? pc-eq item)
     (print " ** ")
-    (print " -- ")))
+    (print "    ")))
 
+;FIXME doens't fucking work now, returns nothing but -1 
 (defn get-index-of [coll elem]
   "returns the index of an elem"
   "in this case, coll is pc-inv and elem is pc-inv item"
-    (print (+ 1 (.indexOf coll elem))))
+  (print (.indexOf coll elem)))
 
-(defn print-item [pc-inv pc-eq item]
+(defn print-item [item]
   (print "                    ")
-  (get-index-of pc-inv item)
-  (is-it-eq pc-eq item)
-  (print item)
+  (print (:desc item))
   (println))
 
 (defn print-pc-inv [pc-inv pc-eq]
   (if (= pc-inv [])
-    (println "Your inventory is currently empty.")
-    (doseq [item (map :desc pc-inv)]
-        (print-item pc-inv pc-eq item))))
+    (println "             Your inventory is currently empty.")
+    (doseq [item  pc-inv]
+      (print-item item))))
 
 (defn open-inv-menu []
   "opens inv menu"
@@ -317,23 +385,23 @@
   ;;(print-damage)
   (println "             Your inventory contains the following items:")
   (print-pc-inv pc-inv pc-eq)
+  (println)
+  (println "             You have equipped the following items:")
+  (print-pc-eq pc-eq)
   (println))
 
-(defn inv-control [pc-inv pc-eq]
+(defn inv-control [pc-loc map-stack pc-inv pc-eq]
   (print-inv-commands pc-inv pc-eq)
-  [pc-inv pc-eq])
-  ;(let [input (read-line)]
-  ;  ;FIXME if input is not an int
-  ;  (let [int-input (read-line)])
-  ;  (if (number? input)
-  ;    )
-  ;  (cond
-  ;    (= input "r") [pc-inv pc-eq]
-  ;    (= input "d") (let [new-pc-inv (remove-item-from-inv pc-loc map-stack pc-inv)]
-   ;                   [new-pc-inv pc-eq])
-   ;   (if )
-   ;   ;FIXME input???
- ;))))
+  (let [input (read-line)]
+    (cond
+      (= input "x") [pc-inv pc-eq]
+      (= input "r") (let [new-pc-inv (remove-item-from-inv pc-loc map-stack pc-inv)]
+                     [new-pc-inv pc-eq])
+      (= input "e") (let [new-pc-eq (equip-item pc-inv pc-eq)]
+                      [pc-inv new-pc-eq])
+      (= input "u") (let [new-pc-eq (unequip-item pc-eq)]
+                      [pc-inv new-pc-eq])
+      :else (do (println "That's not a valid choice.") (pause) [pc-inv pc-eq]))))
 
 ;MENU AND USER OPTIONS________________________________________________________________________________________
 
@@ -351,16 +419,14 @@
       (= input "s") (do (println "You move South.") (pause) [(assoc pc-loc :row (inc (:row pc-loc))) pc-inv pc-eq])
       (= input "e") (do (println "You move East.") (pause) [(assoc pc-loc :col (inc (:col pc-loc))) pc-inv pc-eq]) 
       (= input "w") (do (println "You move West.") (pause) [(assoc pc-loc :col (dec (:col pc-loc))) pc-inv pc-eq]) 
-      (= input "o") (do (print-loc-obj pc-loc map-stack) (pause) [pc-loc pc-inv pc-eq])
-      (= input "m") (do (open-main-menu) (pause) [pc-loc pc-inv pc-eq]) 
-      (= input "l") (do (println "There are no enemies yet, so there is no loot.") (pause) [pc-loc pc-inv pc-eq]) 
-      (= input "a") (let [new-pc-inv (add-to-inv pc-loc map-stack pc-inv pc-eq)] 
-                      [pc-loc new-pc-inv])
-      (= input "i") (let [[new-pc-inv new-pc-eq] (inv-control pc-inv pc-eq)]
-                      (pause)
-                      [pc-loc pc-inv pc-eq])
+      (= input "m") (do (open-main-menu) (println) (pause) [pc-loc pc-inv pc-eq]) 
+      (= input "l") (do (println "There are no enemies yet, so there is no loot.") (println) (pause) [pc-loc pc-inv pc-eq]) 
+      (= input "o") (let [new-pc-inv (obj-control pc-loc map-stack pc-inv)]
+                      [pc-loc new-pc-inv pc-eq])
+      (= input "i") (let [[new-pc-inv new-pc-eq] (inv-control pc-loc map-stack pc-inv pc-eq)]
+                      [pc-loc new-pc-inv new-pc-eq])
       (= input "q") (System/exit 0) 
-      :else (do (println "That's not a valid choice.") (pause) [pc-inv pc-inv pc-eq]))))
+      :else (do (println "That's not a valid choice.") (pause) [pc-loc pc-inv pc-eq]))))
 
 (defn print-user-menu []
   (with-open [rdr (io/reader "resources/user-menu.txt")]
@@ -377,6 +443,7 @@
   If not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
   (print-user-menu)
   (let [[new-loc new-pc-inv new-pc-eq] (parse-user-input pc-loc map-stack pc-inv pc-eq)]
+    ;(println new-pc-inv)
     (if (:desc (get-pc-loc new-loc map-stack))
       [new-loc map-stack new-pc-inv new-pc-eq]
       (do
@@ -511,5 +578,5 @@
           ;(function arguments)
           (print-loc-desc pc-loc map-stack)
           (print-loc-enemy pc-loc map-stack) 
-          (let [[new-loc map-stack pc-inv pc-eq] (display-menu pc-loc map-stack pc-inv pc-eq)]
-            (recur new-loc map-stack pc-inv pc-eq)))))
+          (let [[new-loc map-stack new-pc-inv new-pc-eq] (display-menu pc-loc map-stack pc-inv pc-eq)]
+            (recur new-loc map-stack new-pc-inv new-pc-eq)))))
