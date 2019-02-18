@@ -528,7 +528,7 @@
     ;will be true if a new map was pushed on 
     (if true-false
       ;load new map
-      [new-loc new-map-stack pc-inv]
+      [new-loc new-map-stack pc-inv pc-eq pc-health pc-damage]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage))))
 
@@ -575,7 +575,7 @@
     ;will be true if a map was popped off
     (if true-false
       ;load new map
-      [new-loc new-map-stack pc-inv]
+      [new-loc new-map-stack pc-inv pc-eq pc-health pc-damage]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage)))) 
 
