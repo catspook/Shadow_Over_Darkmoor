@@ -2,6 +2,13 @@
   (:require [clojure.java.io :as io])
   (:require [clojure.string :as s]))
 
+(def debug
+  true)
+
+(defn print-debug [thing]
+  (if debug
+  (println thing)))
+
 ;OPENING SEQUENCE__________________________________________________________
 
 (defn clear-screen []
@@ -92,13 +99,13 @@
 ;interior location data maps
 ;exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
 (def loc-1-0
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're inside the temple." :exit-start-coords {:row 0 :col 3}})
+  {:obj (ref (place-obj gen-vec 6)) :desc "You're inside the temple." :exit-start-coords {:row 0 :col 3}})
 (def loc-2-0
-  {:obj (ref (place-obj gen-vec 3)) :desc "You're inside the tavern." :exit-start-coords {:row 2 :col 0}})
+  {:obj (ref (place-obj gen-vec 10)) :desc "You're inside the tavern." :exit-start-coords {:row 2 :col 0}})
 (def loc-2-1
   {:obj (ref (place-obj gen-vec 3)) :desc "You moved a bit."})
 (def loc-3-0
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're inside the store." :exit-start-coords {:row 3 :col 1}})
+  {:obj (ref (place-obj gen-vec 5)) :desc "You're inside the store." :exit-start-coords {:row 3 :col 1}})
 (def loc-4-0
   {:obj (ref (place-obj gen-vec 1)) :desc "You're inside the mansion." :exit-start-coords {:row 1 :col 1}})
 (def loc-5-0
@@ -202,6 +209,7 @@
   (println)
   (print "That item has been added to your inventory.")
   (println)
+  (print-debug pc-inv)
   (vec (conj pc-inv (nth (get-obj pc-loc map-stack) (dec int-input)))))
 
 (defn remove-obj-from-loc [pc-loc map-stack int-input]
@@ -212,14 +220,15 @@
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
   (if (= [] (get-obj pc-loc map-stack))
-    (do (println) (println "There is nothing here to add.") (println) (pause) pc-inv)
+    (do (println) (println "There is nothing here to add.") (println) (pause) (print-debug pc-inv) pc-inv)
     (do
       (println) (println "What would you like to add? Enter the object number.") (println)
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
           (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
-            ;(println new-pc-inv)
+            (print-debug new-pc-inv)
             (remove-obj-from-loc pc-loc map-stack int-input)
+            (print-debug new-pc-inv)
             (pause)
             new-pc-inv))))))
 
@@ -255,11 +264,13 @@
 (defn obj-control [pc-loc map-stack pc-inv]
   "prints object descriptions that are in current location"
   (print-obj-commands pc-loc map-stack)
+  (print-debug pc-inv)
   (let [input (read-line)]
     (cond
-      (= input "x") [pc-inv]
+      ;FIXME here???
+      (= input "x") pc-inv
       (= input "a") (add-to-inv pc-loc map-stack pc-inv)
-      :else (do (println "That's not a valid choice.") (pause) pc-inv))))
+      :else (do (println "That's not a valid choice.") (pause) (print-debug pc-inv) pc-inv))))
 
 ;INVENTORY________________________________________________________________________
 
@@ -268,6 +279,7 @@
 ;FIXME not working, pc-inv and pc-eq would also need to be ref'd
 (defn add-item-to-loc [pc-loc map-stack pc-inv int-input]
   (println "The problem is here?")
+  (print-debug pc-inv)
   (dosync
     (alter (get-obj-ref pc-loc map-stack) conj  (nth pc-inv (dec int-input)))))
 
@@ -278,14 +290,16 @@
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
       (do
+        (print-debug pc-inv)
         (add-item-to-loc pc-loc map-stack pc-inv int-input)
         (let [pre-inv (subvec pc-inv 0 (dec int-input))
               post-inv (subvec pc-inv int-input)]
+          (print-debug pre-inv)
+          (print-debug post-inv)
           (vec (concat pre-inv post-inv)))))))
 
 
 ;equip and unequip___________________________________________________
-
 
 (defn print-eq [item]
   (print "                    ")
@@ -361,8 +375,10 @@
 (defn print-pc-inv [pc-inv pc-eq]
   (if (= pc-inv [])
     (println "             Your inventory is currently empty.")
-    (doseq [item  pc-inv]
-      (print-item item))))
+    (do
+      (print-debug pc-inv)
+      (doseq [item  pc-inv]
+      (print-item item)))))
 
 (defn open-inv-menu []
   "opens inv menu"
