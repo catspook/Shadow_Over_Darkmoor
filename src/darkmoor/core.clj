@@ -3,7 +3,7 @@
   (:require [clojure.string :as s]))
 
 (def debug
-  true)
+  false)
 
 (defn print-debug [thing]
   (if debug
@@ -61,29 +61,31 @@
 
 ;general obejcts
 (def o1-gen
-  {:desc "Thing1. H1, D1." :health 1 :damage 1})
+  {:potion false :desc "Thing1. H1, D1." :health 1 :damage 1})
 (def o2-gen
-  {:desc "Thing2. H2, D2" :health 2 :damage 2})
+  {:potion false :desc "Thing2. H2, D2" :health 2 :damage 2})
 (def o3-gen
-  {:desc "Thing3. H3, D3" :health 3 :damage 3})
+  {:potion false :desc "Thing3. H3, D3" :health 3 :damage 3})
 (def o4-gen
-  {:desc "Thing4. H4, D4" :health 4 :damage 4})
+  {:potion false :desc "Thing4. H4, D4" :health 4 :damage 4})
 (def o5-gen
-  {:desc "Thing5. H5, D5" :health 5 :damage 5})
+  {:potion false :desc "Thing5. H5, D5" :health 5 :damage 5})
 (def o6-gen
-  {:desc "Thing6. H6 D6" :health 6 :damage 6})
+  {:potion false :desc "Thing6. H6 D6" :health 6 :damage 6})
 (def o7-gen
-  {:desc "Thing7. H7 D7" :health 7 :damage 7})
+  {:potion false :desc "Thing7. H7 D7" :health 7 :damage 7})
 (def o8-gen
-  {:desc "Thing8. H8 D8" :health 8 :damage 8})
+  {:potion false :desc "Thing8. H8 D8" :health 8 :damage 8})
 (def o9-gen
-  {:desc "Thing9. H9 D9" :health 9 :damage 9})
+  {:potion false :desc "Thing9. H9 D9" :health 9 :damage 9})
 (def o10-gen
-  {:desc "Thing10. H10 D10" :health 10 :damage 10})
+  {:potion false :desc "Thing10. H10 D10" :health 10 :damage 10})
+(def health-potion
+  {:potion true :desc "COMMON HEALTH POTION: This potion glimmers with a healthy green glow. After drinking this, you will regain 5 health." :health 5 :damage 0})
 
 ;for place-obj
 (def gen-vec
-  [o1-gen o2-gen o3-gen o4-gen o5-gen o6-gen o7-gen o8-gen o9-gen o10-gen])
+  [o1-gen o2-gen o3-gen o4-gen o5-gen o6-gen o7-gen o8-gen o9-gen o10-gen health-potion])
 
 (defn place-obj [obj-list amt]
   (vec (take amt (repeatedly #(nth obj-list (rand-int (count obj-list)))))))
@@ -456,6 +458,30 @@
              (sub-health pc-eq pc-health int-input) 
              (sub-damage pc-eq pc-damage int-input)]))))))
 
+(defn drink-hp [pc-loc map-stack pc-inv pc-health]
+  (println)
+  (println "What item do you want to drink? Enter the item number.")
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+      (if (not (:potion (nth pc-inv (dec int-input))))
+        (do
+          (println)
+          (println "You don't think you can drink that.")
+          (println)
+          (pause)
+          [pc-inv pc-health])
+      (do
+        (println)
+        (println "You drink the potion, and immediately feel a little bit better.")
+        (pause)
+        (print-debug pc-inv)
+        (let [pre-inv (subvec pc-inv 0 (dec int-input))
+              post-inv (subvec pc-inv int-input)]
+          (print-debug pre-inv)
+          (print-debug post-inv)
+          [(vec (concat pre-inv post-inv)) 
+           (add-health pc-inv pc-health int-input)]))))))
+
 ;print inventory____________________________________________________
 
 ;FIXME doesn't fucking work
@@ -549,6 +575,12 @@
                        new-pc-eq 
                        new-pc-health 
                        new-pc-damage])
+      (= input "d") (let [[new-pc-inv new-pc-health] 
+                          (drink-hp pc-loc map-stack pc-inv pc-health)]
+                      [new-pc-inv
+                       pc-eq
+                       new-pc-health
+                       pc-damage])
       :else (do 
               (println "That's not a valid choice.") 
               (pause) 
@@ -783,9 +815,6 @@
   if true, returns updated pc-loc and map-stack to loop-recur
   if false, calls normal movement functions (check-move)"
   (print-exit)
-  ;let [things returned from function] (function and arguements) 
-  ;    enables new values to be compared to old values
-  ;    need to do it this way because pc-loc itself is not a variable and cannot be changed like one
   (let [[new-loc new-map-stack true-false] 
         (check-pop-map pc-loc map-stack)]
     ;will be true if a map was popped off
@@ -813,15 +842,6 @@
 ;MAIN_____________________________________________________________________
 
 (defn -main []
-  "open- functions are all for start of game, pretty things for user
-  loop-recur: takes in an initial pc coordinate set and an inital map stack
-  displays description of location
-  enemy function is a placeholder
-  display-menu returns an updated pc-loc and map-stack
-  recur takes those values and passes those to the top of the loop
-  loop-recur acts like a recursive function: 
-        takes in inital values, calls other functions that send updated pc-loc and map-stack to registers
-        and then recur calls itself again, using what is in registers"
   ;these are function calls
   (open-title)
   (open-intro)
