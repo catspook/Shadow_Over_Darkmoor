@@ -718,6 +718,15 @@
     the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
   If not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
   (print-user-menu)
+  (if (< pc-health max-health)
+    (do
+     (println)
+      (print "             You're injured! Your current health is ")
+      (print pc-health)
+      (print " out of ")
+      (print max-health)
+      (print ".")
+      (println)))
   (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
         (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
     (print-debug new-pc-inv)
