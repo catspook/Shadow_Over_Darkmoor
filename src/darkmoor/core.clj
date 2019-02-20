@@ -17,6 +17,7 @@
 
 (defn pause []
   "pauses by asking for user input"
+  (println) 
   (println "Press any key to continue.")
   (read-line))
 
@@ -60,25 +61,25 @@
 
 ;general obejcts
 (def o1-gen
-  {:desc "Thing2"})
+  {:desc "Thing1. H1, D1." :health 1 :damage 1})
 (def o2-gen
-  {:desc "Thing2"})
+  {:desc "Thing2. H2, D2" :health 2 :damage 2})
 (def o3-gen
-  {:desc "Thing3"})
+  {:desc "Thing3. H3, D3" :health 3 :damage 3})
 (def o4-gen
-  {:desc "Thing4"})
+  {:desc "Thing4. H4, D4" :health 4 :damage 4})
 (def o5-gen
-  {:desc "Thing5"})
+  {:desc "Thing5. H5, D5" :health 5 :damage 5})
 (def o6-gen
-  {:desc "Thing6"})
+  {:desc "Thing6. H6 D6" :health 6 :damage 6})
 (def o7-gen
-  {:desc "Thing7"})
+  {:desc "Thing7. H7 D7" :health 7 :damage 7})
 (def o8-gen
-  {:desc "Thing8"})
+  {:desc "Thing8. H8 D8" :health 8 :damage 8})
 (def o9-gen
-  {:desc "Thing9"})
+  {:desc "Thing9. H9 D9" :health 9 :damage 9})
 (def o10-gen
-  {:desc "Thing10"})
+  {:desc "Thing10. H10 D10" :health 10 :damage 10})
 
 ;for place-obj
 (def gen-vec
@@ -99,19 +100,32 @@
 ;interior location data maps
 ;exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
 (def loc-1-0
-  {:obj (ref (place-obj gen-vec 6)) :desc "You're inside the temple." :exit-start-coords {:row 0 :col 3}})
+  {:obj (ref (place-obj gen-vec 6)) 
+   :desc "You're inside the temple." 
+   :exit-start-coords {:row 0 :col 3}})
 (def loc-2-0
-  {:obj (ref (place-obj gen-vec 10)) :desc "You're inside the tavern." :exit-start-coords {:row 2 :col 0}})
+  {:obj (ref (place-obj gen-vec 10)) 
+   :desc "You're inside the tavern." 
+   :exit-start-coords {:row 2 :col 0}})
 (def loc-2-1
-  {:obj (ref (place-obj gen-vec 3)) :desc "You moved a bit."})
+  {:obj (ref (place-obj gen-vec 3)) 
+   :desc "You moved a bit."})
 (def loc-3-0
-  {:obj (ref (place-obj gen-vec 5)) :desc "You're inside the store." :exit-start-coords {:row 3 :col 1}})
+  {:obj (ref (place-obj gen-vec 5)) 
+   :desc "You're inside the store." 
+   :exit-start-coords {:row 3 :col 1}})
 (def loc-4-0
-  {:obj (ref (place-obj gen-vec 1)) :desc "You're inside the mansion." :exit-start-coords {:row 1 :col 1}})
+  {:obj (ref (place-obj gen-vec 1)) 
+   :desc "You're inside the mansion." 
+   :exit-start-coords {:row 1 :col 1}})
 (def loc-5-0
-  {:obj (ref (place-obj gen-vec 1)) :desc "You're inside the house." :exit-start-coords {:row 3 :col 2}})
+  {:obj (ref (place-obj gen-vec 1)) 
+   :desc "You're inside the house." 
+   :exit-start-coords {:row 3 :col 2}})
 (def loc-6-0
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're inside the ruins." :exit-start-coords {:row 1 :col 4}})
+  {:obj (ref (place-obj gen-vec 2)) 
+   :desc "You're inside the ruins." 
+   :exit-start-coords {:row 1 :col 4}})
 
 ;interior matrixes. Will be bigger one day.
 (def l1m-indoors-1
@@ -139,28 +153,56 @@
 ;:start-coords is the location the player should start at in the new map
 ;FIXME it looks like we might need locs for every cell if we want unique objects.
 (def loc-0 
-  {:obj (ref (place-obj gen-vec 3)) :desc "You're in the mud. People are staring at you. " :enemy ""})
+  {:obj (ref (place-obj gen-vec 3)) 
+   :desc "You're in the mud. People are staring at you. " 
+   :enemy ""})
 
 (def loc-1
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're at a temple. " :enemy "A cultist attacks you! " :enter {:goto l1m-indoors-1 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 2)) 
+   :desc "You're at a temple. " 
+   :enemy "A cultist attacks you! " 
+   :enter {:goto l1m-indoors-1 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-2
-  {:obj (ref (place-obj gen-vec 1)) :desc "You're at the tavern. It smells like stale beer. " :enemy "A drunk guy starts hurling insults at you. " :enter {:goto l1m-indoors-2 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 1)) 
+   :desc "You're at the tavern. It smells like stale beer. " 
+   :enemy "A drunk guy starts hurling insults at you. " 
+   :enter {:goto l1m-indoors-2 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-3
-  {:obj (ref (place-obj gen-vec 1)) :desc "You're at the decrepit general store. " :enemy "" :enter {:goto l1m-indoors-3 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 1)) 
+   :desc "You're at the decrepit general store. " 
+   :enemy "" 
+   :enter {:goto l1m-indoors-3 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-4
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're at a fancy mansion. " :enemy "A guard attacks! " :enter {:goto l1m-indoors-4 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 2)) 
+   :desc "You're at a fancy mansion. " 
+   :enemy "A guard attacks! " 
+   :enter {:goto l1m-indoors-4 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-5
-  {:obj (ref (place-obj gen-vec 3)) :desc "This house is plain. " :enemy "A dog bites your ankle. Ow. " :enter {:goto l1m-indoors-5 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 3)) 
+   :desc "This house is plain. " 
+   :enemy "A dog bites your ankle. Ow. " 
+   :enter {:goto l1m-indoors-5 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-6 
-  {:obj (ref (place-obj gen-vec 3)) :desc "This building looks like it burned down long ago. You wonder why it hasn't been restored. " :enemy "A rat bites you! " :enter {:goto l1m-indoors-6 :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen-vec 3)) 
+   :desc "This building looks like it burned down long ago. You wonder why it hasn't been restored. " 
+   :enemy "A rat bites you! " 
+   :enter {:goto l1m-indoors-6 
+           :start-coords {:row 0 :col 0}}})
 
 (def loc-7
-  {:obj (ref (place-obj gen-vec 2)) :desc "You're in the street. " :enemy "" })
+  {:obj (ref (place-obj gen-vec 2)) 
+   :desc "You're in the street. " 
+   :enemy "" })
 
 ;level map is a matrix, each cell corresponds to a location data map
 (def level-1-map
@@ -201,18 +243,24 @@
   10)
 
 (defn print-pc-health [pc-health]
-  (print "             Your max health is ") (print pc-health))
+  (print "             Your max health is ") 
+  (print pc-health))
 
 (def init-pc-damage
   10)
 
 (defn print-pc-damage [pc-damage]
-  (println) (print "             Your max damage is ") (print pc-damage) (println) (println))
+  (println) 
+  (print "             Your max damage is ") 
+  (print pc-damage) 
+  (println) 
+  (println))
 
 ;OBJECT OPTIONS______________________________________________________________________________
 
 (defn get-obj [pc-loc map-stack]
-  (deref (get (get-pc-loc pc-loc map-stack) :obj)))
+  (deref 
+    (get (get-pc-loc pc-loc map-stack) :obj)))
 
 (defn get-obj-ref [pc-loc map-stack]
   (get (get-pc-loc pc-loc map-stack) :obj))
@@ -234,9 +282,17 @@
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
   (if (= [] (get-obj pc-loc map-stack))
-    (do (println) (println "There is nothing here to add.") (println) (pause) (print-debug pc-inv) pc-inv)
+    (do 
+      (println) 
+      (println "There is nothing here to add.") 
+      (println) 
+      (pause) 
+      (print-debug pc-inv) 
+      pc-inv)
     (do
-      (println) (println "What would you like to add? Enter the object number.") (println)
+      (println) 
+      (println "What would you like to add? Enter the object number.") 
+      (println)
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
           (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
@@ -247,6 +303,27 @@
             new-pc-inv))))))
 
 ;print object options_____________________________________________________
+
+;FIXME
+(defn print-item-damage [item]
+  (print " -- Damage Bonus: ")
+  (print item)
+  (println))
+
+;FIXME
+(defn print-obj-damage [pc-loc map-stack]
+    (doseq [item (map :damage (get-obj pc-loc map-stack))]
+      (print-item-damage item)))
+
+;FIXME
+(defn print-item-health [item]
+  (print " -- Armor Bonus: ")
+  (print item))
+
+;FIXME
+(defn print-obj-health [pc-loc map-stack]
+    (doseq [item (map :health (get-obj pc-loc map-stack))]
+      (print-item-health item)))
 
 (defn print-obj-item [item]
   (print "                    ")
@@ -281,21 +358,23 @@
   (print-debug pc-inv)
   (let [input (read-line)]
     (cond
-      ;FIXME here???
       (= input "x") pc-inv
       (= input "a") (add-to-inv pc-loc map-stack pc-inv)
-      :else (do (println "That's not a valid choice.") (pause) (print-debug pc-inv) pc-inv))))
+      :else (do 
+              (println "That's not a valid choice.") 
+              (pause) 
+              (print-debug pc-inv) 
+              pc-inv))))
 
 ;INVENTORY________________________________________________________________________
 
 ;removing items from inventory_______________________________________________
 
-;FIXME not working, pc-inv and pc-eq would also need to be ref'd
 (defn add-item-to-loc [pc-loc map-stack pc-inv int-input]
   (println "The problem is here?")
   (print-debug pc-inv)
   (dosync
-    (alter (get-obj-ref pc-loc map-stack) conj  (nth pc-inv (dec int-input)))))
+    (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec int-input)))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "removes a user-defined item from inventory"
@@ -326,22 +405,45 @@
     (doseq [item pc-eq]
       (print-eq item))))
 
+(defn add-damage [pc-inv pc-damage int-input]
+  (+ pc-damage (:damage (nth pc-inv (dec int-input)))))
+
+(defn add-health [pc-inv pc-health int-input]
+  (+ pc-health (:health (nth pc-inv (dec int-input)))))
+
 (defn equip-item [pc-inv pc-eq pc-health pc-damage]
   (println)
   (if (= [] pc-inv)
-    (do (println "There is nothing to equip.") pc-eq)
+    (do 
+      (println "There is nothing to equip.") 
+      (pause)
+      [pc-eq
+       pc-health
+       pc-damage])
     (do
       (println "What item do you want to equip? Enter the item number.")
       (println) 
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
-          ;FIXME needs to return a vector of this, health, and damage
-          [(vec (conj pc-eq (nth pc-inv (dec int-input)))) pc-health pc-damage])))))
+          [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
+           (add-health pc-inv pc-health int-input) 
+           (add-damage pc-inv pc-damage int-input)])))))
+
+(defn sub-damage [pc-eq pc-damage int-input]
+  (- pc-damage (:damage (nth pc-eq (dec int-input)))))
+
+(defn sub-health [pc-eq pc-health int-input]
+  (- pc-health (:health (nth pc-eq (dec int-input)))))
 
 (defn unequip-item [pc-eq pc-health pc-damage]
   "removes a user-defined item from inventory"
   (if (= [] pc-eq)
-    (do (println "There is nothing to unequip.") pc-eq)
+    (do 
+      (println "There is nothing to unequip.") 
+      (pause)
+      [pc-eq
+       pc-health
+       pc-damage])
     (do
       (println)
       (println "What item do you want to unequip? Enter the item number.")
@@ -350,29 +452,30 @@
         (let [int-input (Integer/parseInt input)]
           (let [pre-eq (subvec pc-eq 0 (dec int-input))
                 post-eq (subvec pc-eq int-input)]
-            ;FIXME needs to return a vector of this, health, and damage
-            [(vec (concat pre-eq post-eq)) pc-health pc-damage]))))))
+            [(vec (concat pre-eq post-eq))
+             (sub-health pc-eq pc-health int-input) 
+             (sub-damage pc-eq pc-damage int-input)]))))))
 
 ;print inventory____________________________________________________
 
 ;FIXME doesn't fucking work
 (defn in? [coll elem]  
   "true if coll contains elem"
-  "in this case, coll is pc-eq and elem is pc-inv item"
   (some #(= elem %) coll))
 
 ;FIXME doens't fucking work
 (defn list-contains? [coll value]
   (let [s (seq coll)]
     (if s
-      (if (= (first s) value) true (recur (rest s) value))
+      (if (= (first s) value) 
+        true 
+        (recur (rest s) value))
       false)))
 
 ;FIXME doesn't fucking work
 (defn is-it-eq [pc-eq item]
   "checks if an item is in pc-eq
   if yes, prints ' ** ' otherwise ' -- ' "
-  ;(if (in? pc-eq item) 
   (if (list-contains? pc-eq item)
     (print " ** ")
     (print "    ")))
@@ -412,7 +515,6 @@
   (clear-screen)
   (open-inv-menu)
   (open-sword)
-  ;FIXME
   (print-pc-health pc-health)
   (print-pc-damage pc-damage)
   (println "             Your inventory contains the following items:")
@@ -426,14 +528,34 @@
   (print-inv-commands pc-inv pc-eq pc-health pc-damage)
   (let [input (read-line)]
     (cond
-      (= input "x") [pc-inv pc-eq pc-health pc-damage]
+      (= input "x") [pc-inv 
+                     pc-eq 
+                     pc-health 
+                     pc-damage]
       (= input "r") (let [new-pc-inv (remove-item-from-inv pc-loc map-stack pc-inv)]
-                     [new-pc-inv pc-eq pc-health pc-damage])
-      (= input "e") (let [[new-pc-eq new-pc-health new-pc-damage] (equip-item pc-inv pc-eq pc-health pc-damage)]
-                      [pc-inv new-pc-eq new-pc-health new-pc-damage])
-      (= input "u") (let [[new-pc-eq new-pc-health new-pc-damage] (unequip-item pc-eq pc-health pc-damage)]
-                      [pc-inv new-pc-eq new-pc-health new-pc-damage])
-      :else (do (println "That's not a valid choice.") (pause) [pc-inv pc-eq pc-health pc-damage]))))
+                     [new-pc-inv 
+                      pc-eq 
+                      pc-health 
+                      pc-damage])
+      (= input "e") (let [[new-pc-eq new-pc-health new-pc-damage] 
+                          (equip-item pc-inv pc-eq pc-health pc-damage)]
+                      [pc-inv 
+                       new-pc-eq 
+                       new-pc-health 
+                       new-pc-damage])
+      (= input "u") (let [[new-pc-eq new-pc-health new-pc-damage] 
+                          (unequip-item pc-eq pc-health pc-damage)]
+                      [pc-inv 
+                       new-pc-eq 
+                       new-pc-health 
+                       new-pc-damage])
+      :else (do 
+              (println "That's not a valid choice.") 
+              (pause) 
+              [pc-inv 
+               pc-eq 
+               pc-health 
+               pc-damage]))))
 
 ;MENU AND USER OPTIONS________________________________________________________________________________________
 
@@ -447,18 +569,78 @@
  'q' quits program (system call)"
   (let [input (read-line)]
     (cond
-      (= input "n") (do (println "You move North.") (pause) [(assoc pc-loc :row (dec (:row pc-loc))) pc-inv pc-eq pc-health pc-damage])
-      (= input "s") (do (println "You move South.") (pause) [(assoc pc-loc :row (inc (:row pc-loc))) pc-inv pc-eq pc-health pc-damage])
-      (= input "e") (do (println "You move East.") (pause) [(assoc pc-loc :col (inc (:col pc-loc))) pc-inv pc-eq pc-health pc-damage]) 
-      (= input "w") (do (println "You move West.") (pause) [(assoc pc-loc :col (dec (:col pc-loc))) pc-inv pc-eq pc-health pc-damage]) 
-      (= input "m") (do (open-main-menu) (println) (pause) [pc-loc pc-inv pc-eq pc-health pc-damage]) 
-      (= input "l") (do (println "There are no enemies yet, so there is no loot.") (println) (pause) [pc-loc pc-inv pc-eq pc-health pc-damage]) 
+      (= input "n") (do 
+                      (println "You move North.") 
+                      (pause) 
+                      [(assoc pc-loc :row (dec (:row pc-loc))) 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage])
+      (= input "s") (do 
+                      (println "You move South.") 
+                      (pause) 
+                      [(assoc pc-loc :row (inc (:row pc-loc))) 
+                        pc-inv 
+                        pc-eq 
+                        pc-health 
+                        pc-damage])
+      (= input "e") (do 
+                      (println "You move East.") 
+                      (pause) 
+                      [(assoc pc-loc :col (inc (:col pc-loc))) 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage]) 
+      (= input "w") (do 
+                      (println "You move West.") 
+                      (pause) 
+                      [(assoc pc-loc :col (dec (:col pc-loc))) 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage]) 
+      (= input "m") (do 
+                      (open-main-menu) 
+                      (println) 
+                      (pause) 
+                      [pc-loc 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage]) 
+      (= input "l") (do 
+                      (println "There are no enemies yet, so there is no loot.") 
+                      (println) 
+                      (pause) 
+                      [pc-loc 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage]) 
       (= input "o") (let [new-pc-inv (obj-control pc-loc map-stack pc-inv)]
-                      [pc-loc new-pc-inv pc-eq pc-health pc-damage])
-      (= input "i") (let [[new-pc-inv new-pc-eq new-pc-health new-pc-damage] (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
-                      [pc-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage])
+                      [pc-loc 
+                       new-pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage])
+      (= input "i") (let [[new-pc-inv new-pc-eq new-pc-health new-pc-damage] 
+                          (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
+                      [pc-loc 
+                       new-pc-inv 
+                       new-pc-eq 
+                       new-pc-health 
+                       new-pc-damage])
       (= input "q") (System/exit 0) 
-      :else (do (println "That's not a valid choice.") (pause) [pc-loc pc-inv pc-eq pc-health pc-damage]))))
+      :else (do 
+              (println "That's not a valid choice.") 
+              (pause) 
+              [pc-loc 
+               pc-inv 
+               pc-eq 
+               pc-health 
+               pc-damage]))))
 
 (defn print-user-menu []
   (with-open [rdr (io/reader "resources/user-menu.txt")]
@@ -474,16 +656,27 @@
     the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
   If not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
   (print-user-menu)
-  (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage] (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
-    ;(println new-pc-inv)
+  (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage] 
+        (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
+    (print-debug new-pc-inv)
     (if (:desc (get-pc-loc new-loc map-stack))
-      [new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage]
+      [new-loc 
+       map-stack 
+       new-pc-inv 
+       new-pc-eq 
+       new-pc-health 
+       new-pc-damage]
       (do
         (if (not= (first map-stack) (get level-1-map :map))
           (println "There is a wall in that direction. You move back to where you were.")
           (println "You find yourself at the edge of the village and turn back to where you started."))
         (pause)
-        [pc-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage]))))
+        [pc-loc 
+         map-stack 
+         new-pc-inv 
+         new-pc-eq 
+         new-pc-health 
+         new-pc-damage]))))
 
 ;entering______________________________________________
 
@@ -501,8 +694,15 @@
                        (conj map-stack (:goto (:enter (get-pc-loc pc-loc map-stack))))
                        true]
         ;old map is returned, so change is "false"
-        (= input "x") [pc-loc map-stack false]
-        :else (do (println "That was not a valid choice.") (pause) [pc-loc map-stack false]))))
+        (= input "x") [pc-loc 
+                       map-stack 
+                       false]
+        :else (do 
+                (println "That was not a valid choice.") 
+                (pause) 
+                [pc-loc 
+                 map-stack 
+                 false]))))
 
 (defn print-enter [pc-loc map-stack]
   (print "
@@ -524,11 +724,17 @@
   if true, new map has been loaded and the new pc-coordinates and map stack are returned to loop recur
   if false, calls noromal movement functions (check-move)"
   (print-enter pc-loc map-stack)
-  (let [[new-loc new-map-stack true-false] (check-push-map pc-loc map-stack)]
+  (let [[new-loc new-map-stack true-false] 
+        (check-push-map pc-loc map-stack)]
     ;will be true if a new map was pushed on 
     (if true-false
       ;load new map
-      [new-loc new-map-stack pc-inv pc-eq pc-health pc-damage]
+      [new-loc 
+       new-map-stack 
+       pc-inv 
+       pc-eq 
+       pc-health 
+       pc-damage]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage))))
 
@@ -543,10 +749,19 @@
   (let [input (read-line)]
     (cond
       ;change is made (popping off a map), so "true"
-      (= input "y") [(:exit-start-coords (get-pc-loc pc-loc map-stack)) (rest map-stack) true]
+      (= input "y") [(:exit-start-coords (get-pc-loc pc-loc map-stack)) 
+                     (rest map-stack) 
+                     true]
       ;no change is made to map, so "false"
-      (= input "x") [pc-loc map-stack false]
-      :else (do (println "That was not a valid choice. What else would you like to do at this location?") (pause) [pc-loc map-stack false]))))
+      (= input "x") [pc-loc 
+                     map-stack 
+                     false]
+      :else (do 
+              (println "That was not a valid choice. What else would you like to do at this location?") 
+              (pause) 
+              [pc-loc 
+               map-stack 
+               false]))))
 
 (defn print-exit []
   (print  " 
@@ -571,11 +786,17 @@
   ;let [things returned from function] (function and arguements) 
   ;    enables new values to be compared to old values
   ;    need to do it this way because pc-loc itself is not a variable and cannot be changed like one
-  (let [[new-loc new-map-stack true-false] (check-pop-map pc-loc map-stack)]
+  (let [[new-loc new-map-stack true-false] 
+        (check-pop-map pc-loc map-stack)]
     ;will be true if a map was popped off
     (if true-false
       ;load new map
-      [new-loc new-map-stack pc-inv pc-eq pc-health pc-damage]
+      [new-loc 
+       new-map-stack 
+       pc-inv 
+       pc-eq 
+       pc-health 
+       pc-damage]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage)))) 
 
@@ -610,5 +831,7 @@
           ;(function arguments)
           (print-loc-desc pc-loc map-stack)
           (print-loc-enemy pc-loc map-stack) 
-          (let [[new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage] (display-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
-            (recur new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage)))))
+          (let [[new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage] 
+                (display-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage)]
+            (recur 
+              new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage)))))
