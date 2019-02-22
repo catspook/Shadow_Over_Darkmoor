@@ -857,7 +857,7 @@
   (print max-health))
 
 (def init-pc-damage
-  3)
+  5)
 
 (defn print-pc-damage [pc-damage]
   (println) 
@@ -901,7 +901,7 @@
       pc-inv)
     (do
       (println) 
-      (println "What would you like to add? Enter the object number.") 
+      (println "What would you like to add? Enter '1' for the first item listed, '2' for the second item listed, and so on.") 
       (println)
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
@@ -909,31 +909,9 @@
             (print-debug new-pc-inv)
             (remove-obj-from-loc pc-loc map-stack int-input)
             (print-debug new-pc-inv)
-            (pause)
             new-pc-inv))))))
 
 ;print object options_____________________________________________________
-
-;FIXME
-(defn print-item-damage [item]
-  (print " -- Damage Bonus: ")
-  (print item)
-  (println))
-
-;FIXME
-(defn print-obj-damage [pc-loc map-stack]
-    (doseq [item (map :damage (get-obj pc-loc map-stack))]
-      (print-item-damage item)))
-
-;FIXME
-(defn print-item-health [item]
-  (print " -- Armor Bonus: ")
-  (print item))
-
-;FIXME
-(defn print-obj-health [pc-loc map-stack]
-    (doseq [item (map :health (get-obj pc-loc map-stack))]
-      (print-item-health item)))
 
 (defn print-obj-item [item]
   (print "                    ")
@@ -969,12 +947,11 @@
   (let [input (read-line)]
     (cond
       (= input "x") pc-inv
-      (= input "a") (add-to-inv pc-loc map-stack pc-inv)
+      (= input "a") (let [new-pc-inv (add-to-inv pc-loc map-stack pc-inv)]
+                     (obj-control pc-loc map-stack new-pc-inv)) 
       :else (do 
-              (println "That's not a valid choice.") 
-              (pause) 
               (print-debug pc-inv) 
-              pc-inv))))
+              (obj-control pc-loc map-stack pc-inv)))))
 
 ;INVENTORY________________________________________________________________________
 
@@ -994,7 +971,7 @@
       pc-inv)
     (do
       (println)
-      (println "What item do you want to drop? Enter the item number.")
+      (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
           (do
@@ -1036,7 +1013,7 @@
        pc-damage
        max-health])
     (do
-      (println "What item do you want to equip? Enter the item number.")
+      (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
       (println) 
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
@@ -1063,7 +1040,7 @@
        max-health])
     (do
       (println)
-      (println "What item do you want to unequip? Enter the item number.")
+      (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
       (println)
       (let [input (read-line)]
         (let [int-input (Integer/parseInt input)]
@@ -1082,7 +1059,7 @@
 
 (defn drink-hp [pc-loc map-stack pc-inv pc-health max-health]
   (println)
-  (println "What item do you want to drink? Enter the item number.")
+  (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
       (if (not (:potion (nth pc-inv (dec int-input))))
@@ -1106,34 +1083,6 @@
            (potion-add-health pc-inv pc-health int-input max-health)]))))))
 
 ;print inventory____________________________________________________
-
-;FIXME doesn't fucking work
-(defn in? [coll elem]  
-  "true if coll contains elem"
-  (some #(= elem %) coll))
-
-;FIXME doens't fucking work
-(defn list-contains? [coll value]
-  (let [s (seq coll)]
-    (if s
-      (if (= (first s) value) 
-        true 
-        (recur (rest s) value))
-      false)))
-
-;FIXME doesn't fucking work
-(defn is-it-eq [pc-eq item]
-  "checks if an item is in pc-eq
-  if yes, prints ' ** ' otherwise ' -- ' "
-  (if (list-contains? pc-eq item)
-    (print " ** ")
-    (print "    ")))
-
-;FIXME doens't fucking work now, returns nothing but -1 
-(defn get-index-of [coll elem]
-  "returns the index of an elem"
-  "in this case, coll is pc-inv and elem is pc-inv item"
-  (print (.indexOf coll elem)))
 
 (defn print-item [item]
   (print "                    ")
@@ -1183,25 +1132,13 @@
                      pc-damage
                      max-health]
       (= input "r") (let [new-pc-inv (remove-item-from-inv pc-loc map-stack pc-inv)]
-                     [new-pc-inv 
-                      pc-eq 
-                      pc-health 
-                      pc-damage
-                      max-health])
+                     (inv-control pc-loc map-stack new-pc-inv pc-eq pc-health pc-damage max-health))
       (= input "e") (let [[new-pc-eq new-pc-health new-pc-damage new-max-health] 
                           (equip-item pc-inv pc-eq pc-health pc-damage max-health)]
-                      [pc-inv 
-                       new-pc-eq 
-                       new-pc-health 
-                       new-pc-damage
-                       new-max-health])
+                      (inv-control pc-loc map-stack pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health))
       (= input "u") (let [[new-pc-eq new-pc-health new-pc-damage new-max-health] 
                           (unequip-item pc-eq pc-health pc-damage max-health)]
-                      [pc-inv 
-                       new-pc-eq 
-                       new-pc-health 
-                       new-pc-damage
-                       new-max-health])
+                      (inv-control pc-loc map-stack pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health))
       (= input "d") (let [[new-pc-inv new-pc-health] 
                           (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
                       [new-pc-inv
@@ -1209,14 +1146,7 @@
                        new-pc-health
                        pc-damage 
                        max-health])
-      :else (do 
-              (println "That's not a valid choice.") 
-              (pause) 
-              [pc-inv 
-               pc-eq 
-               pc-health 
-               pc-damage
-               max-health]))))
+      :else (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
 ;MENU AND USER OPTIONS________________________________________________________________________________________
 
