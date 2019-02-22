@@ -60,32 +60,229 @@
 ;OBJECT DATA____________________________________________________________________________
 
 ;general obejcts
-(def o1-gen
-  {:potion false :desc "Thing1. H1, D1." :health 1 :damage 1})
-(def o2-gen
-  {:potion false :desc "Thing2. H2, D2" :health 2 :damage 2})
-(def o3-gen
-  {:potion false :desc "Thing3. H3, D3" :health 3 :damage 3})
-(def o4-gen
-  {:potion false :desc "Thing4. H4, D4" :health 4 :damage 4})
-(def o5-gen
-  {:potion false :desc "Thing5. H5, D5" :health 5 :damage 5})
-(def o6-gen
-  {:potion false :desc "Thing6. H6 D6" :health 6 :damage 6})
-(def o7-gen
-  {:potion false :desc "Thing7. H7 D7" :health 7 :damage 7})
-(def o8-gen
-  {:potion false :desc "Thing8. H8 D8" :health 8 :damage 8})
-(def o9-gen
-  {:potion false :desc "Thing9. H9 D9" :health 9 :damage 9})
-(def o10-gen
-  {:potion false :desc "Thing10. H10 D10" :health 10 :damage 10})
-(def health-potion
-  {:potion true :desc "COMMON HEALTH POTION: This potion glimmers with a healthy green glow. After drinking this, you will regain 5 health." :health 5 :damage 0})
+(def o1
+  {:potion false 
+   :desc "WOODCUTTER'S AXE: Blunted and notched. +2 SLASHING DAMAGE" 
+   :health 0 
+   :damage 2})
+(def o2
+  {:potion false 
+   :desc "OLD LEATHER ARMOR: Better than fighting in your traveling clothes. +4 HEALTH" 
+   :health 4 
+   :damage 0})
+(def o3
+  {:potion false 
+   :desc "CULTIST'S DAGGER: A strange symbol carved on the blade glows with an unearthly purple light. +5 NECROTIC DAMAGE" 
+   :health 0 
+   :damage 5})
+(def o4
+  {:potion false 
+   :desc "FIRE SHIELD: Flames lick around the edges of this shield, but thankfully the handle is not red-hot. +2 HEALTH, +1 FIRE DAMAGE" 
+   :health 2 
+   :damage 1})
+(def o5
+  {:potion false 
+   :desc "BUTCHER'S GLOVES: These stink, but your fingers have never felt so protected. +2 HEALTH" 
+   :health 2 
+   :damage 0})
+(def o6
+  {:potion false 
+   :desc "FEMUR: Makes a good club, but takes both of your hands to carry. +5 BLUNT DAMAGE" 
+   :health 0 
+   :damage 8})
+(def o7
+  {:potion false 
+   :desc "HALF-PLATE ARMOR: Caked in dirt. You're pretty sure that no one living has worn this recently. +7 HEALTH" 
+   :health 7 
+   :damage 0})
+(def o8
+  {:potion false 
+   :desc "ETHERIAL BOOTS: You feel just a bit less present while wearing these. +3 HEALTH" 
+   :health 3 
+   :damage 0})
+(def o9
+  {:potion false 
+   :desc "SHARPENED SYTHE: More of a farmer's weapon than Death's. +3 SLASHING DAMAGE" 
+   :health 0 
+   :damage 3})
+(def o10
+  {:potion false 
+   :desc "SPIKED FLAIL: Screaming faces are engraved on the handle, and the spikes are coated in gore. +6 PIERCING DAMAGE" 
+   :health 0 
+   :damage 6})
+(def o11
+  {:potion false
+   :desc "POLE-AXE: Literally a hand axe tied to a long stick. +4 SLASHING DAMAGE"
+   :health 0
+   :damage 4})
+(def o12
+  {:potion false
+   :desc "FINE CHAINMAIL: Finely-made armor consisting of thousands of tiny, silver rings. +6 HEALTH"
+   :health 9
+   :damage 0})
+(def o13
+  {:potion false
+   :desc "CULTIST'S ROBE: A thick, wool robe embroidered with enchanted runes that do damage to enemies while protecting the wearer. +4 HEALTH, +3 NECROTIC DAMAGE"
+   :health 4
+   :damage 3})
+(def o14
+  {:potion false
+   :desc "FINE SILVER SWORD: A thin, curved blade with a decorative eagle carved around the handle. +6 PIERCING DAMAGE"
+   :health 0
+   :damage 6})
+(def o15
+  {:potion false
+   :desc "SEVERED ARM: It's just like a club. A squishy, stinking club. +3 NECROTIC DAMAGE"
+   :health 0
+   :damage 3})
+(def o16
+  {:potion false
+   :desc "WARHAMMER: A large, heavy stone hammer carved with intricate geometric designs. +7 BLUNT DAMAGE"
+   :health 0
+   :damage 7})
+(def o17
+  {:potion false
+   :desc "RUSTED BOW AND ARROW: A half-rotted bow and a handful of rusted arrows. This weapon is ranged, but requires both hands to use. +2 HEALTH, 4 PIERCING DAMAGE"
+   :health 0
+   :damage 5})
+(def o18
+  {:potion false
+   :desc "GREAT AXE: Passed down from generation to generation, this once was a prized family heirloom. It's yours now. +7 SLASHING DAMAGE"
+   :health 0
+   :damage 7})
+(def o19
+  {:potion false
+   :desc "SPIKED SHIELD: Long spikes protrude from the center of this shield. +3 HEALTH, +1 PIERCING DAMAGE"
+   :health 3
+   :damage 1})
+(def o20
+  {:potion false
+   :desc "SPIKED GAUNTLETS: Finely made from a previous age, if a bit dusty. +2 HEALTH, +1 PIERCING DAMAGE"
+   :health 2
+   :damage 1})
+(def o21
+  {:potion false
+   :desc "SPIKED PAULDRONS: Your neck will be somewhat more protected by these large spikes. Just don't bend your head too far. +1 HEALTH"
+   :health 1
+   :damage 0})
+;(def o22
+;  {:potion false
+;   :key true
+;   :desc "TEMPLE KEY: A large brass key, marked with the symbol of the Templar Order. This probably unlocks something in the temple."
+;   :health 0
+;   :damage 0})
+(def o23
+  {:potion false
+   :desc "BARREL OF DEAD FISH: You don't think you could get within a foot of this without throwing up."
+   :health 0
+   :damage -2})
+(def o24
+  {:potion false
+   :desc "HEMP ROPE: It's so rotten it snaps as soon as you pick it up."
+   :health 0
+   :damage 0})
+(def o25
+  {:potion false
+   :desc "BARREL OF ROTTEN GRAIN: Not quite beer yet."
+   :health 0
+   :damage 0})
+(def o26
+  {:potion false
+   :desc "RUSTED HORSESHOE: You're not a centaur, so you're not sure what you'd do with this." 
+   :health 0
+   :damage 0})
+(def o27
+  {:potion false
+   :desc "BROKEN BAR STOOL: A little unweildy, but heavy. Getting hit with this will hurt. +5 BLUNT DAMAGE, -2 HEALTH"
+   :health -2
+   :damage 5})
+(def o28
+  {:potion false
+   :desc "CHAIR LEG: Made of sturdy oak. +3 BLUNT DAMAGE"
+   :health 0
+   :damage 3})
+(def o29
+  {:potion false
+   :desc "BROKEN WINE BOTTLE: Sharp as glass. +4 PIERCING DAMAGE"
+   :health 0
+   :damage 4})
+(def o30
+  {:potion false 
+   :desc "RUM: Gives the drinker the Sea Legs effect while EQUIPPED, allowing them to evade more attacks (+1 HEALTH), but reducing their aim (-1 DAMAGE)." 
+   :health 1
+   :damage -1})
+(def o31
+  {:potion false
+   :desc "MOONSHINE: Gives the drinker the Drunken Rage effect while EQUIPPED, allowing them to do an extra +1 DAMAGE at the cost of -1 HEALTH."
+   :health -1
+   :damage 1})
+(def o32
+  {:potion false
+   :desc "HOLY SHIELD: A shield painted with a yellow rising sun. +3 HEALTH, +1 HOLY DAMAGE"
+   :health 3
+   :damage 1})
+(def o33
+  {:potion false
+   :desc "TEMPLAR ARMOR: Plate mail emblazoned with a gold rising sun on the breastplate. +8 HEALTH"
+   :health 8
+   :damage 0})
+(def o34
+  {:potion false
+   :desc "RING OF THE MOON: An onyx ring set with a large moonstone. +1 ICE DAMAGE"
+   :health 0
+   :damage 1})
+(def o35
+  {:potion false
+   :desc "ARCANE DAGGER: Made of a sheer crystaline material and as cold as ice. +5 ICE DAMAGE"
+   :health 0
+   :damage 5})
+(def h1
+  {:potion true 
+   :desc "LESSER HEALTH POTION: This potion glimmers with a healthy green glow. After drinking this, you will regain 5 health." 
+   :health 5 
+   :damage 0})
+(def h2
+  {:potion true 
+   :desc "COMMON HEALTH POTION: This potion shines a bright, sunshine yellow. After drinking this, you will regain 10 health." 
+   :health 10
+   :damage 0})
+(def h3
+  {:potion true 
+   :desc "GREATER HEALTH POTION: This potion ruby red sparkles cheerfully in the gloom. After drinking this, you will regain 15 health." 
+   :health 15 
+   :damage 0})
 
 ;for place-obj
-(def gen-vec
-  [o1-gen o2-gen o3-gen o4-gen o5-gen o6-gen o7-gen o8-gen o9-gen o10-gen health-potion])
+(def health
+  [h1 h2 h3])
+(def skele
+  [o2 o6 o7 o11 o16 o17])
+(def rich
+  [o12 o14 o16 o18 h3 h2])
+(def cultists
+  [o3 o8 o10 o13 h2 h3])
+(def forge
+  [o4 o9 o12 o14 o16])
+(def gen-skele
+  [o1 o2 o5 o6 o7 o9 o11 o15 o17 h1 h2])
+(def cult-skele
+  [o3 o6 o7 o9 o13 o15 o17 h1 h2])
+(def gen-cult
+  [o1 o2 o3 o5 o9 o11 o13 h2 h3])
+(def crypt
+  [o19 o20 o21 h2 h3])
+(def junk-gen-forge
+  [o1 o2 o4 o5 o9 o11 o12 o14 o16 o23 o24 o25 o26 h1 h2])
+(def junk
+  [o23 o24 o25 o26])
+(def tavern 
+  [o27 o28 o29 o30 o31])
+(def temple
+  [o32 o33 o34 o35 h1 h2 h3])
+(def gen
+  [o1 o2 o5 o9 o11 o24 o26 h1])
+;(def cave-key
+;  [o22])
 
 (defn place-obj [obj-list amt]
   (vec (take amt (repeatedly #(nth obj-list (rand-int (count obj-list)))))))
@@ -97,121 +294,527 @@
   [])
 
 ;LEVEL BUILDING___________________________________________________________
-;1-temple 2-inn 3-general store 4-mansion 5-house 6-ruined building1 7-object in road
-
-;interior location data maps
 ;exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
+
+;this loc is null. has no description and therefore can't be loaded.
+(def loc-0-0
+  {})
+
+;temple basement
+;exiting basement
+(def loc-1-3-0
+  {:obj (ref (place-obj health 1)) 
+   :desc "temple basement"
+   :exit-start-coords {:row 1 :col 0}})
+(def loc-1-3-1
+  {:obj (ref (place-obj cultists 2)) 
+   :desc "basement1"})
+(def loc-1-3-2
+  {:obj (ref (place-obj cult-skele 3)) 
+   :desc "basement2"})
+(def loc-1-3-3
+  {:obj (ref (place-obj temple 1)) 
+   :desc "basement5"})
+
+(def basement-1-3 
+  [[loc-1-3-0 loc-1-3-1]
+   [loc-1-3-2 loc-1-3-3]])
+
+;temple
+;exiting temple
 (def loc-1-0
-  {:obj (ref (place-obj gen-vec 6)) 
+  {:obj (ref (place-obj temple 1)) 
    :desc "You're inside the temple." 
-   :exit-start-coords {:row 0 :col 3}})
+   :exit-start-coords {:row 1 :col 2}})
+(def loc-1-1
+  {:obj (ref (place-obj cultists 1)) 
+   :desc "temple 1"})
+(def loc-1-2
+  {:obj (ref (place-obj health 1)) 
+   :desc "temple 2"})
+;enter temple basement
+(def loc-1-3
+  {:obj (ref (place-obj health 0)) 
+   :desc "enter basement"
+   :enter {:goto basement-1-3
+           :start-coords {:row 0 :col 0}}})
+(def loc-1-4
+  {:obj (ref (place-obj cultists 1)) 
+   :desc "temple 4"})
+(def loc-1-5
+  {:obj (ref (place-obj temple 2)) 
+   :desc "temple 5"})
+(def loc-1-6
+  {:obj (ref (place-obj temple 1)) 
+   :desc "temple 6"})
+(def loc-1-7
+  {:obj (ref (place-obj health 2)) 
+   :desc "temple 7"})
+(def loc-1-8
+  {:obj (ref (place-obj cultists 0)) 
+   :desc "temple 8"})
+(def loc-1-9
+  {:obj (ref (place-obj cultists 0)) 
+   :desc "temple 9"})
+(def loc-1-10
+  {:obj (ref (place-obj temple 1)) 
+   :desc "temple 10"})
+(def loc-1-11
+  {:obj (ref (place-obj cultists 1)) 
+   :desc "temple 11"})
+
+(def temple-1 
+  [[loc-0-0 loc-1-0  loc-1-1  loc-0-0]
+   [loc-1-3 loc-1-4  loc-1-5  loc-1-6]
+   [loc-0-0 loc-1-8  loc-1-9  loc-0-0]
+   [loc-0-0 loc-1-10 loc-1-11 loc-0-0]])
+
+;mausoleum
+;exiting mausoleum
+(def loc-2-7-0
+  {:obj (ref (place-obj crypt 1)) 
+   :desc "in Mausoleum" 
+   :exit-start-coords {:row 0 :col 1}})
+(def loc-2-7-1
+  {:obj (ref (place-obj skele 0)) 
+   :desc "mausoleum 1"})
+(def loc-2-7-2
+  {:obj (ref (place-obj skele 0)) 
+   :desc "mausoleum 2"})
+(def loc-2-7-3
+  {:obj (ref (place-obj health 1)) 
+   :desc "mausoleum 3"})
+(def loc-2-7-4
+  {:obj (ref (place-obj crypt 2)) 
+   :desc "mausoleum 4"})
+(def loc-2-7-5
+  {:obj (ref (place-obj health 1)) 
+   :desc "mausoleum 5"})
+(def loc-2-7-6
+  {:obj (ref (place-obj crypt 2)) 
+   :desc "mausoleum 6"})
+(def loc-2-7-7
+  {:obj (ref (place-obj crypt 1)) 
+   :desc "mausoleum 7"})
+
+;mausoleum
+(def mausoleum-2-7 
+  [[loc-0-0   loc-2-7-0 loc-0-0  ]
+   [loc-0-0   loc-2-7-1 loc-0-0  ]
+   [loc-2-7-2 loc-2-7-3 loc-2-7-4]
+   [loc-2-7-5 loc-2-7-6 loc-2-7-7]])
+
+;graveyard
 (def loc-2-0
-  {:obj (ref (place-obj gen-vec 10)) 
-   :desc "You're inside the tavern." 
-   :exit-start-coords {:row 2 :col 0}})
+  {:obj (ref (place-obj skele 2)) 
+   :desc "graveyard 0"})
+;exit graveyard
 (def loc-2-1
-  {:obj (ref (place-obj gen-vec 3)) 
-   :desc "You moved a bit."})
-(def loc-3-0
-  {:obj (ref (place-obj gen-vec 5)) 
-   :desc "You're inside the store." 
-   :exit-start-coords {:row 3 :col 1}})
-(def loc-4-0
-  {:obj (ref (place-obj gen-vec 1)) 
-   :desc "You're inside the mansion." 
+  {:obj (ref (place-obj skele 2)) 
+   :desc "You stand inside the graveyard." 
    :exit-start-coords {:row 1 :col 1}})
+(def loc-2-2
+  {:obj (ref (place-obj skele 1)) 
+   :desc "graveyard 2"})
+(def loc-2-3
+  {:obj (ref (place-obj skele 0)) 
+   :desc "graveyard 3"})
+(def loc-2-4
+  {:obj (ref (place-obj skele 2)) 
+   :desc "graveyard 4"})
+(def loc-2-5
+  {:obj (ref (place-obj skele 1)) 
+   :desc "graveyard 5"})
+(def loc-2-6
+  {:obj (ref (place-obj skele 0)) 
+   :desc "graveyard 6"})
+;entering mausoleum
+(def loc-2-7
+  {:obj (ref (place-obj skele 0)) 
+   :desc "enter mausoleum"
+   :enter {:goto mausoleum-2-7 
+           :start-coords {:row 0 :col 1}}})
+(def loc-2-8
+  {:obj (ref (place-obj skele 1)) 
+   :desc "graveyard 8"})
+
+(def graveyard-2 
+  [[loc-2-6 loc-2-7 loc-2-8]
+   [loc-2-3 loc-2-4 loc-2-5]
+   [loc-2-0 loc-2-1 loc-2-2]])
+
+;store
+(def loc-3-0
+  {:obj (ref (place-obj gen 2)) 
+   :desc "store 0"})
+(def loc-3-1
+  {:obj (ref (place-obj gen-cult 3)) 
+   :desc "store 1"})
+(def loc-3-2
+  {:obj (ref (place-obj gen-cult 1)) 
+   :desc "store 2"})
+(def loc-3-3
+  {:obj (ref (place-obj gen-cult 2)) 
+   :desc "store 3"})
+(def loc-3-4
+  {:obj (ref (place-obj junk 1)) 
+   :desc "store 4"})
+(def loc-3-5
+  {:obj (ref (place-obj junk-gen-forge 3)) 
+   :desc "store 5"})
+(def loc-3-6
+  {:obj (ref (place-obj gen 0)) 
+   :desc "store 6"})
+;enter store
+(def loc-3-7
+  {:obj (ref (place-obj gen 5)) 
+   :desc "You're inside the store." 
+   :exit-start-coords {:row 0 :col 4}})
+(def loc-3-8
+  {:obj (ref (place-obj gen-cult 3)) 
+   :desc "store 8"})
+
+(def store-3 
+  [[loc-3-0 loc-3-1 loc-3-2]
+   [loc-3-3 loc-3-4 loc-3-5]
+   [loc-3-6 loc-3-7 loc-3-8]])
+
+;mansion
+(def loc-4-0
+  {:obj (ref (place-obj gen 0))
+   :desc "mansion 0"})
+(def loc-4-1
+  {:obj (ref (place-obj rich 1))
+   :desc "mansion 1"})
+(def loc-4-2
+  {:obj (ref (place-obj health 3))
+   :desc "mansion 2"})
+(def loc-4-3
+  {:obj (ref (place-obj rich 0))
+   :desc "mansion 3"})
+(def loc-4-4
+  {:obj (ref (place-obj rich 2))
+   :desc "mansion 4"})
+;enter mansion
+(def loc-4-5
+  {:obj (ref (place-obj health 1))
+   :desc "you're in the mansion"
+   :exit-start-coords {:row 2 :col 2}})
+(def loc-4-6
+  {:obj (ref (place-obj gen 0))
+   :desc "mansion 6"})
+(def loc-4-7
+  {:obj (ref (place-obj health 2))
+   :desc "mansion 7"})
+(def loc-4-8
+  {:obj (ref (place-obj gen 0))
+   :desc "mansion 8"})
+(def loc-4-9
+  {:obj (ref (place-obj rich 3))
+   :desc "mansion 9"})
+
+(def mansion-4 
+  [[loc-0-0 loc-4-0 loc-4-1]
+   [loc-4-2 loc-4-3 loc-4-4]
+   [loc-4-5 loc-4-6 loc-4-7]
+   [loc-0-0 loc-4-8 loc-4-9]])
+
+;house
 (def loc-5-0
-  {:obj (ref (place-obj gen-vec 1)) 
-   :desc "You're inside the house." 
+  {:obj (ref (place-obj junk-gen-forge 2))
+   :desc "house 0"})
+(def loc-5-1
+  {:obj (ref (place-obj gen 2))
+   :desc "house 1"})
+(def loc-5-2
+  {:obj (ref (place-obj rich 0))
+   :desc "house 2"})
+(def loc-5-3
+  {:obj (ref (place-obj health 1))
+   :desc "house 3"})
+(def loc-5-4
+  {:obj (ref (place-obj gen 0))
+   :desc "house 4"})
+(def loc-5-5
+  {:obj (ref (place-obj rich 1))
+   :desc "house 5"})
+(def loc-5-6
+  {:obj (ref (place-obj health 1))
+   :desc "you're in the house"
    :exit-start-coords {:row 3 :col 2}})
+
+(def house-5 
+  [[loc-5-0 loc-5-1 loc-5-2 loc-0-0]
+   [loc-5-3 loc-5-4 loc-5-5 loc-5-6]])
+
+;ruins
 (def loc-6-0
-  {:obj (ref (place-obj gen-vec 2)) 
+  {:obj (ref (place-obj junk-gen-forge 2)) 
+   :desc "ruins 0"})
+(def loc-6-1
+  {:obj (ref (place-obj junk-gen-forge 3)) 
+   :desc "ruins 1"})
+(def loc-6-2
+  {:obj (ref (place-obj junk-gen-forge 1)) 
+   :desc "ruins 2"})
+;enter ruins
+(def loc-6-3
+  {:obj (ref (place-obj junk-gen-forge 2)) 
    :desc "You're inside the ruins." 
+   :exit-start-coords {:row 3 :col 4}})
+(def loc-6-4
+  {:obj (ref (place-obj junk-gen-forge 0)) 
+   :desc "ruins 4"})
+(def loc-6-5
+  {:obj (ref (place-obj junk-gen-forge 0)) 
+   :desc "ruins 5"})
+(def loc-6-6
+  {:obj (ref (place-obj junk-gen-forge 4)) 
+   :desc "ruins 6"})
+(def loc-6-7
+  {:obj (ref (place-obj junk-gen-forge 2)) 
+   :desc "ruins 7"})
+(def loc-6-8
+  {:obj (ref (place-obj junk-gen-forge 3)) 
+   :desc "ruins 8"})
+
+(def ruins-6 
+  [[loc-6-0 loc-6-1 loc-6-2]
+   [loc-6-3 loc-6-4 loc-6-5]
+   [loc-6-6 loc-6-7 loc-6-8]])
+
+;cave
+(def loc-13-0
+  {:obj (ref (place-obj skele 1)) 
+   :desc "You're inside the cave." 
+   :exit-start-coords {:row 3 :col 0}})
+(def loc-13-1
+  {:obj (ref (place-obj cult-skele 2)) 
+   :desc "cave 1"})
+(def loc-13-2
+  {:obj (ref (place-obj skele 1)) 
+   :desc "cave 2"})
+(def loc-13-3
+  {:obj (ref (place-obj cult-skele 2)) 
+   :desc "cave 3"})
+(def loc-13-4
+  {:obj (ref (place-obj skele 0)) 
+   :desc "cave 4"})
+(def loc-13-5
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 5"})
+(def loc-13-6
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 6"})
+(def loc-13-7
+  {:obj (ref (place-obj cult-skele 2)) 
+   :desc "cave 7"})
+(def loc-13-8
+  {:obj (ref (place-obj skele 1)) 
+   :desc "cave 8"})
+(def loc-13-9
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 9"})
+(def loc-13-10
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 10"})
+(def loc-13-11
+  {:obj (ref (place-obj cult-skele 3)) 
+   :desc "cave 11"})
+(def loc-13-12
+  {:obj (ref (place-obj cult-skele 2)) 
+   :desc "cave 12"})
+(def loc-13-13
+  {:obj (ref (place-obj skele 1)) 
+   :desc "cave 13"})
+(def loc-13-14
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 14"})
+(def loc-13-15
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "cave 15"})
+(def loc-13-16
+  {:obj (ref (place-obj cult-skele 3)) 
+   :desc "cave 16"})
+
+(def cave-13 
+  [[loc-0-0  loc-0-0  loc-13-9 loc-13-10 loc-13-11 loc-13-12 loc-13-13 loc-13-14]
+   [loc-0-0  loc-0-0  loc-13-6 loc-13-7  loc-13-8  loc-0-0   loc-13-15 loc-13-16]
+   [loc-0-0  loc-13-2 loc-13-3 loc-13-4  loc-13-5  loc-0-0   loc-0-0   loc-0-0  ]
+   [loc-13-0 loc-13-1 loc-0-0  loc-0-0   loc-0-0   loc-0-0   loc-0-0   loc-0-0  ]])
+
+;tavern
+(def loc-18-0
+  {:obj (ref (place-obj tavern 2)) 
+   :desc "tavern 0"})
+(def loc-18-1
+  {:obj (ref (place-obj gen 1)) 
+   :desc "tavern 1"})
+(def loc-18-2
+  {:obj (ref (place-obj junk 2)) 
+   :desc "tavern 2"})
+(def loc-18-3
+  {:obj (ref (place-obj gen 0)) 
+   :desc "tavern 3"})
+(def loc-18-4
+  {:obj (ref (place-obj gen 0)) 
+   :desc "tavern 4"})
+(def loc-18-5
+  {:obj (ref (place-obj tavern 1)) 
+   :desc "tavern 5"})
+(def loc-18-6
+  {:obj (ref (place-obj gen 2)) 
+   :desc "tavern 6"})
+(def loc-18-7
+  {:obj (ref (place-obj tavern 2)) 
+   :desc "tavern 7"})
+(def loc-18-8
+  {:obj (ref (place-obj gen 0)) 
+   :desc "tavern 8"})
+(def loc-18-9
+  {:obj (ref (place-obj junk-gen-forge 3)) 
+   :desc "tavern 9"})
+(def loc-18-10
+  {:obj (ref (place-obj tavern 1)) 
+   :desc "you are in the tavern"
    :exit-start-coords {:row 1 :col 4}})
+(def loc-18-11
+  {:obj (ref (place-obj tavern 4)) 
+   :desc "tavern 10"})
 
-;interior matrixes. Will be bigger one day.
-(def l1m-indoors-1
-  [[loc-1-0]])
-
-(def l1m-indoors-2
-  [[loc-2-0 loc-2-1]])
-
-(def l1m-indoors-3
-  [[loc-3-0]])
-
-(def l1m-indoors-4
-  [[loc-4-0]])
-
-(def l1m-indoors-5
-  [[loc-5-0]])
-
-(def l1m-indoors-6
-  [[loc-6-0]])
+(def tavern-18 
+  [[loc-18-0 loc-18-1 loc-18-2]
+   [loc-18-3 loc-18-4 loc-18-5]
+   [loc-18-6 loc-18-7 loc-18-8]
+   [loc-18-9 loc-18-10 loc-18-11]])
 
 ;maps of location data, accessed by keywords
-;obj and enemy are place holders right now
 ;:enter means there is a matrix map that can be loaded from that location.
 ;:map is the matrix that should be loaded (pushed onto the stack) 
 ;:start-coords is the location the player should start at in the new map
-;FIXME it looks like we might need locs for every cell if we want unique objects.
+
 (def loc-0 
-  {:obj (ref (place-obj gen-vec 3)) 
-   :desc "You're in the mud. People are staring at you. " 
+  {:obj (ref (place-obj junk 2)) 
+   :desc "A cart with a broken wheel lies abandoned on the side of the road." 
    :enemy ""})
 
 (def loc-1
-  {:obj (ref (place-obj gen-vec 2)) 
-   :desc "You're at a temple. " 
-   :enemy "A cultist attacks you! " 
-   :enter {:goto l1m-indoors-1 
-           :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj health 1)) 
+   :desc "An unfamiliar temple adorned with snarling gargoyles rises above you. " 
+   :enemy "" 
+   :enter {:goto temple-1 
+           :start-coords {:row 0 :col 1}}})
 
 (def loc-2
-  {:obj (ref (place-obj gen-vec 1)) 
-   :desc "You're at the tavern. It smells like stale beer. " 
-   :enemy "A drunk guy starts hurling insults at you. " 
-   :enter {:goto l1m-indoors-2 
-           :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj skele 0)) 
+   :desc "Rickety gates surround an old graveyard. The air smells of freshly-dug earth." 
+   :enemy "" 
+   :enter {:goto graveyard-2
+           :start-coords {:row 2 :col 1}}})
 
 (def loc-3
-  {:obj (ref (place-obj gen-vec 1)) 
-   :desc "You're at the decrepit general store. " 
+  {:obj (ref (place-obj junk 2)) 
+   :desc "A decrepit general store stands before you, barrels of rotting goods scattered about the area." 
    :enemy "" 
-   :enter {:goto l1m-indoors-3 
-           :start-coords {:row 0 :col 0}}})
+   :enter {:goto store-3 
+           :start-coords {:row 2 :col 1}}})
 
 (def loc-4
-  {:obj (ref (place-obj gen-vec 2)) 
-   :desc "You're at a fancy mansion. " 
-   :enemy "A guard attacks! " 
-   :enter {:goto l1m-indoors-4 
-           :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj health 1)) 
+   :desc "A grand, old mansion sits in what was once a garden. A single candle flickers behind a stained-glass window." 
+   :enemy ""
+   :enter {:goto mansion-4 
+           :start-coords {:row 2 :col 0}}}) 
 
 (def loc-5
-  {:obj (ref (place-obj gen-vec 3)) 
-   :desc "This house is plain. " 
-   :enemy "A dog bites your ankle. Ow. " 
-   :enter {:goto l1m-indoors-5 
-           :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen 2)) 
+   :desc "This cottage is exceptionally well built, and in better shape than most of the surrounding buildings. There still might be something useful inside." 
+   :enemy ""
+   :enter {:goto house-5 
+           :start-coords {:row 1 :col 3}}})
 
 (def loc-6 
-  {:obj (ref (place-obj gen-vec 3)) 
-   :desc "This building looks like it burned down long ago. You wonder why it hasn't been restored. " 
-   :enemy "A rat bites you! " 
-   :enter {:goto l1m-indoors-6 
-           :start-coords {:row 0 :col 0}}})
+  {:obj (ref (place-obj gen 0)) 
+   :desc "A ruined building lies in an overgrown field. It looks like it burned down long ago, but a glint of metal catches your eye." 
+   :enemy "" 
+   :enter {:goto ruins-6 
+           :start-coords {:row 1 :col 0}}})
 
 (def loc-7
-  {:obj (ref (place-obj gen-vec 2)) 
-   :desc "You're in the street. " 
+  {:obj (ref (place-obj gen 1)) 
+   :desc "You squeeze into a narrow alleyway between two buildings. A rat scurries away from you." 
    :enemy "" })
+
+(def loc-8 
+  {:obj (ref (place-obj health 2)) 
+   :desc "You hide among a small copse of gnarled pine trees, the hanging moss shielding you from view." 
+   :enemy ""})
+
+(def loc-9
+  {:obj (ref (place-obj junk-gen-forge 1)) 
+   :desc "Broken, cracked cobblestones and smashed stalls form a picture of a town square bustling with ghosts." 
+   :enemy ""})
+
+(def loc-10
+  {:obj (ref (place-obj gen 0)) 
+   :desc "A half-rotted well lies in the middle of the market square. You drop a small pebble and hear a small 'plink' of it hitting water several seconds later." 
+   :enemy ""})
+
+(def loc-11
+  {:obj (ref (place-obj junk-gen-forge 2)) 
+   :desc "What was once brightly-colored cloth and lanterns lie smashed around a market stall." 
+   :enemy ""})
+
+(def loc-12
+  {:obj (ref (place-obj forge 2)) 
+   :desc "You find yourself in front of a forge, long cold." 
+   :enemy ""})
+
+(def loc-13
+  {:obj (ref (place-obj cult-skele 0)) 
+   :desc "Mossy rocks jut out of the marsh. Cold air whistles past you, coming from a small opening in the rock just big enough to crawl through." 
+   :enemy ""
+   :enter {:goto cave-13 
+           :start-coords {:row 3 :col 0}}})
+
+(def loc-14
+  {:obj (ref (place-obj cult-skele 2)) 
+   :desc "A small shrine of carved, blackened bones has been constructed on top of a pile of smooth stones." 
+   :enemy ""})
+
+(def loc-15
+  {:obj (ref (place-obj cultists 2)) 
+   :desc "Low chanting drifts over on the wind. In the distance, a small camp surrounds a fire of unearthly purple flames. You crouch lower in the weeds, hoping to not be seen." 
+   :enemy "" })
+
+(def loc-16
+  {:obj (ref (place-obj skele 2)) 
+   :desc "A sticky smear of blood leads to a pile of burnt corpses that once were the people who lived here. You feel your stomach turn over and look away."
+   :enemy ""})
+
+(def loc-17
+  {:obj (ref (place-obj gen 2)) 
+   :desc "This grain store has been painted with a swirling symbol. You stare at it, trying to make sense of the squiggling lines, and feel your mind bending." 
+   :enemy ""})
+
+(def loc-18
+  {:obj (ref (place-obj gen 1)) 
+   :desc "You stand in front of a tavern, its welcoming sign hanging askew. Casks of beer lie smashed on the road." 
+   :enemy ""
+   :enter {:goto tavern-18 
+           :start-coords {:row 3 :col 1}}})
+
+(def loc-19
+  {:obj (ref (place-obj gen-skele 4)) 
+   :desc "A lone chicken picks for worms in a field littered with traveling packs and household goods, all torn open and looted."
+   :enemy ""})
 
 ;level map is a matrix, each cell corresponds to a location data map
 (def level-1-map
-  [[loc-0 loc-0 loc-0 loc-1 loc-0]
-   [loc-0 loc-4 loc-0 loc-0 loc-6]
-   [loc-2 loc-0 loc-0 loc-7 loc-0]
-   [loc-0 loc-3 loc-5 loc-0 loc-0]])
+  [[loc-15 loc-8  loc-0 loc-11 loc-3]
+   [loc-14 loc-2  loc-1 loc-9  loc-18]
+   [loc-16 loc-19 loc-4 loc-10 loc-12]
+   [loc-13 loc-17 loc-5 loc-7  loc-6]])
 
 ;PC LOCATION_________________________________________________________________________________
 
@@ -242,10 +845,10 @@
 ;PC HEALTH AND DAMAGE________________________________________________________________________
 
 (def init-max-health
-  10)
+  20)
 
 (def init-pc-health
-  10)
+  20)
 
 (defn print-pc-health [pc-health max-health]
   (print "             Your current health is ") 
@@ -254,7 +857,7 @@
   (print max-health))
 
 (def init-pc-damage
-  10)
+  3)
 
 (defn print-pc-damage [pc-damage]
   (println) 
@@ -378,26 +981,30 @@
 ;removing items from inventory_______________________________________________
 
 (defn add-item-to-loc [pc-loc map-stack pc-inv int-input]
-  (println "The problem is here?")
   (print-debug pc-inv)
   (dosync
     (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec int-input)))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "removes a user-defined item from inventory"
-  (println)
-  (println "What item do you want to drop? Enter the item number.")
-  (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (do
-        (print-debug pc-inv)
-        (add-item-to-loc pc-loc map-stack pc-inv int-input)
-        (let [pre-inv (subvec pc-inv 0 (dec int-input))
-              post-inv (subvec pc-inv int-input)]
-          (print-debug pre-inv)
-          (print-debug post-inv)
-          (vec (concat pre-inv post-inv)))))))
-
+  (if (= pc-inv [])
+    (do
+      (println "You have nothing to drop.")
+      (pause)
+      pc-inv)
+    (do
+      (println)
+      (println "What item do you want to drop? Enter the item number.")
+      (let [input (read-line)]
+        (let [int-input (Integer/parseInt input)]
+          (do
+            (print-debug pc-inv)
+            (add-item-to-loc pc-loc map-stack pc-inv int-input)
+            (let [pre-inv (subvec pc-inv 0 (dec int-input))
+                  post-inv (subvec pc-inv int-input)]
+              (print-debug pre-inv)
+              (print-debug post-inv)
+              (vec (concat pre-inv post-inv)))))))))
 
 ;equip and unequip___________________________________________________
 
@@ -623,42 +1230,30 @@
  'q' quits program (system call)"
   (let [input (read-line)]
     (cond
-      (= input "n") (do 
-                      (println "You move North.") 
-                      (pause) 
-                      [(assoc pc-loc :row (dec (:row pc-loc))) 
+      (= input "n") [(assoc pc-loc :row (dec (:row pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health])
-      (= input "s") (do 
-                      (println "You move South.") 
-                      (pause) 
-                      [(assoc pc-loc :row (inc (:row pc-loc))) 
-                        pc-inv 
-                        pc-eq 
-                        pc-health 
-                        pc-damage
-                        max-health])
-      (= input "e") (do 
-                      (println "You move East.") 
-                      (pause) 
-                      [(assoc pc-loc :col (inc (:col pc-loc))) 
+                       max-health]
+      (= input "s")  [(assoc pc-loc :row (inc (:row pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health]) 
-      (= input "w") (do 
-                      (println "You move West.") 
-                      (pause) 
-                      [(assoc pc-loc :col (dec (:col pc-loc))) 
+                       max-health]
+      (= input "e")  [(assoc pc-loc :col (inc (:col pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health]) 
+                       max-health] 
+      (= input "w")  [(assoc pc-loc :col (dec (:col pc-loc))) 
+                       pc-inv 
+                       pc-eq 
+                       pc-health 
+                       pc-damage
+                       max-health] 
       (= input "m") (do 
                       (open-main-menu) 
                       (println) 
@@ -731,18 +1326,18 @@
         (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
     (print-debug new-pc-inv)
     (if (:desc (get-pc-loc new-loc map-stack))
-      [new-loc 
-       map-stack 
-       new-pc-inv 
-       new-pc-eq 
-       new-pc-health 
-       new-pc-damage
-       new-max-health]
       (do
-        (if (not= (first map-stack) (get level-1-map :map))
+        [new-loc 
+         map-stack 
+         new-pc-inv 
+         new-pc-eq 
+         new-pc-health 
+         new-pc-damage
+         new-max-health])
+      (do
+        (if (not= (first map-stack) level-1-map)
           (println "There is a wall in that direction. You move back to where you were.")
           (println "You find yourself at the edge of the village and turn back to where you started."))
-        (pause)
         [pc-loc 
          map-stack 
          new-pc-inv 
@@ -807,7 +1402,8 @@
        pc-inv 
        pc-eq 
        pc-health 
-       pc-damage]
+       pc-damage
+       max-health]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
@@ -866,7 +1462,8 @@
        pc-inv 
        pc-eq 
        pc-health 
-       pc-damage]
+       pc-damage
+       max-health]
       ;move normally
       (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)))) 
 
