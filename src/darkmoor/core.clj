@@ -21,6 +21,10 @@
   (println "Press any key to continue.")
   (read-line))
 
+(defn pause-screen3 []
+  "pauses thread for 3 seconds"
+  (Thread/sleep 3000))
+
 (defn pause-screen2 []
   "pauses thread for 2 seconds"
   (Thread/sleep 2000))
@@ -39,7 +43,7 @@
   (with-open [rdr (io/reader "resources/title.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
-  (pause-screen2)
+  (pause-screen3)
   (clear-screen))
 
 (defn open-main-menu []
@@ -866,6 +870,24 @@
   (println) 
   (println))
 
+(defn add-damage [pc-inv pc-damage int-input]
+  (+ pc-damage (:damage (nth pc-inv (dec int-input)))))
+
+(defn add-health [pc-inv health int-input]
+  (+ health (:health (nth pc-inv (dec int-input)))))
+
+(defn sub-damage [pc-eq pc-damage int-input]
+  (- pc-damage (:damage (nth pc-eq (dec int-input)))))
+
+(defn sub-health [pc-eq health int-input]
+  (- health (:health (nth pc-eq (dec int-input)))))
+
+(defn potion-add-health [pc-inv pc-health int-input max-health]
+  (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec int-input))))]
+    (if (> new-pc-health max-health)
+      max-health
+      new-pc-health)))
+
 ;OBJECT OPTIONS______________________________________________________________________________
 
 (defn get-obj [pc-loc map-stack]
@@ -890,26 +912,31 @@
     (dosync
       (ref-set (get-obj-ref pc-loc map-stack) (vec (concat pre-obj post-obj))))))
 
+(defn nothing-to-add []
+  (println) 
+  (println "There is nothing here to add.") 
+  (println) 
+  (pause)) 
+
+(defn something-to-add [pc-loc map-stack pc-inv]
+  (println) 
+  (println "What would you like to add? Enter '1' for the first item listed, '2' for the second item listed, and so on.") 
+  (println)
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+      (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
+        (print-debug new-pc-inv)
+        (remove-obj-from-loc pc-loc map-stack int-input)
+        (print-debug new-pc-inv)
+        new-pc-inv))))
+
 (defn add-to-inv [pc-loc map-stack pc-inv]
   (if (= [] (get-obj pc-loc map-stack))
     (do 
-      (println) 
-      (println "There is nothing here to add.") 
-      (println) 
-      (pause) 
+      (nothing-to-add)
       (print-debug pc-inv) 
       pc-inv)
-    (do
-      (println) 
-      (println "What would you like to add? Enter '1' for the first item listed, '2' for the second item listed, and so on.") 
-      (println)
-      (let [input (read-line)]
-        (let [int-input (Integer/parseInt input)]
-          (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
-            (print-debug new-pc-inv)
-            (remove-obj-from-loc pc-loc map-stack int-input)
-            (print-debug new-pc-inv)
-            new-pc-inv))))))
+    (something-to-add pc-loc map-stack pc-inv)))
 
 ;print object options_____________________________________________________
 
@@ -962,26 +989,30 @@
   (dosync
     (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec int-input)))))
 
+(defn nothing-to-drop [pc-inv]
+  (println "You have nothing to drop.")
+  (pause)
+  pc-inv)
+
+(defn something-to-drop [pc-loc map-stack pc-inv]
+  (println)
+  (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+      (do
+        (print-debug pc-inv)
+        (add-item-to-loc pc-loc map-stack pc-inv int-input)
+        (let [pre-inv (subvec pc-inv 0 (dec int-input))
+             post-inv (subvec pc-inv int-input)]
+          (print-debug pre-inv)
+          (print-debug post-inv)
+          (vec (concat pre-inv post-inv)))))))
+
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "removes a user-defined item from inventory"
   (if (= pc-inv [])
-    (do
-      (println "You have nothing to drop.")
-      (pause)
-      pc-inv)
-    (do
-      (println)
-      (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
-      (let [input (read-line)]
-        (let [int-input (Integer/parseInt input)]
-          (do
-            (print-debug pc-inv)
-            (add-item-to-loc pc-loc map-stack pc-inv int-input)
-            (let [pre-inv (subvec pc-inv 0 (dec int-input))
-                  post-inv (subvec pc-inv int-input)]
-              (print-debug pre-inv)
-              (print-debug post-inv)
-              (vec (concat pre-inv post-inv)))))))))
+    (nothing-to-drop pc-inv)
+    (something-to-drop pc-loc map-stack pc-inv)))
 
 ;equip and unequip___________________________________________________
 
@@ -996,66 +1027,67 @@
     (doseq [item pc-eq]
       (print-eq item))))
 
-(defn add-damage [pc-inv pc-damage int-input]
-  (+ pc-damage (:damage (nth pc-inv (dec int-input)))))
+(defn nothing-to-equip [pc-eq pc-health pc-damage max-health]
+  (println "There is nothing in your inventory.")
+  (pause)
+  [pc-eq
+   pc-health
+   pc-damage
+   max-health])
 
-(defn add-health [pc-inv health int-input]
-  (+ health (:health (nth pc-inv (dec int-input)))))
+(defn something-to-equip [pc-inv pc-eq pc-health pc-damage max-health]
+  (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
+  (println) 
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+      [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
+       (add-health pc-inv pc-health int-input) 
+       (add-damage pc-inv pc-damage int-input)
+       (add-health pc-inv max-health int-input)])))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
   (println)
   (if (= [] pc-inv)
-    (do 
-      (println "There is nothing to equip.") 
-      (pause)
-      [pc-eq
-       pc-health
-       pc-damage
-       max-health])
-    (do
-      (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
-      (println) 
-      (let [input (read-line)]
-        (let [int-input (Integer/parseInt input)]
-          [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
-           (add-health pc-inv pc-health int-input) 
-           (add-damage pc-inv pc-damage int-input)
-           (add-health pc-inv max-health int-input)])))))
+    (nothing-to-equip pc-eq pc-health pc-damage max-health) 
+    (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
 
-(defn sub-damage [pc-eq pc-damage int-input]
-  (- pc-damage (:damage (nth pc-eq (dec int-input)))))
-
-(defn sub-health [pc-eq health int-input]
-  (- health (:health (nth pc-eq (dec int-input)))))
+(defn something-to-unequip [pc-eq pc-health pc-damage max-health]
+  (println)
+  (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
+  (println)
+  (let [input (read-line)]
+    (let [int-input (Integer/parseInt input)]
+     (let [pre-eq (subvec pc-eq 0 (dec int-input))
+           post-eq (subvec pc-eq int-input)]
+       [(vec (concat pre-eq post-eq))
+        (sub-health pc-eq pc-health int-input) 
+        (sub-damage pc-eq pc-damage int-input)
+        (sub-health pc-eq max-health int-input)]))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
   "removes a user-defined item from inventory"
   (if (= [] pc-eq)
-    (do 
-      (println "There is nothing to unequip.") 
-      (pause)
-      [pc-eq
-       pc-health
-       pc-damage
-       max-health])
-    (do
-      (println)
-      (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
-      (println)
-      (let [input (read-line)]
-        (let [int-input (Integer/parseInt input)]
-          (let [pre-eq (subvec pc-eq 0 (dec int-input))
-                post-eq (subvec pc-eq int-input)]
-            [(vec (concat pre-eq post-eq))
-             (sub-health pc-eq pc-health int-input) 
-             (sub-damage pc-eq pc-damage int-input)
-             (sub-health pc-eq max-health int-input)]))))))
+    (nothing-to-equip pc-eq pc-health pc-damage max-health) 
+    (something-to-unequip pc-eq pc-health pc-damage max-health)))
 
-(defn potion-add-health [pc-inv pc-health int-input max-health]
-  (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec int-input))))]
-    (if (> new-pc-health max-health)
-      max-health
-      new-pc-health)))
+(defn not-drinkable [pc-inv pc-health]
+  (println)
+  (println "You don't think you can drink that.")
+  (println)
+  (pause)
+  [pc-inv pc-health]) 
+
+(defn drinkable [pc-loc map-stack pc-inv pc-health int-input max-health]
+  (println)
+  (println "You drink the potion, and immediately feel a little bit better.")
+  (pause)
+  (print-debug pc-inv)
+  (let [pre-inv (subvec pc-inv 0 (dec int-input))
+        post-inv (subvec pc-inv int-input)]
+    (print-debug pre-inv)
+    (print-debug post-inv)
+    [(vec (concat pre-inv post-inv)) 
+     (potion-add-health pc-inv pc-health int-input max-health)]))
 
 (defn drink-hp [pc-loc map-stack pc-inv pc-health max-health]
   (println)
@@ -1063,24 +1095,8 @@
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
       (if (not (:potion (nth pc-inv (dec int-input))))
-        (do
-          (println)
-          (println "You don't think you can drink that.")
-          (println)
-          (pause)
-          [pc-inv 
-           pc-health])
-      (do
-        (println)
-        (println "You drink the potion, and immediately feel a little bit better.")
-        (pause)
-        (print-debug pc-inv)
-        (let [pre-inv (subvec pc-inv 0 (dec int-input))
-              post-inv (subvec pc-inv int-input)]
-          (print-debug pre-inv)
-          (print-debug post-inv)
-          [(vec (concat pre-inv post-inv)) 
-           (potion-add-health pc-inv pc-health int-input max-health)]))))))
+        (not-drinkable pc-inv pc-health)
+        (drinkable pc-loc map-stack pc-inv pc-health int-input max-health)))))
 
 ;print inventory____________________________________________________
 
@@ -1141,11 +1157,7 @@
                       (inv-control pc-loc map-stack pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health))
       (= input "d") (let [[new-pc-inv new-pc-health] 
                           (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
-                      [new-pc-inv
-                       pc-eq
-                       new-pc-health
-                       pc-damage 
-                       max-health])
+                      (inv-control pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
       :else (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
 ;MENU AND USER OPTIONS________________________________________________________________________________________
@@ -1268,6 +1280,7 @@
         (if (not= (first map-stack) level-1-map)
           (println "There is a wall in that direction. You move back to where you were.")
           (println "You find yourself at the edge of the village and turn back to where you started."))
+        (pause)
         [pc-loc 
          map-stack 
          new-pc-inv 
