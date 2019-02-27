@@ -61,6 +61,54 @@
   (pause)
   (clear-screen))
 
+;ENEMIES________________________________________________________________________________
+
+(def rat
+  {:rat true
+   :weapon "bite"
+   :health 5
+   :damage 3})
+(def dagger-cult
+  {:cultist true
+   :weapon "dagger"
+   :health 25
+   :damage 5})
+(def magic-cult
+  {:cultist true 
+   :weapon "magic"
+   :health 20
+   :damage 6})
+(def bow-skele
+  {:skeleton true
+   :weapon "bow"
+   :health 15
+   :damage 5})
+(def axe-skele
+  {:skeleton true
+   :weapon "greataxe"
+   :health 18
+   :damage 7})
+(def zombie 
+  {:zombie true
+   :weapon "claws"
+   :health 20
+   :damage 4})
+(def ghost
+  {:ghost true
+   :weapon "magic"
+   :health 15
+   :damage 5})
+(def boss
+  {:boss true
+   :weapon "magic"
+   :health 35
+   :damage 9})
+(def minion
+  {:minion true
+   :weapon "shield + sword"
+   :health 30
+   :damage 8})
+
 ;OBJECT DATA____________________________________________________________________________
 
 ;general obejcts
@@ -169,12 +217,11 @@
    :desc "SPIKED PAULDRONS: Your neck will be somewhat more protected by these large spikes. Just don't bend your head too far. +1 HEALTH"
    :health 1
    :damage 0})
-;(def o22
-;  {:potion false
-;   :key true
-;   :desc "TEMPLE KEY: A large brass key, marked with the symbol of the Templar Order. This probably unlocks something in the temple."
-;   :health 0
-;   :damage 0})
+(def o22
+  {:potion false
+   :desc "TORN LETTER: You can barely make out the words on this blood-spattered parchment. This letter contains instructions to a novice cultist, and tells them to report to the  ." 
+   :health 0
+   :damage 0})
 (def o23
   {:potion false
    :desc "BARREL OF DEAD FISH: You don't think you could get within a foot of this without throwing up."
@@ -259,6 +306,8 @@
 ;for place-obj
 (def health
   [h1 h2 h3])
+(def health-loc-8
+  [h1 h2 h3 o2 o11])
 (def skele
   [o2 o6 o7 o11 o16 o17])
 (def rich
@@ -285,8 +334,6 @@
   [o32 o33 o34 o35 h1 h2 h3])
 (def gen
   [o1 o2 o5 o9 o11 o24 o26 h1])
-;(def cave-key
-;  [o22])
 
 (defn place-obj [obj-list amt]
   (vec (take amt (repeatedly #(nth obj-list (rand-int (count obj-list)))))))
@@ -699,119 +746,96 @@
 
 (def loc-0 
   {:obj (ref (place-obj junk 2)) 
-   :desc "A cart with a broken wheel lies abandoned on the side of the road." 
-   :enemy ""})
-
+   :desc "A cart with a broken wheel lies abandoned on the side of the road."})
 (def loc-1
   {:obj (ref (place-obj health 1)) 
    :desc "An unfamiliar temple adorned with snarling gargoyles rises above you. " 
-   :enemy "" 
    :enter {:goto temple-1 
            :start-coords {:row 0 :col 1}}})
-
 (def loc-2
   {:obj (ref (place-obj skele 0)) 
    :desc "Rickety gates surround an old graveyard. The air smells of freshly-dug earth." 
-   :enemy "" 
    :enter {:goto graveyard-2
            :start-coords {:row 2 :col 1}}})
-
 (def loc-3
   {:obj (ref (place-obj junk 2)) 
    :desc "A decrepit general store stands before you, barrels of rotting goods scattered about the area." 
-   :enemy "" 
    :enter {:goto store-3 
            :start-coords {:row 2 :col 1}}})
-
 (def loc-4
   {:obj (ref (place-obj health 1)) 
    :desc "A grand, old mansion sits in what was once a garden. A single candle flickers behind a stained-glass window." 
-   :enemy ""
    :enter {:goto mansion-4 
            :start-coords {:row 2 :col 0}}}) 
-
 (def loc-5
   {:obj (ref (place-obj gen 2)) 
    :desc "This cottage is exceptionally well built, and in better shape than most of the surrounding buildings. There still might be something useful inside." 
-   :enemy ""
    :enter {:goto house-5 
            :start-coords {:row 1 :col 3}}})
-
 (def loc-6 
   {:obj (ref (place-obj gen 0)) 
    :desc "A ruined building lies in an overgrown field. It looks like it burned down long ago, but a glint of metal catches your eye." 
-   :enemy "" 
    :enter {:goto ruins-6 
            :start-coords {:row 1 :col 0}}})
-
 (def loc-7
   {:obj (ref (place-obj gen 1)) 
    :desc "You squeeze into a narrow alleyway between two buildings. A rat scurries away from you." 
-   :enemy "" })
-
+   :fight {:alive? (ref true)
+           :enemy rat}})
 (def loc-8 
-  {:obj (ref (place-obj health 2)) 
-   :desc "You hide among a small copse of gnarled pine trees, the hanging moss shielding you from view." 
-   :enemy ""})
-
+  {:obj (ref (place-obj health-loc-8 8)) 
+   :desc "You hide among a small copse of gnarled pine trees, the hanging moss shielding you from view."})
 (def loc-9
   {:obj (ref (place-obj junk-gen-forge 1)) 
-   :desc "Broken, cracked cobblestones and smashed stalls form a picture of a town square bustling with ghosts." 
-   :enemy ""})
-
+   :desc "Broken, cracked cobblestones and smashed stalls form a picture of a town square bustling with ghosts."
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-10
   {:obj (ref (place-obj gen 0)) 
    :desc "A half-rotted well lies in the middle of the market square. You drop a small pebble and hear a small 'plink' of it hitting water several seconds later." 
-   :enemy ""})
-
+   :fight {:alive? (ref true) 
+           :enemy zombie}})
 (def loc-11
   {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "What was once brightly-colored cloth and lanterns lie smashed around a market stall." 
-   :enemy ""})
-
+   :desc "What was once brightly-colored cloth and lanterns lie smashed around a market stall."
+   :fight {:alive? (ref true) 
+           :enemy rat}})
 (def loc-12
   {:obj (ref (place-obj forge 2)) 
-   :desc "You find yourself in front of a forge, long cold." 
-   :enemy ""})
-
+   :desc "You find yourself in front of a forge, long cold."})
 (def loc-13
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "Mossy rocks jut out of the marsh. Cold air whistles past you, coming from a small opening in the rock just big enough to crawl through." 
-   :enemy ""
    :enter {:goto cave-13 
            :start-coords {:row 3 :col 0}}})
-
 (def loc-14
   {:obj (ref (place-obj cult-skele 2)) 
    :desc "A small shrine of carved, blackened bones has been constructed on top of a pile of smooth stones." 
-   :enemy ""})
-
+   :fight {:alive? (ref true) 
+           :enemy magic-cult}})
 (def loc-15
   {:obj (ref (place-obj cultists 2)) 
    :desc "Low chanting drifts over on the wind. In the distance, a small camp surrounds a fire of unearthly purple flames. You crouch lower in the weeds, hoping to not be seen." 
-   :enemy "" })
-
+   :fight {:alive? (ref true) 
+           :enemy dagger-cult}})
 (def loc-16
   {:obj (ref (place-obj skele 2)) 
    :desc "A sticky smear of blood leads to a pile of burnt corpses that once were the people who lived here. You feel your stomach turn over and look away."
-   :enemy ""})
-
+   :fight {:alive? (ref true) 
+           :enemy zombie}})
 (def loc-17
   {:obj (ref (place-obj gen 2)) 
-   :desc "This grain store has been painted with a swirling symbol. You stare at it, trying to make sense of the squiggling lines, and feel your mind bending." 
-   :enemy ""})
-
+   :desc "This grain store has been painted with a swirling symbol. You stare at it, trying to make sense of the squiggling lines, and feel your mind bending."})
 (def loc-18
   {:obj (ref (place-obj gen 1)) 
    :desc "You stand in front of a tavern, its welcoming sign hanging askew. Casks of beer lie smashed on the road." 
-   :enemy ""
    :enter {:goto tavern-18 
            :start-coords {:row 3 :col 1}}})
-
 (def loc-19
   {:obj (ref (place-obj gen-skele 4)) 
    :desc "A lone chicken picks for worms in a field littered with traveling packs and household goods, all torn open and looted."
-   :enemy ""})
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 
 ;level map is a matrix, each cell corresponds to a location data map
 (def level-1-map
@@ -823,8 +847,10 @@
 ;PC LOCATION_________________________________________________________________________________
 
 ;initial player location in the first map, needed for loop recur
-(def init-pc-loc
-  {:row (rand-int 4) :col (rand-int 3)})   
+(def init-pc-loc 
+  {:row 0 :col 0})
+;(def init-pc-loc
+;  {:row (rand-int 4) :col (rand-int 3)})   
 
 ;it's a list, acts as a stack of maps
 ;init needed for loop recur
@@ -839,12 +865,6 @@
 (defn print-loc-desc [pc-loc map-stack]
   "prints location description, using get-pc-loc"
   (println (:desc (get-pc-loc pc-loc map-stack))))
-
-;FIXME placeholder
-(defn print-loc-enemy [pc-loc map-stack]
-  "prints enemy descriptions"
-  (if (:enemy (get-pc-loc pc-loc map-stack))
-    (println (:enemy (get-pc-loc pc-loc map-stack)))))
 
 ;PC HEALTH AND DAMAGE________________________________________________________________________
 
@@ -1094,9 +1114,13 @@
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-      (if (not (:potion (nth pc-inv (dec int-input))))
-        (not-drinkable pc-inv pc-health)
-        (drinkable pc-loc map-stack pc-inv pc-health int-input max-health)))))
+      (if (= int-input 0)
+        (do
+          (println "That's not an item.")
+          [pc-inv pc-health])
+        (if (not (:potion (nth pc-inv (dec int-input))))
+          (not-drinkable pc-inv pc-health)
+          (drinkable pc-loc map-stack pc-inv pc-health int-input max-health))))))
 
 ;print inventory____________________________________________________
 
@@ -1160,6 +1184,131 @@
                       (inv-control pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
       :else (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
+;COMBAT_______________________________________________________________________________________
+
+(defn print-enemy-damage-done [pc-health max-health new-pc-health]
+  (print "             Your enemy attacks and deals ")
+  (print (- pc-health new-pc-health))
+  (print " damage.")
+  (println)
+  (println))
+
+(defn pc-dead []
+  (clear-screen)
+  (println)
+  (with-open [rdr (io/reader "resources/you-died.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line)))
+  (System/exit 0))
+
+(defn print-pc-damage-done [enemy-health new-enemy-health]
+  (print "             You swing your weapon as hard as you can, hitting your opponent for ") 
+  (print (- enemy-health new-enemy-health))
+  (print " damage!")
+  (println)
+  (print "             Enemy health: ")
+  (print new-enemy-health)
+  (println)
+  (println))
+
+(defn enemy-first [pc-loc map-stack pc-health pc-damage max-health enemy-health] 
+  (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+    (print-enemy-damage-done pc-health max-health new-pc-health)
+    (if (<= new-pc-health 0)
+      (pc-dead)
+      (let [new-enemy-health (- enemy-health (- pc-damage (rand-int 3)))]
+        (print-pc-damage-done enemy-health new-enemy-health)
+        [new-pc-health new-enemy-health]))))
+
+(defn pc-first [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  (let [new-enemy-health (- enemy-health (- pc-damage (rand-int 3)))]
+    (print-pc-damage-done enemy-health new-enemy-health)
+    (if (<= new-enemy-health 0)
+      [pc-health new-enemy-health]
+      (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+        (print-enemy-damage-done pc-health max-health new-pc-health)
+        (if (<= new-pc-health 0)
+          (pc-dead)
+          [new-pc-health new-enemy-health])))))
+
+(defn combat-round [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  (if (= 1 (rand-int 2))
+    (do
+      (println "             You get the jump on it.")
+      (let [[new-pc-health new-enemy-health] (pc-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+        [new-pc-health new-enemy-health]))
+    (do
+      (println "             It gets the jump on you.")
+      (let [[new-pc-health new-enemy-health] (enemy-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+        [new-pc-health new-enemy-health]))))
+
+(defn open-combat []
+  (with-open [rdr (io/reader "resources/combat.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn print-fight-start [pc-inv pc-eq pc-health max-health]
+  (open-combat)
+  ;print description of enemy
+  (print-pc-health pc-health max-health)
+  (println)
+  (println)
+  (println "             Your inventory contains the following items:")
+  (print-pc-inv pc-inv pc-eq)
+  (println))
+
+(defn first-map [map-stack]
+  (if (not= (first map-stack) level-1-map)
+    (first-map (rest map-stack))
+    map-stack))
+
+(defn run-away [pc-loc map-stack pc-health max-health]
+  (println "             As vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
+  (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+    (print "             You take ")
+    (print (- pc-health new-pc-health))
+    (print " damage.")
+    (println)
+    (print-pc-health pc-health max-health)
+    (println)
+    (let [new-map-stack (first-map map-stack)]
+      (let [new-row-pc-loc (assoc pc-loc :row 0)] 
+        (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
+          [new-pc-loc new-map-stack new-pc-health])))))
+
+(defn fight [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input]
+    (cond
+      (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
+                      [new-pc-loc new-map-stack pc-inv new-pc-health true])
+      (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
+                      (pause)
+                      (let [new-input (read-line)]
+                        (clear-screen)
+                        (print-fight-start pc-inv pc-eq pc-health max-health)
+                        (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
+      (= input "a") (let [[pc-loc new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+                      (if (<= new-enemy-health 0)
+                        (do 
+                          (println "             With one last snarl, your enemy falls dead at your feet. You win the fight!") 
+                          (pause)
+                          [pc-loc map-stack pc-inv new-pc-health false])
+                        (do
+                          (let [new-input (read-line)]
+                            (clear-screen)
+                            (print-fight-start pc-inv pc-eq new-pc-health max-health)
+                            (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input)))))
+      :else (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)))
+    
+(defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+  (print-fight-start pc-inv pc-eq pc-health max-health) 
+  (let [enemy-health (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :health])]
+    (let [input (read-line)]
+      (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
+        (if (= alive? false)
+          (dosync
+            (ref-set (get-in (get-pc-loc pc-loc map-stack) [:fight :alive?]) false)))
+        [new-pc-loc new-map-stack new-pc-inv new-pc-health]))))
+
 ;MENU AND USER OPTIONS________________________________________________________________________________________
 
 ;moving normally________________________________________
@@ -1198,16 +1347,6 @@
                        max-health] 
       (= input "m") (do 
                       (open-main-menu) 
-                      (println) 
-                      (pause) 
-                      [pc-loc 
-                       pc-inv 
-                       pc-eq 
-                       pc-health 
-                       pc-damage
-                       max-health]) 
-      (= input "l") (do 
-                      (println "There are no enemies yet, so there is no loot.") 
                       (println) 
                       (pause) 
                       [pc-loc 
@@ -1415,10 +1554,15 @@
   "checks to see if a place can be entered or exited from current player location.
   if yes, gives player the option to enter/exit
   if no, just displays normal movement functions (check-move)"
-  (cond
-    (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
-    (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
-    :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)))
+  (if (:fight (get-pc-loc pc-loc map-stack))
+    (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health] (start-combat pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
+      (clear-screen)
+      (print-loc-desc new-pc-loc new-map-stack)
+      (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
+    (cond
+      (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
+      (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
+      :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
 ;MAIN_____________________________________________________________________
 
@@ -1429,9 +1573,7 @@
   (open-main-menu)
   (loop [pc-loc init-pc-loc map-stack init-map-stack pc-inv init-pc-inv pc-eq init-pc-eq pc-health init-pc-health pc-damage init-pc-damage max-health init-max-health]
       (do (clear-screen)
-          ;(function arguments)
           (print-loc-desc pc-loc map-stack)
-          (print-loc-enemy pc-loc map-stack) 
           (let [[new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
                 (display-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
             (recur 
