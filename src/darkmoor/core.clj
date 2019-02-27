@@ -65,242 +65,198 @@
 
 (def rat
   {:rat true
-   :weapon "bite"
    :health 5
    :damage 3})
 (def dagger-cult
   {:cultist true
-   :weapon "dagger"
-   :health 25
-   :damage 5})
+   :health 24 
+   :damage 4})
 (def magic-cult
   {:cultist true 
-   :weapon "magic"
    :health 20
-   :damage 6})
+   :damage 5})
 (def bow-skele
   {:skeleton true
-   :weapon "bow"
    :health 15
-   :damage 5})
+   :damage 3})
 (def axe-skele
   {:skeleton true
-   :weapon "greataxe"
    :health 18
-   :damage 7})
+   :damage 4})
 (def zombie 
   {:zombie true
-   :weapon "claws"
    :health 20
    :damage 4})
 (def ghost
   {:ghost true
-   :weapon "magic"
    :health 15
-   :damage 5})
+   :damage 4})
 (def boss
   {:boss true
-   :weapon "magic"
    :health 35
    :damage 9})
 (def minion
   {:minion true
-   :weapon "shield + sword"
    :health 30
-   :damage 8})
+   :damage 7})
 
 ;OBJECT DATA____________________________________________________________________________
 
 ;general obejcts
 (def o1
-  {:potion false 
-   :desc "WOODCUTTER'S AXE: Blunted and notched. +2 SLASHING DAMAGE" 
+  {:desc "WOODCUTTER'S AXE: Blunted and notched. +3 SLASHING DAMAGE" 
    :health 0 
-   :damage 2})
+   :damage 3})
 (def o2
-  {:potion false 
-   :desc "OLD LEATHER ARMOR: Better than fighting in your traveling clothes. +4 HEALTH" 
-   :health 4 
+  {:desc "OLD LEATHER ARMOR: Better than fighting in your traveling clothes. +15 HEALTH" 
+   :health 15
    :damage 0})
 (def o3
-  {:potion false 
-   :desc "CULTIST'S DAGGER: A strange symbol carved on the blade glows with an unearthly purple light. +5 NECROTIC DAMAGE" 
+  {:desc "CULTIST'S DAGGER: A strange symbol carved on the blade glows with an unearthly purple light. +6 NECROTIC DAMAGE" 
    :health 0 
-   :damage 5})
+   :damage 6})
 (def o4
-  {:potion false 
-   :desc "FIRE SHIELD: Flames lick around the edges of this shield, but thankfully the handle is not red-hot. +2 HEALTH, +1 FIRE DAMAGE" 
-   :health 2 
+  {:desc "FIRE SHIELD: Flames lick around the edges of this shield, but thankfully the handle is not red-hot. +5 HEALTH, +1 FIRE DAMAGE" 
+   :health 5 
    :damage 1})
 (def o5
-  {:potion false 
-   :desc "BUTCHER'S GLOVES: These stink, but your fingers have never felt so protected. +2 HEALTH" 
-   :health 2 
-   :damage 0})
-(def o6
-  {:potion false 
-   :desc "FEMUR: Makes a good club, but takes both of your hands to carry. +5 BLUNT DAMAGE" 
-   :health 0 
-   :damage 8})
-(def o7
-  {:potion false 
-   :desc "HALF-PLATE ARMOR: Caked in dirt. You're pretty sure that no one living has worn this recently. +7 HEALTH" 
-   :health 7 
-   :damage 0})
-(def o8
-  {:potion false 
-   :desc "ETHERIAL BOOTS: You feel just a bit less present while wearing these. +3 HEALTH" 
+  {:desc "BUTCHER'S GLOVES: These stink, but your fingers have never felt so protected. +3 HEALTH" 
    :health 3 
    :damage 0})
+(def o6
+  {:desc "FEMUR: Makes a good club, but takes both of your hands to carry. +7 BLUNT DAMAGE" 
+   :health 0 
+   :damage 7})
+(def o7
+  {:desc "HALF-PLATE ARMOR: Caked in dirt. You're pretty sure that no one living has worn this recently. +20 HEALTH" 
+   :health 20 
+   :damage 0})
+(def o8
+  {:desc "ETHERIAL BOOTS: You feel just a bit less present while wearing these. +5 HEALTH" 
+   :health 5 
+   :damage 0})
 (def o9
-  {:potion false 
-   :desc "SHARPENED SYTHE: More of a farmer's weapon than Death's. +3 SLASHING DAMAGE" 
+  {:desc "SHARPENED SYTHE: More of a farmer's weapon than Death's. +3 SLASHING DAMAGE" 
    :health 0 
    :damage 3})
 (def o10
-  {:potion false 
-   :desc "SPIKED FLAIL: Screaming faces are engraved on the handle, and the spikes are coated in gore. +6 PIERCING DAMAGE" 
+  {:desc "SPIKED FLAIL: Screaming faces are engraved on the handle, and the spikes are coated in gore. +7 PIERCING DAMAGE" 
    :health 0 
-   :damage 6})
+   :damage 7})
 (def o11
-  {:potion false
-   :desc "POLE-AXE: Literally a hand axe tied to a long stick. +4 SLASHING DAMAGE"
+  {:desc "POLE-AXE: Literally a hand axe tied to a long stick. +4 SLASHING DAMAGE"
    :health 0
    :damage 4})
 (def o12
-  {:potion false
-   :desc "FINE CHAINMAIL: Finely-made armor consisting of thousands of tiny, silver rings. +6 HEALTH"
-   :health 9
+  {:desc "FINE CHAINMAIL: Finely-made armor consisting of thousands of tiny, silver rings. +25 HEALTH"
+   :health 25 
    :damage 0})
 (def o13
-  {:potion false
-   :desc "CULTIST'S ROBE: A thick, wool robe embroidered with enchanted runes that do damage to enemies while protecting the wearer. +4 HEALTH, +3 NECROTIC DAMAGE"
-   :health 4
+  {:desc "CULTIST'S ROBE: A thick, wool robe embroidered with enchanted runes that do damage to enemies while protecting the wearer. +10 HEALTH, +3 NECROTIC DAMAGE"
+   :health 10 
    :damage 3})
 (def o14
-  {:potion false
-   :desc "FINE SILVER SWORD: A thin, curved blade with a decorative eagle carved around the handle. +6 PIERCING DAMAGE"
+  {:desc "FINE SILVER SWORD: A thin blade with a decorative eagle carved around the handle. +6 PIERCING DAMAGE"
    :health 0
    :damage 6})
 (def o15
-  {:potion false
-   :desc "SEVERED ARM: It's just like a club. A squishy, stinking club. +3 NECROTIC DAMAGE"
+  {:desc "SEVERED ARM: It's just like a club. A squishy, stinking club. +4 NECROTIC DAMAGE"
    :health 0
-   :damage 3})
+   :damage 4})
 (def o16
-  {:potion false
-   :desc "WARHAMMER: A large, heavy stone hammer carved with intricate geometric designs. +7 BLUNT DAMAGE"
+  {:desc "WARHAMMER: A large, heavy stone hammer carved with intricate geometric designs. +7 BLUNT DAMAGE"
    :health 0
    :damage 7})
 (def o17
-  {:potion false
-   :desc "RUSTED BOW AND ARROW: A half-rotted bow and a handful of rusted arrows. This weapon is ranged, but requires both hands to use. +2 HEALTH, 4 PIERCING DAMAGE"
-   :health 0
+  {:desc "RUSTED BOW AND ARROW: A half-rotted bow and a handful of rusted arrows. This weapon is ranged, but requires both hands to use. +3 HEALTH, 5 PIERCING DAMAGE"
+   :health 3 
    :damage 5})
 (def o18
-  {:potion false
-   :desc "GREAT AXE: Passed down from generation to generation, this once was a prized family heirloom. It's yours now. +7 SLASHING DAMAGE"
+  {:desc "GREAT AXE: Passed down from generation to generation, this once was a prized family heirloom. It's yours now. +7 SLASHING DAMAGE"
    :health 0
    :damage 7})
 (def o19
-  {:potion false
-   :desc "SPIKED SHIELD: Long spikes protrude from the center of this shield. +3 HEALTH, +1 PIERCING DAMAGE"
-   :health 3
+  {:desc "SPIKED SHIELD: Long spikes protrude from the center of this shield. +5 HEALTH, +1 PIERCING DAMAGE"
+   :health 5 
    :damage 1})
 (def o20
-  {:potion false
-   :desc "SPIKED GAUNTLETS: Finely made from a previous age, if a bit dusty. +2 HEALTH, +1 PIERCING DAMAGE"
-   :health 2
+  {:desc "SPIKED GAUNTLETS: Finely made from a previous age, if a bit dusty. +5 HEALTH, +1 PIERCING DAMAGE"
+   :health 5 
    :damage 1})
 (def o21
-  {:potion false
-   :desc "SPIKED PAULDRONS: Your neck will be somewhat more protected by these large spikes. Just don't bend your head too far. +1 HEALTH"
-   :health 1
+  {:desc "SPIKED PAULDRONS: Your neck will be somewhat more protected by these large spikes. Just don't bend your head too far. +5 HEALTH"
+   :health 5 
    :damage 0})
 (def o22
-  {:potion false
-   :desc "TORN LETTER: You can barely make out the words on this blood-spattered parchment. This letter contains instructions to a novice cultist, and tells them to report to the  ." 
+  {:desc "TORN LETTER: This blood-spattered letter contains instructions to a cultist from the 'MASTER', who is headquartered in the basement of the Temple." 
    :health 0
    :damage 0})
 (def o23
-  {:potion false
-   :desc "BARREL OF DEAD FISH: You don't think you could get within a foot of this without throwing up."
+  {:desc "BARREL OF DEAD FISH: You don't think you could get within a foot of this without throwing up."
    :health 0
-   :damage -2})
+   :damage 0})
 (def o24
-  {:potion false
-   :desc "HEMP ROPE: It's so rotten it snaps as soon as you pick it up."
+  {:desc "HEMP ROPE: It's so rotten it snaps as soon as you pick it up."
    :health 0
    :damage 0})
 (def o25
-  {:potion false
-   :desc "BARREL OF ROTTEN GRAIN: Not quite beer yet."
+  {:desc "BARREL OF ROTTEN GRAIN: Not quite beer yet."
    :health 0
    :damage 0})
 (def o26
-  {:potion false
-   :desc "RUSTED HORSESHOE: You're not a centaur, so you're not sure what you'd do with this." 
+  {:desc "RUSTED HORSESHOE: You're not a centaur, so you're not sure what you'd do with this." 
    :health 0
    :damage 0})
 (def o27
-  {:potion false
-   :desc "BROKEN BAR STOOL: A little unweildy, but heavy. Getting hit with this will hurt. +5 BLUNT DAMAGE, -2 HEALTH"
+  {:desc "BROKEN BAR STOOL: A little unweildy, but heavy. Getting hit with this would hurt. +7 BLUNT DAMAGE, -2 HEALTH"
    :health -2
-   :damage 5})
+   :damage 7})
 (def o28
-  {:potion false
-   :desc "CHAIR LEG: Made of sturdy oak. +3 BLUNT DAMAGE"
+  {:desc "CHAIR LEG: Made of sturdy oak. +5 BLUNT DAMAGE"
    :health 0
-   :damage 3})
+   :damage 5})
 (def o29
-  {:potion false
-   :desc "BROKEN WINE BOTTLE: Sharp as glass. +4 PIERCING DAMAGE"
+  {:desc "BROKEN WINE BOTTLE: Sharp as glass. +4 PIERCING DAMAGE"
    :health 0
    :damage 4})
 (def o30
-  {:potion false 
-   :desc "RUM: Gives the drinker the Sea Legs effect while EQUIPPED, allowing them to evade more attacks (+1 HEALTH), but reducing their aim (-1 DAMAGE)." 
+  {:desc "RUM: Gives the drinker the Sea Legs effect while EQUIPPED, allowing them to evade more attacks (+1 HEALTH), but reducing their aim (-1 DAMAGE)." 
    :health 1
    :damage -1})
 (def o31
-  {:potion false
-   :desc "MOONSHINE: Gives the drinker the Drunken Rage effect while EQUIPPED, allowing them to do an extra +1 DAMAGE at the cost of -1 HEALTH."
+  {:desc "MOONSHINE: Gives the drinker the Drunken Rage effect while EQUIPPED, allowing them to do an extra +1 DAMAGE at the cost of -1 HEALTH."
    :health -1
    :damage 1})
 (def o32
-  {:potion false
-   :desc "HOLY SHIELD: A shield painted with a yellow rising sun. +3 HEALTH, +1 HOLY DAMAGE"
-   :health 3
-   :damage 1})
+  {:desc "TEMPLAR SHIELD: A shield painted with a yellow rising sun. +5 HEALTH, +2 HOLY DAMAGE"
+   :health 5 
+   :damage 2})
 (def o33
-  {:potion false
-   :desc "TEMPLAR ARMOR: Plate mail emblazoned with a gold rising sun on the breastplate. +8 HEALTH"
-   :health 8
+  {:desc "TEMPLAR ARMOR: Plate mail emblazoned with a gold rising sun on the breastplate. +25 HEALTH"
+   :health 25 
    :damage 0})
 (def o34
-  {:potion false
-   :desc "RING OF THE MOON: An onyx ring set with a large moonstone. +1 ICE DAMAGE"
+  {:desc "RING OF THE MOON: An onyx ring set with a large moonstone. +3 ICE DAMAGE"
    :health 0
-   :damage 1})
+   :damage 3})
 (def o35
-  {:potion false
-   :desc "ARCANE DAGGER: Made of a sheer crystaline material and as cold as ice. +5 ICE DAMAGE"
+  {:desc "ARCANE DAGGER: Made of a opalescent crystaline material and as cold as ice. +10 ICE DAMAGE"
    :health 0
-   :damage 5})
+   :damage 10})
 (def h1
   {:potion true 
-   :desc "LESSER HEALTH POTION: This potion glimmers with a healthy green glow. After drinking this, you will regain 5 health." 
-   :health 5 
+   :desc "LESSER HEALTH POTION: This potion glimmers with a healthy green glow. After drinking this, you will regain 10 health." 
+   :health 10 
    :damage 0})
 (def h2
   {:potion true 
-   :desc "COMMON HEALTH POTION: This potion shines a bright, sunshine yellow. After drinking this, you will regain 10 health." 
-   :health 10
+   :desc "COMMON HEALTH POTION: This potion shines a bright, sunshine yellow. After drinking this, you will regain 15 health." 
+   :health 15 
    :damage 0})
 (def h3
   {:potion true 
-   :desc "GREATER HEALTH POTION: This potion ruby red sparkles cheerfully in the gloom. After drinking this, you will regain 15 health." 
-   :health 15 
+   :desc "GREATER HEALTH POTION: This potion ruby red sparkles cheerfully in the gloom. After drinking this, you will regain 20 health." 
+   :health 20 
    :damage 0})
 
 ;for place-obj
@@ -313,13 +269,13 @@
 (def rich
   [o12 o14 o16 o18 h3 h2])
 (def cultists
-  [o3 o8 o10 o13 h2 h3])
+  [o3 o8 o10 o13 o22 h2 h3])
 (def forge
   [o4 o9 o12 o14 o16])
 (def gen-skele
   [o1 o2 o5 o6 o7 o9 o11 o15 o17 h1 h2])
 (def cult-skele
-  [o3 o6 o7 o9 o13 o15 o17 h1 h2])
+  [o3 o6 o7 o9 o13 o15 o17 o22 h1 h2])
 (def gen-cult
   [o1 o2 o3 o5 o9 o11 o13 h2 h3])
 (def crypt
@@ -331,9 +287,11 @@
 (def tavern 
   [o27 o28 o29 o30 o31])
 (def temple
-  [o32 o33 o34 o35 h1 h2 h3])
+  [o32 o33 o34 o35 o22 h1 h2 h3])
 (def gen
   [o1 o2 o5 o9 o11 o24 o26 h1])
+(def letter
+  [o22])
 
 (defn place-obj [obj-list amt]
   (vec (take amt (repeatedly #(nth obj-list (rand-int (count obj-list)))))))
@@ -354,18 +312,24 @@
 ;temple basement
 ;exiting basement
 (def loc-1-3-0
-  {:obj (ref (place-obj health 1)) 
+  {:obj (ref (place-obj health 2)) 
    :desc "temple basement"
    :exit-start-coords {:row 1 :col 0}})
 (def loc-1-3-1
-  {:obj (ref (place-obj cultists 2)) 
-   :desc "basement1"})
+  {:obj (ref (place-obj cultists 4)) 
+   :desc "basement1"
+   :fight {:alive? (ref true)
+           :enemy minion}})
 (def loc-1-3-2
   {:obj (ref (place-obj cult-skele 3)) 
-   :desc "basement2"})
+   :desc "basement2"
+   :fight {:alive? (ref true)
+           :enemy minion}})
 (def loc-1-3-3
   {:obj (ref (place-obj temple 1)) 
-   :desc "basement5"})
+   :desc "basement5"
+   :fight {:alive? (ref true)
+           :enemy boss}})
 
 (def basement-1-3 
   [[loc-1-3-0 loc-1-3-1]
@@ -374,11 +338,11 @@
 ;temple
 ;exiting temple
 (def loc-1-0
-  {:obj (ref (place-obj temple 1)) 
+  {:obj (ref (place-obj letter 1)) 
    :desc "You're inside the temple." 
    :exit-start-coords {:row 1 :col 2}})
 (def loc-1-1
-  {:obj (ref (place-obj cultists 1)) 
+  {:obj (ref (place-obj cultists 3)) 
    :desc "temple 1"})
 (def loc-1-2
   {:obj (ref (place-obj health 1)) 
@@ -387,31 +351,41 @@
 (def loc-1-3
   {:obj (ref (place-obj health 0)) 
    :desc "enter basement"
+   :fight {:alive? (ref true)
+           :enemy magic-cult}
    :enter {:goto basement-1-3
            :start-coords {:row 0 :col 0}}})
 (def loc-1-4
-  {:obj (ref (place-obj cultists 1)) 
-   :desc "temple 4"})
+  {:obj (ref (place-obj cultists 2)) 
+   :desc "temple 4"
+   :fight {:alive? (ref true)
+           :enemy dagger-cult}})
 (def loc-1-5
   {:obj (ref (place-obj temple 2)) 
    :desc "temple 5"})
 (def loc-1-6
   {:obj (ref (place-obj temple 1)) 
-   :desc "temple 6"})
+   :desc "temple 6"
+   :fight {:alive? (ref true)
+           :enemy dagger-cult}})
 (def loc-1-7
-  {:obj (ref (place-obj health 2)) 
+  {:obj (ref (place-obj cultists 3)) 
    :desc "temple 7"})
 (def loc-1-8
   {:obj (ref (place-obj cultists 0)) 
    :desc "temple 8"})
 (def loc-1-9
-  {:obj (ref (place-obj cultists 0)) 
-   :desc "temple 9"})
+  {:obj (ref (place-obj health 2)) 
+   :desc "temple 9"
+   :fight {:alive? (ref true)
+           :enemy magic-cult}})
 (def loc-1-10
-  {:obj (ref (place-obj temple 1)) 
-   :desc "temple 10"})
+  {:obj (ref (place-obj temple 2)) 
+   :desc "temple 10"
+   :fight {:alive? (ref true)
+           :enemy dagger-cult}})
 (def loc-1-11
-  {:obj (ref (place-obj cultists 1)) 
+  {:obj (ref (place-obj cultists 3)) 
    :desc "temple 11"})
 
 (def temple-1 
@@ -431,22 +405,32 @@
    :desc "mausoleum 1"})
 (def loc-2-7-2
   {:obj (ref (place-obj skele 0)) 
-   :desc "mausoleum 2"})
+   :desc "mausoleum 2"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-2-7-3
-  {:obj (ref (place-obj health 1)) 
+  {:obj (ref (place-obj health 2)) 
    :desc "mausoleum 3"})
 (def loc-2-7-4
   {:obj (ref (place-obj crypt 2)) 
-   :desc "mausoleum 4"})
+   :desc "mausoleum 4"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-2-7-5
-  {:obj (ref (place-obj health 1)) 
-   :desc "mausoleum 5"})
+  {:obj (ref (place-obj health 4)) 
+   :desc "mausoleum 5"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-2-7-6
-  {:obj (ref (place-obj crypt 2)) 
-   :desc "mausoleum 6"})
+  {:obj (ref (place-obj crypt 0)) 
+   :desc "mausoleum 6"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-2-7-7
-  {:obj (ref (place-obj crypt 1)) 
-   :desc "mausoleum 7"})
+  {:obj (ref (place-obj crypt 4)) 
+   :desc "mausoleum 7"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 
 ;mausoleum
 (def mausoleum-2-7 
@@ -463,26 +447,38 @@
 (def loc-2-1
   {:obj (ref (place-obj skele 2)) 
    :desc "You stand inside the graveyard." 
+   :fight {:alive? (ref true)
+           :enemy bow-skele}
    :exit-start-coords {:row 1 :col 1}})
 (def loc-2-2
   {:obj (ref (place-obj skele 1)) 
-   :desc "graveyard 2"})
+   :desc "graveyard 2"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-2-3
   {:obj (ref (place-obj skele 0)) 
-   :desc "graveyard 3"})
+   :desc "graveyard 3"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-2-4
   {:obj (ref (place-obj skele 2)) 
    :desc "graveyard 4"})
 (def loc-2-5
   {:obj (ref (place-obj skele 1)) 
-   :desc "graveyard 5"})
+   :desc "graveyard 5"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-2-6
   {:obj (ref (place-obj skele 0)) 
-   :desc "graveyard 6"})
+   :desc "graveyard 6"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 ;entering mausoleum
 (def loc-2-7
   {:obj (ref (place-obj skele 0)) 
    :desc "enter mausoleum"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}
    :enter {:goto mausoleum-2-7 
            :start-coords {:row 0 :col 1}}})
 (def loc-2-8
@@ -500,10 +496,14 @@
    :desc "store 0"})
 (def loc-3-1
   {:obj (ref (place-obj gen-cult 3)) 
-   :desc "store 1"})
+   :desc "store 1"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-3-2
   {:obj (ref (place-obj gen-cult 1)) 
-   :desc "store 2"})
+   :desc "store 2"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-3-3
   {:obj (ref (place-obj gen-cult 2)) 
    :desc "store 3"})
@@ -512,7 +512,9 @@
    :desc "store 4"})
 (def loc-3-5
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "store 5"})
+   :desc "store 5"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-3-6
   {:obj (ref (place-obj gen 0)) 
    :desc "store 6"})
@@ -520,10 +522,14 @@
 (def loc-3-7
   {:obj (ref (place-obj gen 5)) 
    :desc "You're inside the store." 
+   :fight {:alive? (ref true)
+           :enemy bow-skele}
    :exit-start-coords {:row 0 :col 4}})
 (def loc-3-8
   {:obj (ref (place-obj gen-cult 3)) 
-   :desc "store 8"})
+   :desc "store 8"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 
 (def store-3 
   [[loc-3-0 loc-3-1 loc-3-2]
@@ -533,19 +539,25 @@
 ;mansion
 (def loc-4-0
   {:obj (ref (place-obj gen 0))
-   :desc "mansion 0"})
+   :desc "mansion 0"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-4-1
   {:obj (ref (place-obj rich 1))
    :desc "mansion 1"})
 (def loc-4-2
   {:obj (ref (place-obj health 3))
-   :desc "mansion 2"})
+   :desc "mansion 2"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-4-3
   {:obj (ref (place-obj rich 0))
    :desc "mansion 3"})
 (def loc-4-4
   {:obj (ref (place-obj rich 2))
-   :desc "mansion 4"})
+   :desc "mansion 4"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 ;enter mansion
 (def loc-4-5
   {:obj (ref (place-obj health 1))
@@ -559,10 +571,14 @@
    :desc "mansion 7"})
 (def loc-4-8
   {:obj (ref (place-obj gen 0))
-   :desc "mansion 8"})
+   :desc "mansion 8"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-4-9
   {:obj (ref (place-obj rich 3))
-   :desc "mansion 9"})
+   :desc "mansion 9"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 
 (def mansion-4 
   [[loc-0-0 loc-4-0 loc-4-1]
@@ -573,10 +589,14 @@
 ;house
 (def loc-5-0
   {:obj (ref (place-obj junk-gen-forge 2))
-   :desc "house 0"})
+   :desc "house 0"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-5-1
   {:obj (ref (place-obj gen 2))
-   :desc "house 1"})
+   :desc "house 1"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-5-2
   {:obj (ref (place-obj rich 0))
    :desc "house 2"})
@@ -588,7 +608,10 @@
    :desc "house 4"})
 (def loc-5-5
   {:obj (ref (place-obj rich 1))
-   :desc "house 5"})
+   :desc "house 5"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
+;enter house
 (def loc-5-6
   {:obj (ref (place-obj health 1))
    :desc "you're in the house"
@@ -601,7 +624,9 @@
 ;ruins
 (def loc-6-0
   {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "ruins 0"})
+   :desc "ruins 0"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-6-1
   {:obj (ref (place-obj junk-gen-forge 3)) 
    :desc "ruins 1"})
@@ -615,19 +640,25 @@
    :exit-start-coords {:row 3 :col 4}})
 (def loc-6-4
   {:obj (ref (place-obj junk-gen-forge 0)) 
-   :desc "ruins 4"})
+   :desc "ruins 4"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-6-5
   {:obj (ref (place-obj junk-gen-forge 0)) 
    :desc "ruins 5"})
 (def loc-6-6
   {:obj (ref (place-obj junk-gen-forge 4)) 
-   :desc "ruins 6"})
+   :desc "ruins 6"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 (def loc-6-7
   {:obj (ref (place-obj junk-gen-forge 2)) 
    :desc "ruins 7"})
 (def loc-6-8
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "ruins 8"})
+   :desc "ruins 8"
+   :fight {:alive? (ref true)
+           :enemy ghost}})
 
 (def ruins-6 
   [[loc-6-0 loc-6-1 loc-6-2]
@@ -641,16 +672,22 @@
    :exit-start-coords {:row 3 :col 0}})
 (def loc-13-1
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 1"})
+   :desc "cave 1"
+   :fight {:alive? (ref true)
+           :enemy magic-cult}})
 (def loc-13-2
   {:obj (ref (place-obj skele 1)) 
    :desc "cave 2"})
 (def loc-13-3
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 3"})
+   :desc "cave 3"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-13-4
   {:obj (ref (place-obj skele 0)) 
-   :desc "cave 4"})
+   :desc "cave 4"
+   :fight {:alive? (ref true)
+           :enemy rat}})
 (def loc-13-5
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 5"})
@@ -662,22 +699,32 @@
    :desc "cave 7"})
 (def loc-13-8
   {:obj (ref (place-obj skele 1)) 
-   :desc "cave 8"})
+   :desc "cave 8"
+   :fight {:alive? (ref true)
+           :enemy rat}})
 (def loc-13-9
   {:obj (ref (place-obj cult-skele 0)) 
-   :desc "cave 9"})
+   :desc "cave 9"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-13-10
   {:obj (ref (place-obj cult-skele 0)) 
-   :desc "cave 10"})
+   :desc "cave 10"
+   :fight {:alive? (ref true)
+           :enemy dagger-cult}})
 (def loc-13-11
   {:obj (ref (place-obj cult-skele 3)) 
    :desc "cave 11"})
 (def loc-13-12
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 12"})
+   :desc "cave 12"
+   :fight {:alive? (ref true)
+           :enemy magic-cult}})
 (def loc-13-13
   {:obj (ref (place-obj skele 1)) 
-   :desc "cave 13"})
+   :desc "cave 13"
+   :fight {:alive? (ref true)
+           :enemy rat}})
 (def loc-13-14
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 14"})
@@ -686,7 +733,9 @@
    :desc "cave 15"})
 (def loc-13-16
   {:obj (ref (place-obj cult-skele 3)) 
-   :desc "cave 16"})
+   :desc "cave 16"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 
 (def cave-13 
   [[loc-0-0  loc-0-0  loc-13-9 loc-13-10 loc-13-11 loc-13-12 loc-13-13 loc-13-14]
@@ -700,38 +749,51 @@
    :desc "tavern 0"})
 (def loc-18-1
   {:obj (ref (place-obj gen 1)) 
-   :desc "tavern 1"})
+   :desc "tavern 1"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-18-2
   {:obj (ref (place-obj junk 2)) 
    :desc "tavern 2"})
 (def loc-18-3
   {:obj (ref (place-obj gen 0)) 
-   :desc "tavern 3"})
+   :desc "tavern 3"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 (def loc-18-4
   {:obj (ref (place-obj gen 0)) 
-   :desc "tavern 4"})
+   :desc "tavern 4"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-18-5
   {:obj (ref (place-obj tavern 1)) 
-   :desc "tavern 5"})
+   :desc "tavern 5"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-18-6
   {:obj (ref (place-obj gen 2)) 
    :desc "tavern 6"})
 (def loc-18-7
   {:obj (ref (place-obj tavern 2)) 
-   :desc "tavern 7"})
+   :desc "tavern 7"
+   :fight {:alive? (ref true)
+           :enemy axe-skele}})
 (def loc-18-8
   {:obj (ref (place-obj gen 0)) 
    :desc "tavern 8"})
 (def loc-18-9
   {:obj (ref (place-obj junk-gen-forge 3)) 
    :desc "tavern 9"})
+;enter tavern
 (def loc-18-10
   {:obj (ref (place-obj tavern 1)) 
    :desc "you are in the tavern"
    :exit-start-coords {:row 1 :col 4}})
 (def loc-18-11
   {:obj (ref (place-obj tavern 4)) 
-   :desc "tavern 10"})
+   :desc "tavern 10"
+   :fight {:alive? (ref true)
+           :enemy bow-skele}})
 
 (def tavern-18 
   [[loc-18-0 loc-18-1 loc-18-2]
@@ -748,8 +810,8 @@
   {:obj (ref (place-obj junk 2)) 
    :desc "A cart with a broken wheel lies abandoned on the side of the road."})
 (def loc-1
-  {:obj (ref (place-obj health 1)) 
-   :desc "An unfamiliar temple adorned with snarling gargoyles rises above you. " 
+  {:obj (ref (place-obj letter 1)) 
+   :desc "A temple rises above you, colored light shining through stained glass windows onto the cobblestones below. A carving of a holy knight slaying a demon sits above the door." 
    :enter {:goto temple-1 
            :start-coords {:row 0 :col 1}}})
 (def loc-2
@@ -773,12 +835,12 @@
    :enter {:goto house-5 
            :start-coords {:row 1 :col 3}}})
 (def loc-6 
-  {:obj (ref (place-obj gen 0)) 
+  {:obj (ref (place-obj gen 1)) 
    :desc "A ruined building lies in an overgrown field. It looks like it burned down long ago, but a glint of metal catches your eye." 
    :enter {:goto ruins-6 
            :start-coords {:row 1 :col 0}}})
 (def loc-7
-  {:obj (ref (place-obj gen 1)) 
+  {:obj (ref (place-obj gen 2)) 
    :desc "You squeeze into a narrow alleyway between two buildings. A rat scurries away from you." 
    :fight {:alive? (ref true)
            :enemy rat}})
@@ -786,35 +848,35 @@
   {:obj (ref (place-obj health-loc-8 8)) 
    :desc "You hide among a small copse of gnarled pine trees, the hanging moss shielding you from view."})
 (def loc-9
-  {:obj (ref (place-obj junk-gen-forge 1)) 
+  {:obj (ref (place-obj junk-gen-forge 5)) 
    :desc "Broken, cracked cobblestones and smashed stalls form a picture of a town square bustling with ghosts."
    :fight {:alive? (ref true)
            :enemy axe-skele}})
 (def loc-10
-  {:obj (ref (place-obj gen 0)) 
+  {:obj (ref (place-obj junk-gen-forge 3)) 
    :desc "A half-rotted well lies in the middle of the market square. You drop a small pebble and hear a small 'plink' of it hitting water several seconds later." 
    :fight {:alive? (ref true) 
            :enemy zombie}})
 (def loc-11
-  {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "What was once brightly-colored cloth and lanterns lie smashed around a market stall."
+  {:obj (ref (place-obj junk-gen-forge 4)) 
+   :desc "Brightly-colored cloth and lanterns lie smashed around a market stall."
    :fight {:alive? (ref true) 
            :enemy rat}})
 (def loc-12
-  {:obj (ref (place-obj forge 2)) 
+  {:obj (ref (place-obj forge 4)) 
    :desc "You find yourself in front of a forge, long cold."})
 (def loc-13
-  {:obj (ref (place-obj cult-skele 0)) 
+  {:obj (ref (place-obj letter 1)) 
    :desc "Mossy rocks jut out of the marsh. Cold air whistles past you, coming from a small opening in the rock just big enough to crawl through." 
    :enter {:goto cave-13 
            :start-coords {:row 3 :col 0}}})
 (def loc-14
-  {:obj (ref (place-obj cult-skele 2)) 
+  {:obj (ref (place-obj cult-skele 3)) 
    :desc "A small shrine of carved, blackened bones has been constructed on top of a pile of smooth stones." 
    :fight {:alive? (ref true) 
            :enemy magic-cult}})
 (def loc-15
-  {:obj (ref (place-obj cultists 2)) 
+  {:obj (ref (place-obj cultists 4)) 
    :desc "Low chanting drifts over on the wind. In the distance, a small camp surrounds a fire of unearthly purple flames. You crouch lower in the weeds, hoping to not be seen." 
    :fight {:alive? (ref true) 
            :enemy dagger-cult}})
@@ -847,10 +909,8 @@
 ;PC LOCATION_________________________________________________________________________________
 
 ;initial player location in the first map, needed for loop recur
-(def init-pc-loc 
-  {:row 0 :col 0})
-;(def init-pc-loc
-;  {:row (rand-int 4) :col (rand-int 3)})   
+(def init-pc-loc
+  {:row (rand-int 4) :col (rand-int 3)})   
 
 ;it's a list, acts as a stack of maps
 ;init needed for loop recur
@@ -944,11 +1004,13 @@
   (println)
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-      (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
-        (print-debug new-pc-inv)
-        (remove-obj-from-loc pc-loc map-stack int-input)
-        (print-debug new-pc-inv)
-        new-pc-inv))))
+      (if (integer? int-input)
+        (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
+          (print-debug new-pc-inv)
+          (remove-obj-from-loc pc-loc map-stack int-input)
+          (print-debug new-pc-inv)
+          new-pc-inv)
+        (something-to-add pc-loc map-stack pc-inv)))))
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
   (if (= [] (get-obj pc-loc map-stack))
@@ -1019,14 +1081,16 @@
   (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-      (do
-        (print-debug pc-inv)
-        (add-item-to-loc pc-loc map-stack pc-inv int-input)
-        (let [pre-inv (subvec pc-inv 0 (dec int-input))
-             post-inv (subvec pc-inv int-input)]
-          (print-debug pre-inv)
-          (print-debug post-inv)
-          (vec (concat pre-inv post-inv)))))))
+      (if (integer? int-input) 
+        (do
+          (print-debug pc-inv)
+          (add-item-to-loc pc-loc map-stack pc-inv int-input)
+          (let [pre-inv (subvec pc-inv 0 (dec int-input))
+                post-inv (subvec pc-inv int-input)]
+            (print-debug pre-inv)
+            (print-debug post-inv)
+            (vec (concat pre-inv post-inv))))
+        (something-to-drop pc-loc map-stack pc-inv)))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "removes a user-defined item from inventory"
@@ -1060,10 +1124,17 @@
   (println) 
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-      [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
-       (add-health pc-inv pc-health int-input) 
-       (add-damage pc-inv pc-damage int-input)
-       (add-health pc-inv max-health int-input)])))
+      (if (integer? int-input)
+        (if (:potion (nth pc-inv (dec int-input)))
+          (do
+            (println "You can't equip that.")
+            (pause)
+            [pc-eq pc-health pc-damage max-health])
+          [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
+           (add-health pc-inv pc-health int-input) 
+           (add-damage pc-inv pc-damage int-input)
+           (add-health pc-inv max-health int-input)])
+        (something-to-drop pc-inv pc-eq pc-health pc-damage max-health)))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
   (println)
@@ -1077,12 +1148,14 @@
   (println)
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-     (let [pre-eq (subvec pc-eq 0 (dec int-input))
-           post-eq (subvec pc-eq int-input)]
-       [(vec (concat pre-eq post-eq))
-        (sub-health pc-eq pc-health int-input) 
-        (sub-damage pc-eq pc-damage int-input)
-        (sub-health pc-eq max-health int-input)]))))
+      (if (integer? int-input)
+        (let [pre-eq (subvec pc-eq 0 (dec int-input))
+              post-eq (subvec pc-eq int-input)]
+          [(vec (concat pre-eq post-eq))
+           (sub-health pc-eq pc-health int-input) 
+           (sub-damage pc-eq pc-damage int-input)
+           (sub-health pc-eq max-health int-input)])
+        (something-to-unequip pc-eq pc-health pc-damage max-health)))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
   "removes a user-defined item from inventory"
@@ -1094,13 +1167,11 @@
   (println)
   (println "You don't think you can drink that.")
   (println)
-  (pause)
   [pc-inv pc-health]) 
 
 (defn drinkable [pc-loc map-stack pc-inv pc-health int-input max-health]
   (println)
   (println "You drink the potion, and immediately feel a little bit better.")
-  (pause)
   (print-debug pc-inv)
   (let [pre-inv (subvec pc-inv 0 (dec int-input))
         post-inv (subvec pc-inv int-input)]
@@ -1114,13 +1185,15 @@
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (let [int-input (Integer/parseInt input)]
-      (if (= int-input 0)
-        (do
-          (println "That's not an item.")
-          [pc-inv pc-health])
-        (if (not (:potion (nth pc-inv (dec int-input))))
-          (not-drinkable pc-inv pc-health)
-          (drinkable pc-loc map-stack pc-inv pc-health int-input max-health))))))
+      (if (integer? int-input)
+        (if (= int-input 0)
+          (do
+            (println "That's not an item.")
+            [pc-inv pc-health])
+          (if (not (:potion (nth pc-inv (dec int-input))))
+            (not-drinkable pc-inv pc-health)
+            (drinkable pc-loc map-stack pc-inv pc-health int-input max-health)))
+        (drink-hp pc-loc map-stack pc-inv pc-health max-health)))))
 
 ;print inventory____________________________________________________
 
@@ -1181,6 +1254,7 @@
                       (inv-control pc-loc map-stack pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health))
       (= input "d") (let [[new-pc-inv new-pc-health] 
                           (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
+                      (pause)
                       (inv-control pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
       :else (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
@@ -1190,6 +1264,8 @@
   (print "             Your enemy attacks and deals ")
   (print (- pc-health new-pc-health))
   (print " damage.")
+  (println)
+  (print-pc-health new-pc-health max-health)
   (println)
   (println))
 
@@ -1247,10 +1323,13 @@
     (doseq [line (line-seq rdr)]
       (println line))))
 
-(defn print-fight-start [pc-inv pc-eq pc-health max-health]
+(defn print-fight-start [pc-inv pc-eq pc-health max-health enemy-health]
   (open-combat)
   ;print description of enemy
   (print-pc-health pc-health max-health)
+  (println)
+  (print "             Enemy health: ")
+  (print enemy-health)
   (println)
   (println)
   (println "             Your inventory contains the following items:")
@@ -1265,28 +1344,31 @@
 (defn run-away [pc-loc map-stack pc-health max-health]
   (println "             As vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
   (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
-    (print "             You take ")
-    (print (- pc-health new-pc-health))
-    (print " damage.")
-    (println)
-    (print-pc-health pc-health max-health)
-    (println)
-    (let [new-map-stack (first-map map-stack)]
-      (let [new-row-pc-loc (assoc pc-loc :row 0)] 
-        (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
-          [new-pc-loc new-map-stack new-pc-health])))))
+    (if (<= new-pc-health 0)
+      (pc-dead)
+      (do
+        (print "             You take ")
+        (print (- pc-health new-pc-health))
+        (print " damage.")
+        (println)
+        (print-pc-health pc-health max-health)
+        (println)
+        (let [new-map-stack (first-map map-stack)]
+          (let [new-row-pc-loc (assoc pc-loc :row 0)] 
+            (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
+              [new-pc-loc new-map-stack new-pc-health])))))))
 
 (defn fight [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input]
     (cond
       (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
                       [new-pc-loc new-map-stack pc-inv new-pc-health true])
       (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
-                      (pause)
+                      (println "What else would you like to do?")
                       (let [new-input (read-line)]
                         (clear-screen)
-                        (print-fight-start pc-inv pc-eq pc-health max-health)
+                        (print-fight-start new-pc-inv pc-eq new-pc-health max-health enemy-health)
                         (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
-      (= input "a") (let [[pc-loc new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+      (= input "a") (let [[new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
                       (if (<= new-enemy-health 0)
                         (do 
                           (println "             With one last snarl, your enemy falls dead at your feet. You win the fight!") 
@@ -1295,19 +1377,74 @@
                         (do
                           (let [new-input (read-line)]
                             (clear-screen)
-                            (print-fight-start pc-inv pc-eq new-pc-health max-health)
+                            (print-fight-start pc-inv pc-eq new-pc-health max-health enemy-health)
                             (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input)))))
-      :else (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)))
+      :else (do
+              (println "That's not valid input. What do you want to do?")
+              (let [new-input (read-line)]
+                (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
+
+(defn print-rat []
+  (println "A large rat scuttles out of the shadows, open sores oozing on its back. It bares its yellow teeth at you. "))
+ 
+(defn print-cultist []
+  (if (= 1 (rand 2))
+    (println "A young man in swirling black blood-soaked robes glances around, spotting you immediately. He yells and runs at you, drawing a curved dagger dripping with poison.")
+    (println "You turn a corner and see a woman with long, grey hair concentrate for a moment before a tiny blue flame appears in her hand. In a second a roaring fire is contained in her palm.")))
+
+(defn print-skele []
+  (if (= 1 (rand 2))
+    (println "A skeleton comes rushing towards you, jaw clacking. It raises a cracked bow and fits a rusted arrow to it.")
+    (println "This skeleton looks between you and the chipped axe in its bony hand, and a whisper of a sad sigh rattles in its ribcage.")))
+
+(defn print-zombie []
+  (println "You turn a corner and see a woman with long, grey hair concentrate for a moment before a tiny blue flame appears in her hand. In a second a roaring fire is contained in her palm."))
+
+(defn print-ghost []
+  (println "The air freezes and the light around you dims. A gleam of ethereal blue light coalesces into a spirit, lost in the torment of its last moments. 'No! I won't let you hurt them!' "))
+
+(defn print-boss []
+  (println "A old woman, back bent with age, looks up from the alter, a wicked gleam in her eye. The wooden staff in her hand crackles with energy and the crystal at the top glows a deep red." ))
+
+(defn print-minion []
+  (println " 'You will not interrupt the master!' A knight blocks your path, a heavy mace held aloft. The holy symbol that once adorned the breastplate lies to the side, cracked in half."))
+
+(defn print-tavern-skele []
+  (let [which-one? (rand-int 5)]
+    (cond
+      (= which-one? 0) (println "A skeleton stumbles towards you drunkenly, waving an empty bottle of whiskey.")
+      (= which-one? 1) (println "A skeleton with a tablecloth tied around its head as a bandana breaks a chair over its bony knee, picking up the remnants in both hands.")
+      (= which-one? 2) (println "A skeleton pours a bottle behind the bar through its open jaw, rum splashing through its body. It smashes the empty bottle and jumps over the counter towards you.")
+      (= which-one? 3) (println "Two skeletons are locked in a brawl in front of you. One uses a candlestick to bash the other's skull, and it collapses. The victor looks around for another victim.")
+      (= which-one? 4) (println "A skeleton dances drunkenly to silent music. You try to squeeze past it, but you bump its hip and it angrily lashes out at you.")
+      :else (println "This should never print: print-tavern-skele"))))
+
+(defn print-enemy [pc-loc map-stack]
+  (if (= tavern-18 (first map-stack))
+    (print-tavern-skele)
+    (do
+      (cond
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :rat]) (print-rat)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :cultist]) (print-cultist)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :skele]) (print-skele)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :zombie]) (print-zombie)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :ghost]) (print-ghost)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :boss]) (print-boss)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :minion]) (print-minion)
+        :else (println "This should never print: print-enemy")))))
     
 (defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
-  (print-fight-start pc-inv pc-eq pc-health max-health) 
+  (print-enemy pc-loc map-stack)
   (let [enemy-health (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :health])]
+  (print-fight-start pc-inv pc-eq pc-health max-health enemy-health) 
     (let [input (read-line)]
       (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
         (if (= alive? false)
-          (dosync
-            (ref-set (get-in (get-pc-loc pc-loc map-stack) [:fight :alive?]) false)))
-        [new-pc-loc new-map-stack new-pc-inv new-pc-health]))))
+          (do
+            (dosync
+              (ref-set (get-in (get-pc-loc pc-loc map-stack) [:fight :alive?]) false))
+            [new-pc-loc new-map-stack new-pc-inv new-pc-health])
+          [new-pc-loc new-map-stack new-pc-inv new-pc-health])))))
 
 ;MENU AND USER OPTIONS________________________________________________________________________________________
 
@@ -1558,7 +1695,10 @@
     (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health] (start-combat pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
       (clear-screen)
       (print-loc-desc new-pc-loc new-map-stack)
-      (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
+      (cond
+        (:enter (get-pc-loc new-pc-loc new-map-stack)) (push-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)
+        (:exit-start-coords (get-pc-loc new-pc-loc new-map-stack)) (pop-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)
+        :else (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)))
     (cond
       (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
       (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
