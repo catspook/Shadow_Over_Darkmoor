@@ -57,7 +57,11 @@
   (with-open [rdr (io/reader "resources/intro.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
-  (open-main-menu)
+  (pause)
+  (clear-screen)
+  (with-open [rdr (io/reader "resources/intro-cont.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line)))
   (pause)
   (clear-screen))
 
@@ -327,7 +331,7 @@
            :enemy minion}})
 (def loc-1-3-3
   {:obj (ref (place-obj temple 1)) 
-   :desc "basement5"
+   :desc "basement3"
    :fight {:alive? (ref true)
            :enemy boss}})
 
@@ -1260,130 +1264,6 @@
 
 ;COMBAT_______________________________________________________________________________________
 
-(defn print-enemy-damage-done [pc-health max-health new-pc-health]
-  (print "             Your enemy attacks and deals ")
-  (print (- pc-health new-pc-health))
-  (print " damage.")
-  (println)
-  (print-pc-health new-pc-health max-health)
-  (println)
-  (println))
-
-(defn pc-dead []
-  (clear-screen)
-  (println)
-  (with-open [rdr (io/reader "resources/you-died.txt")]
-    (doseq [line (line-seq rdr)]
-      (println line)))
-  (System/exit 0))
-
-(defn print-pc-damage-done [enemy-health new-enemy-health]
-  (print "             You swing your weapon as hard as you can, hitting your opponent for ") 
-  (print (- enemy-health new-enemy-health))
-  (print " damage!")
-  (println)
-  (print "             Enemy health: ")
-  (print new-enemy-health)
-  (println)
-  (println))
-
-(defn enemy-first [pc-loc map-stack pc-health pc-damage max-health enemy-health] 
-  (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
-    (print-enemy-damage-done pc-health max-health new-pc-health)
-    (if (<= new-pc-health 0)
-      (pc-dead)
-      (let [new-enemy-health (- enemy-health (- pc-damage (rand-int 3)))]
-        (print-pc-damage-done enemy-health new-enemy-health)
-        [new-pc-health new-enemy-health]))))
-
-(defn pc-first [pc-loc map-stack pc-health pc-damage max-health enemy-health]
-  (let [new-enemy-health (- enemy-health (- pc-damage (rand-int 3)))]
-    (print-pc-damage-done enemy-health new-enemy-health)
-    (if (<= new-enemy-health 0)
-      [pc-health new-enemy-health]
-      (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
-        (print-enemy-damage-done pc-health max-health new-pc-health)
-        (if (<= new-pc-health 0)
-          (pc-dead)
-          [new-pc-health new-enemy-health])))))
-
-(defn combat-round [pc-loc map-stack pc-health pc-damage max-health enemy-health]
-  (if (= 1 (rand-int 2))
-    (do
-      (println "             You get the jump on it.")
-      (let [[new-pc-health new-enemy-health] (pc-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
-        [new-pc-health new-enemy-health]))
-    (do
-      (println "             It gets the jump on you.")
-      (let [[new-pc-health new-enemy-health] (enemy-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
-        [new-pc-health new-enemy-health]))))
-
-(defn open-combat []
-  (with-open [rdr (io/reader "resources/combat.txt")]
-    (doseq [line (line-seq rdr)]
-      (println line))))
-
-(defn print-fight-start [pc-inv pc-eq pc-health max-health enemy-health]
-  (open-combat)
-  ;print description of enemy
-  (print-pc-health pc-health max-health)
-  (println)
-  (print "             Enemy health: ")
-  (print enemy-health)
-  (println)
-  (println)
-  (println "             Your inventory contains the following items:")
-  (print-pc-inv pc-inv pc-eq)
-  (println))
-
-(defn first-map [map-stack]
-  (if (not= (first map-stack) level-1-map)
-    (first-map (rest map-stack))
-    map-stack))
-
-(defn run-away [pc-loc map-stack pc-health max-health]
-  (println "             As vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
-  (let [new-pc-health (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
-    (if (<= new-pc-health 0)
-      (pc-dead)
-      (do
-        (print "             You take ")
-        (print (- pc-health new-pc-health))
-        (print " damage.")
-        (println)
-        (print-pc-health pc-health max-health)
-        (println)
-        (let [new-map-stack (first-map map-stack)]
-          (let [new-row-pc-loc (assoc pc-loc :row 0)] 
-            (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
-              [new-pc-loc new-map-stack new-pc-health])))))))
-
-(defn fight [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input]
-    (cond
-      (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
-                      [new-pc-loc new-map-stack pc-inv new-pc-health true])
-      (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
-                      (println "What else would you like to do?")
-                      (let [new-input (read-line)]
-                        (clear-screen)
-                        (print-fight-start new-pc-inv pc-eq new-pc-health max-health enemy-health)
-                        (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
-      (= input "a") (let [[new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
-                      (if (<= new-enemy-health 0)
-                        (do 
-                          (println "             With one last snarl, your enemy falls dead at your feet. You win the fight!") 
-                          (pause)
-                          [pc-loc map-stack pc-inv new-pc-health false])
-                        (do
-                          (let [new-input (read-line)]
-                            (clear-screen)
-                            (print-fight-start pc-inv pc-eq new-pc-health max-health enemy-health)
-                            (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input)))))
-      :else (do
-              (println "That's not valid input. What do you want to do?")
-              (let [new-input (read-line)]
-                (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
-
 (defn print-rat []
   (println "A large rat scuttles out of the shadows, open sores oozing on its back. It bares its yellow teeth at you. "))
  
@@ -1407,7 +1287,7 @@
   (println "A old woman, back bent with age, looks up from the alter, a wicked gleam in her eye. The wooden staff in her hand crackles with energy and the crystal at the top glows a deep red." ))
 
 (defn print-minion []
-  (println " 'You will not interrupt the master!' A knight blocks your path, a heavy mace held aloft. The holy symbol that once adorned the breastplate lies to the side, cracked in half."))
+  (println " 'You will not interrupt the Master!' A knight blocks your path, a heavy mace held aloft. The holy symbol that once adorned the breastplate lies to the side, cracked in half."))
 
 (defn print-tavern-skele []
   (let [which-one? (rand-int 5)]
@@ -1426,19 +1306,179 @@
       (cond
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :rat]) (print-rat)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :cultist]) (print-cultist)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :skele]) (print-skele)
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :skeleton]) (print-skele)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :zombie]) (print-zombie)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :ghost]) (print-ghost)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :boss]) (print-boss)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :minion]) (print-minion)
         :else (println "This should never print: print-enemy")))))
+
+(defn print-enemy-damage-done [pc-health max-health new-pc-health]
+  (print "             Your enemy attacks and deals ")
+  (print (- pc-health new-pc-health))
+  (print " damage.")
+  (println)
+  (print-pc-health new-pc-health max-health)
+  (println)
+  (println))
+
+(defn pc-dead []
+  (clear-screen)
+  (println)
+  (with-open [rdr (io/reader "resources/you-died.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line)))
+      (System/exit 0))
+
+(defn pc-wins []
+  (clear-screen)
+  (println)
+  (with-open [rdr (io/reader "resources/you-win.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line)))
+      (System/exit 0))
+
+(defn print-pc-damage-done [enemy-health new-enemy-health]
+  (print "             You swing your weapon as hard as you can, hitting your opponent for ") 
+  (print (- enemy-health new-enemy-health))
+  (print " damage!")
+  (println)
+  (print "             Enemy health: ")
+  (print new-enemy-health)
+  (println)
+  (println))
+
+(defn enemy-first [pc-loc map-stack pc-health pc-damage max-health enemy-health] 
+  (let [new-pc-health 
+        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+    (print-enemy-damage-done pc-health max-health new-pc-health)
+    (if (<= new-pc-health 0)
+      (pc-dead)
+      (let [new-enemy-health 
+            (- enemy-health (- pc-damage (rand-int 3)))]
+        (print-pc-damage-done enemy-health new-enemy-health)
+        [new-pc-health new-enemy-health]))))
+
+(defn pc-first [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  (let [new-enemy-health 
+        (- enemy-health (- pc-damage (rand-int 3)))]
+    (print-pc-damage-done enemy-health new-enemy-health)
+    (if (<= new-enemy-health 0)
+      [pc-health new-enemy-health]
+      (let [new-pc-health (- pc-health 
+                             (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+        (print-enemy-damage-done pc-health max-health new-pc-health)
+        (if (<= new-pc-health 0)
+          (pc-dead)
+          [new-pc-health new-enemy-health])))))
+
+(defn combat-round [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  (if (= 1 (rand-int 2))
+    (do
+      (println "             You get the jump on it.")
+      (let [[new-pc-health new-enemy-health] 
+            (pc-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+        [new-pc-health new-enemy-health]))
+    (do
+      (println "             It gets the jump on you.")
+      (let [[new-pc-health new-enemy-health] 
+            (enemy-first pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+        [new-pc-health new-enemy-health]))))
+
+(defn first-map [map-stack]
+  (if (not= (first map-stack) level-1-map)
+    (first-map (rest map-stack))
+    map-stack))
+
+(defn run-away [pc-loc map-stack pc-health max-health]
+  (println "             As vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
+  (let [new-pc-health 
+        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+    (if (<= new-pc-health 0)
+      (pc-dead)
+      (do
+        (print "             You take ")
+        (print (- pc-health new-pc-health))
+        (print " damage.")
+        (println)
+        (print-pc-health pc-health max-health)
+        (println)
+        (let [new-map-stack (first-map map-stack)]
+          (let [new-row-pc-loc (assoc pc-loc :row 0)] 
+            (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
+              [new-pc-loc new-map-stack new-pc-health])))))))
+
+(defn open-combat []
+  (with-open [rdr (io/reader "resources/combat.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-sword2 []
+  (with-open [rdr (io/reader "resources/sword2.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
     
-(defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn print-fight-start [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  (open-combat)
   (print-enemy pc-loc map-stack)
-  (let [enemy-health (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :health])]
-  (print-fight-start pc-inv pc-eq pc-health max-health enemy-health) 
+  (open-sword2)
+  ;print description of enemy
+  (print-pc-health pc-health max-health)
+  (println)
+  (print "             Enemy health: ")
+  (print enemy-health)
+  (println)
+  (println)
+  (println "             Your inventory contains the following items:")
+  (print-pc-inv pc-inv pc-eq)
+  (println))
+
+(defn continue [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  (println "What else would you like to do?")
+  (let [new-input (read-line)]
+    (clear-screen)
+    (print-fight-start pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health)
+    new-input))
+
+(defn im-not-dead-yet [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  (let [input (read-line)]
+    (clear-screen)
+    (print-fight-start pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health)
+    input))
+
+(defn fought-boss? [pc-loc map-stack pc-inv pc-health]
+  (if (= boss (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy]))
+    (pc-wins)
+    (do 
+      (println "             With one last snarl, your enemy falls dead at your feet. You win the fight!") 
+      (pause)
+      [pc-loc map-stack pc-inv pc-health false])))
+
+(defn fight [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input]
+    (cond
+      (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
+                      [new-pc-loc new-map-stack pc-inv new-pc-health true])
+      (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
+                      (let [new-input (continue pc-loc map-stack new-pc-inv pc-eq new-pc-health max-health enemy-health)]
+                        (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
+      (= input "a") (let [[new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+                      (if (<= new-enemy-health 0)
+                        (fought-boss? pc-loc map-stack pc-inv new-pc-health)
+                        (let [new-input (im-not-dead-yet pc-loc map-stack pc-inv pc-eq new-pc-health max-health new-enemy-health)]
+                          (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input))))
+      :else (do
+              (println "That's not valid input. What do you want to do?")
+              (let [new-input (read-line)]
+                (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
+
+
+(defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+  (let [enemy-health 
+        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :health])]
+  (print-fight-start pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health) 
     (let [input (read-line)]
-      (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
+      (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] 
+            (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
         (if (= alive? false)
           (do
             (dosync
@@ -1482,16 +1522,6 @@
                        pc-health 
                        pc-damage
                        max-health] 
-      (= input "m") (do 
-                      (open-main-menu) 
-                      (println) 
-                      (pause) 
-                      [pc-loc 
-                       pc-inv 
-                       pc-eq 
-                       pc-health 
-                       pc-damage
-                       max-health]) 
       (= input "o") (let [new-pc-inv (obj-control pc-loc map-stack pc-inv)]
                       [pc-loc 
                        new-pc-inv 
@@ -1507,7 +1537,7 @@
                        new-pc-health 
                        new-pc-damage
                        new-max-health])
-      (= input "q") (System/exit 0) 
+      (= input "x") (System/exit 0) 
       :else (do 
               (println "That's not a valid choice.") 
               (pause) 
@@ -1517,7 +1547,7 @@
                pc-health 
                pc-damage max-health]))))
 
-(defn print-user-menu []
+(defn open-user-menu []
   (with-open [rdr (io/reader "resources/user-menu.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
@@ -1530,7 +1560,7 @@
   If a description can be pulled from the new pc-loc (from location data stored in map)
     the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
   If not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
-  (print-user-menu)
+  (open-main-menu)
   (if (< pc-health max-health)
     (do
      (println)
@@ -1710,7 +1740,6 @@
   ;these are function calls
   (open-title)
   (open-intro)
-  (open-main-menu)
   (loop [pc-loc init-pc-loc map-stack init-map-stack pc-inv init-pc-inv pc-eq init-pc-eq pc-health init-pc-health pc-damage init-pc-damage max-health init-max-health]
       (do (clear-screen)
           (print-loc-desc pc-loc map-stack)

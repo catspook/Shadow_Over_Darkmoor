@@ -2,9 +2,20 @@
 
 A Clojure library designed to ... well, that part is up to you.
 
+
+
 ## Usage
 
 FIXME
+
+## Acknowledgements
+
+Thanks to my wife, without whom I never would have been able to complete this.
+
+All ASCII art taken from: 
+   patorjk.com/software/taag
+   www.asciiart.eu/
+   ascii.co.uk/
 
 ## License
 

@@ -1,0 +1,49 @@
+                                                                  
+
+ 
+
+ ,,                         ,                    ,,                 
+||          ;             ||                    ||   _             
+||/\\  /'\\ \\/\/\       =||=  /'\\       -_-_  ||  < \, '\\/\\ <> 
+|| || || || || | |        ||  || ||       || \\ ||  /-||  || ;'    
+|| || || || || | |        ||  || ||       || || || (( ||  ||/      
+\\ |/ \\,/  \\/\\/        \\, \\,/        ||-'  \\  \/\\  |/    <> 
+  _/                                      |/             (         
+                                          '               -_-      
+
+
+As you make your way through the village, you will find weapons, armor, and clues to help you on your way. Use the commands listed below to 
+search for interesting objects and look through your inventory. Make sure you pay attention to the objects at each location you visit--
+your life may depend on it.
+
+Enemies will attack you as you reach their location. During combat, you will be able to drink any health potions that you've picked up along 
+the way. You also have the option to run away to a safe place, but your opponent will be able to take one last attack as you leave. When 
+combat begins, a menu will appear with the available commands.
+
+To win, find the person responsible for the attack on your village and destroy them.
+
+
+
+            .-.---------------------------------------.-.
+           ((o))                                         )
+            \U/_________     _________        __________/
+             |                                        |
+             |    _,  _, _, _ _, _  _, _, _ __,  _,   |
+             |   / ` / \ |\/| |\/| /_\ |\ | | \ (_    |
+             |   \ , \ / |  | |  | | | | \| |_/ , )   |
+             |    ~   ~  ~  ~ ~  ~ ~ ~ ~  ~ ~    ~    |
+             |                                        |
+             |    n.........move North                |
+             |    s.........move South                |
+             |    e.........move East                 |
+             |    w.........move West                 |
+             |    o.........look around for objects   |
+             |    i.........open your inventory       |
+             |    m.........open this menu            |
+             |    x.........exit the game             |
+             |                                        |
+             |____________       ________    _________|
+            /A\                                        \
+           ((o))                                        )
+            '-'----------------------------------------'
+
