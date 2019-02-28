@@ -954,20 +954,20 @@
   (println) 
   (println))
 
-(defn add-damage [pc-inv pc-damage int-input]
-  (+ pc-damage (:damage (nth pc-inv (dec int-input)))))
+(defn add-damage [pc-inv pc-damage maybe-int]
+  (+ pc-damage (:damage (nth pc-inv (dec maybe-int)))))
 
-(defn add-health [pc-inv health int-input]
-  (+ health (:health (nth pc-inv (dec int-input)))))
+(defn add-health [pc-inv health maybe-int]
+  (+ health (:health (nth pc-inv (dec maybe-int)))))
 
-(defn sub-damage [pc-eq pc-damage int-input]
-  (- pc-damage (:damage (nth pc-eq (dec int-input)))))
+(defn sub-damage [pc-eq pc-damage maybe-int]
+  (- pc-damage (:damage (nth pc-eq (dec maybe-int)))))
 
-(defn sub-health [pc-eq health int-input]
-  (- health (:health (nth pc-eq (dec int-input)))))
+(defn sub-health [pc-eq health maybe-int]
+  (- health (:health (nth pc-eq (dec maybe-int)))))
 
-(defn potion-add-health [pc-inv pc-health int-input max-health]
-  (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec int-input))))]
+(defn potion-add-health [pc-inv pc-health maybe-int max-health]
+  (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec maybe-int))))]
     (if (> new-pc-health max-health)
       max-health
       new-pc-health)))
@@ -983,16 +983,16 @@
 
 ;adding items to inventory____________________________________________________
 
-(defn add-obj-to-inv [pc-loc map-stack pc-inv int-input]
+(defn add-obj-to-inv [pc-loc map-stack pc-inv maybe-int]
   (println)
   (print "That item has been added to your inventory.")
   (println)
   (print-debug pc-inv)
-  (vec (conj pc-inv (nth (get-obj pc-loc map-stack) (dec int-input)))))
+  (vec (conj pc-inv (nth (get-obj pc-loc map-stack) (dec maybe-int)))))
 
-(defn remove-obj-from-loc [pc-loc map-stack int-input]
-  (let [pre-obj (subvec (get-obj pc-loc map-stack) 0 (dec int-input))
-        post-obj  (subvec (get-obj pc-loc map-stack) int-input)]
+(defn remove-obj-from-loc [pc-loc map-stack maybe-int]
+  (let [pre-obj (subvec (get-obj pc-loc map-stack) 0 (dec maybe-int))
+        post-obj  (subvec (get-obj pc-loc map-stack) maybe-int)]
     (dosync
       (ref-set (get-obj-ref pc-loc map-stack) (vec (concat pre-obj post-obj))))))
 
@@ -1002,16 +1002,21 @@
   (println) 
   (pause)) 
 
+(defn is-int? [input]
+    (try 
+      (Integer/parseInt input)
+      (catch NumberFormatException e (println "That's not a number."))))
+
 (defn something-to-add [pc-loc map-stack pc-inv]
   (println) 
-  (println "What would you like to add? Enter '1' for the first item listed, '2' for the second item listed, and so on.") 
+  (println "What would you like to add? enter '1' for the first item listed, '2' for the second item listed, and so on.") 
   (println)
   (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (integer? int-input)
-        (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv int-input)]
+    (let [maybe-int (is-int? input)]
+      (if maybe-int
+        (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv maybe-int)]
           (print-debug new-pc-inv)
-          (remove-obj-from-loc pc-loc map-stack int-input)
+          (remove-obj-from-loc pc-loc map-stack maybe-int)
           (print-debug new-pc-inv)
           new-pc-inv)
         (something-to-add pc-loc map-stack pc-inv)))))
@@ -1066,14 +1071,14 @@
               (print-debug pc-inv) 
               (obj-control pc-loc map-stack pc-inv)))))
 
-;INVENTORY________________________________________________________________________
+;inventory________________________________________________________________________
 
 ;removing items from inventory_______________________________________________
 
-(defn add-item-to-loc [pc-loc map-stack pc-inv int-input]
+(defn add-item-to-loc [pc-loc map-stack pc-inv maybe-int]
   (print-debug pc-inv)
   (dosync
-    (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec int-input)))))
+    (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec maybe-int)))))
 
 (defn nothing-to-drop [pc-inv]
   (println "You have nothing to drop.")
@@ -1084,13 +1089,13 @@
   (println)
   (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (integer? int-input) 
+    (let [maybe-int (is-int? input)]
+      (if maybe-int
         (do
           (print-debug pc-inv)
-          (add-item-to-loc pc-loc map-stack pc-inv int-input)
-          (let [pre-inv (subvec pc-inv 0 (dec int-input))
-                post-inv (subvec pc-inv int-input)]
+          (add-item-to-loc pc-loc map-stack pc-inv maybe-int)
+          (let [pre-inv (subvec pc-inv 0 (dec maybe-int))
+                post-inv (subvec pc-inv maybe-int)]
             (print-debug pre-inv)
             (print-debug post-inv)
             (vec (concat pre-inv post-inv))))
@@ -1127,17 +1132,17 @@
   (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
   (println) 
   (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (integer? int-input)
-        (if (:potion (nth pc-inv (dec int-input)))
+    (let [maybe-int (is-int? input)]
+      (if maybe-int
+        (if (:potion (nth pc-inv (dec maybe-int)))
           (do
             (println "You can't equip that.")
             (pause)
             [pc-eq pc-health pc-damage max-health])
-          [(vec (conj pc-eq (nth pc-inv (dec int-input)))) 
-           (add-health pc-inv pc-health int-input) 
-           (add-damage pc-inv pc-damage int-input)
-           (add-health pc-inv max-health int-input)])
+          [(vec (conj pc-eq (nth pc-inv (dec maybe-int)))) 
+           (add-health pc-inv pc-health maybe-int) 
+           (add-damage pc-inv pc-damage maybe-int)
+           (add-health pc-inv max-health maybe-int)])
         (something-to-drop pc-inv pc-eq pc-health pc-damage max-health)))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
@@ -1151,14 +1156,14 @@
   (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
   (println)
   (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (integer? int-input)
-        (let [pre-eq (subvec pc-eq 0 (dec int-input))
-              post-eq (subvec pc-eq int-input)]
+    (let [maybe-int (is-int? input)]
+      (if maybe-int
+        (let [pre-eq (subvec pc-eq 0 (dec maybe-int))
+              post-eq (subvec pc-eq maybe-int)]
           [(vec (concat pre-eq post-eq))
-           (sub-health pc-eq pc-health int-input) 
-           (sub-damage pc-eq pc-damage int-input)
-           (sub-health pc-eq max-health int-input)])
+           (sub-health pc-eq pc-health maybe-int) 
+           (sub-damage pc-eq pc-damage maybe-int)
+           (sub-health pc-eq max-health maybe-int)])
         (something-to-unequip pc-eq pc-health pc-damage max-health)))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
@@ -1173,30 +1178,30 @@
   (println)
   [pc-inv pc-health]) 
 
-(defn drinkable [pc-loc map-stack pc-inv pc-health int-input max-health]
+(defn drinkable [pc-loc map-stack pc-inv pc-health maybe-int max-health]
   (println)
   (println "You drink the potion, and immediately feel a little bit better.")
   (print-debug pc-inv)
-  (let [pre-inv (subvec pc-inv 0 (dec int-input))
-        post-inv (subvec pc-inv int-input)]
+  (let [pre-inv (subvec pc-inv 0 (dec maybe-int))
+        post-inv (subvec pc-inv maybe-int)]
     (print-debug pre-inv)
     (print-debug post-inv)
     [(vec (concat pre-inv post-inv)) 
-     (potion-add-health pc-inv pc-health int-input max-health)]))
+     (potion-add-health pc-inv pc-health maybe-int max-health)]))
 
 (defn drink-hp [pc-loc map-stack pc-inv pc-health max-health]
   (println)
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
-    (let [int-input (Integer/parseInt input)]
-      (if (integer? int-input)
-        (if (= int-input 0)
+    (let [maybe-int (is-int? input)]
+      (if maybe-int
+        (if (= maybe-int 0)
           (do
             (println "That's not an item.")
             [pc-inv pc-health])
-          (if (not (:potion (nth pc-inv (dec int-input))))
+          (if (not (:potion (nth pc-inv (dec maybe-int))))
             (not-drinkable pc-inv pc-health)
-            (drinkable pc-loc map-stack pc-inv pc-health int-input max-health)))
+            (drinkable pc-loc map-stack pc-inv pc-health maybe-int max-health)))
         (drink-hp pc-loc map-stack pc-inv pc-health max-health)))))
 
 ;print inventory____________________________________________________
@@ -1262,14 +1267,14 @@
                       (inv-control pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health))
       :else (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
 
-;COMBAT_______________________________________________________________________________________
+;combat_______________________________________________________________________________________
 
 (defn print-rat []
   (println "A large rat scuttles out of the shadows, open sores oozing on its back. It bares its yellow teeth at you. "))
  
 (defn print-cultist []
   (if (= 1 (rand 2))
-    (println "A young man in swirling black blood-soaked robes glances around, spotting you immediately. He yells and runs at you, drawing a curved dagger dripping with poison.")
+    (println "A young man in swirling black blood-soaked robes glances around, spotting you immediately. He shouts, drawing a curved dagger dripping with poison.")
     (println "You turn a corner and see a woman with long, grey hair concentrate for a moment before a tiny blue flame appears in her hand. In a second a roaring fire is contained in her palm.")))
 
 (defn print-skele []
@@ -1278,7 +1283,7 @@
     (println "This skeleton looks between you and the chipped axe in its bony hand, and a whisper of a sad sigh rattles in its ribcage.")))
 
 (defn print-zombie []
-  (println "You turn a corner and see a woman with long, grey hair concentrate for a moment before a tiny blue flame appears in her hand. In a second a roaring fire is contained in her palm."))
+  (println "As you carefully pick your way forward, a corpse groans and rises from the ground, stumbling towards you."))
 
 (defn print-ghost []
   (println "The air freezes and the light around you dims. A gleam of ethereal blue light coalesces into a spirit, lost in the torment of its last moments. 'No! I won't let you hurt them!' "))
@@ -1297,7 +1302,7 @@
       (= which-one? 2) (println "A skeleton pours a bottle behind the bar through its open jaw, rum splashing through its body. It smashes the empty bottle and jumps over the counter towards you.")
       (= which-one? 3) (println "Two skeletons are locked in a brawl in front of you. One uses a candlestick to bash the other's skull, and it collapses. The victor looks around for another victim.")
       (= which-one? 4) (println "A skeleton dances drunkenly to silent music. You try to squeeze past it, but you bump its hip and it angrily lashes out at you.")
-      :else (println "This should never print: print-tavern-skele"))))
+      :else (println "this should never print: print-tavern-skele"))))
 
 (defn print-enemy [pc-loc map-stack]
   (if (= tavern-18 (first map-stack))
@@ -1311,10 +1316,10 @@
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :ghost]) (print-ghost)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :boss]) (print-boss)
         (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :minion]) (print-minion)
-        :else (println "This should never print: print-enemy")))))
+        :else (println "this should never print: print-enemy")))))
 
 (defn print-enemy-damage-done [pc-health max-health new-pc-health]
-  (print "             Your enemy attacks and deals ")
+  (print "            The enemy attacks and deals ")
   (print (- pc-health new-pc-health))
   (print " damage.")
   (println)
@@ -1391,7 +1396,7 @@
     map-stack))
 
 (defn run-away [pc-loc map-stack pc-health max-health]
-  (println "             As vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
+  (println "             As your vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
   (let [new-pc-health 
         (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
     (if (<= new-pc-health 0)
@@ -1406,6 +1411,7 @@
         (let [new-map-stack (first-map map-stack)]
           (let [new-row-pc-loc (assoc pc-loc :row 0)] 
             (let [new-pc-loc (assoc new-row-pc-loc :col 1)]
+              (pause)
               [new-pc-loc new-map-stack new-pc-health])))))))
 
 (defn open-combat []
@@ -1486,16 +1492,16 @@
             [new-pc-loc new-map-stack new-pc-inv new-pc-health])
           [new-pc-loc new-map-stack new-pc-inv new-pc-health])))))
 
-;MENU AND USER OPTIONS________________________________________________________________________________________
+;menu and user options________________________________________________________________________________________
 
 ;moving normally________________________________________
 
 (defn parse-user-input [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
-  "called from check-move. Parses user input.
+  "called from check-move. parses user input.
   movement: dec/inc returns a new value that is one greater than the value passed in.
     assoc returns a new map of pc coordinates that is updated according to inc/dec
   objects: objects, loot, and inventory are placeholders
- 'q' quits program (system call)"
+ 'q' quits program (System call)"
   (let [input (read-line)]
     (cond
       (= input "n") [(assoc pc-loc :row (dec (:row pc-loc))) 
@@ -1556,10 +1562,10 @@
   "takes pc-loc player coordinates and the map stack
   prints a menu of options for the user to see
   then calls parse-user-input
-    parse-user-input returns an updated set of PC coordinates
-  If a description can be pulled from the new pc-loc (from location data stored in map)
+    parse-user-input returns an updated set of pc coordinates
+  if a description can be pulled from the new pc-loc (from location data stored in map)
     the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
-  If not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
+  if not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
   (open-main-menu)
   (if (< pc-health max-health)
     (do
@@ -1629,11 +1635,11 @@
             | You can enter a new  |
             |    area from here.   | 
             |                      |
-            |   Type y to enter    |
-            |  or x to stay here.  |
+            |     y.....enter      |
+            |   x......stay here   |
             |__    ___   __    ___ |
           =(________________________)=")
-  (println))
+  (println)(println)(println)(println)(println))
 
 (defn push-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
   "called from display-menu, takes in pc-loc and map-stack
@@ -1687,13 +1693,13 @@
           =(____   ___      __     _)=
             |                      |
             |  You can exit this   |
-            | this area from here. |
+            |   area from here.    |
             |                      |
-            |    Type y to exit    |
-            |    or x to stay.     |
+            |      y.....exit      |
+            |   x.....stay here    |
             |__    ___   __    ___ |
           =(________________________)=")
-  (println))
+  (println)(println)(println)(println)(println))
 
 (defn pop-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
   "called from display-menu, takes in pc-loc and map-stack
