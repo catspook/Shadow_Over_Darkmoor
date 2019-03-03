@@ -5,9 +5,21 @@
 (def debug
   false)
 
+(def debug-hit-list
+  false)
+
 (defn print-debug [thing]
   (if debug
   (println thing)))
+
+(defn print-debug-hit-list [func, hit-list]
+  (if debug-hit-list
+    (do
+      (println)
+      (print func)
+      (print " ")
+      (print hit-list)
+      (println))))
 
 ;OPENING SEQUENCE__________________________________________________________
 
@@ -103,6 +115,10 @@
   {:minion true
    :health 30
    :damage 7})
+
+;places w/ a monster you've already killed get added here
+(def init-hit-list
+  #{})
 
 ;OBJECT DATA____________________________________________________________________________
 
@@ -317,23 +333,20 @@
 ;exiting basement
 (def loc-1-3-0
   {:obj (ref (place-obj health 2)) 
-   :desc "temple basement"
+   :desc "The Templar used this underground chamber for holy rituals. A small wooden table lies to the side of the rope ladder leading upwards, covered in blood-spattered candles."
    :exit-start-coords {:row 1 :col 0}})
 (def loc-1-3-1
   {:obj (ref (place-obj cultists 4)) 
-   :desc "basement1"
-   :fight {:alive? (ref true)
-           :enemy minion}})
+   :desc "A beautifully carved marble monk stares silently forward, unaware of the defilement of its temple."
+   :enemy minion})
 (def loc-1-3-2
   {:obj (ref (place-obj cult-skele 3)) 
-   :desc "basement2"
-   :fight {:alive? (ref true)
-           :enemy minion}})
+   :desc "The High Priest of the Templar Order lies before you, dead. A sword is still clutched in his feeble hand." 
+   :enemy minion})
 (def loc-1-3-3
   {:obj (ref (place-obj temple 1)) 
-   :desc "basement3"
-   :fight {:alive? (ref true)
-           :enemy boss}})
+   :desc "A marble alter takes up one-quarter of the underground chamber. It has been defaced with runes painted in blood. A spellbook lies open on top, emitting unearthly black smoke."
+   :enemy boss})
 
 (def basement-1-3 
   [[loc-1-3-0 loc-1-3-1]
@@ -343,98 +356,82 @@
 ;exiting temple
 (def loc-1-0
   {:obj (ref (place-obj letter 1)) 
-   :desc "You're inside the temple." 
+   :desc "The air inside in the Temple smells dusty and stagnant, and feels wrong coming from a place you've always known as bright and full of life." 
    :exit-start-coords {:row 1 :col 2}})
 (def loc-1-1
   {:obj (ref (place-obj cultists 3)) 
-   :desc "temple 1"})
-(def loc-1-2
-  {:obj (ref (place-obj health 1)) 
-   :desc "temple 2"})
+   :desc "Heavy oaken pews lie stacked haphazardly in front of the Temple's Eastern doors. You will have to move West to exit."})
 ;enter temple basement
-(def loc-1-3
+(def loc-1-2
   {:obj (ref (place-obj health 0)) 
-   :desc "enter basement"
-   :fight {:alive? (ref true)
-           :enemy magic-cult}
+   :desc "A wooden bed lies upturned, the plain woollen blanket soaking up the last of the blood trail. A heavy wooden trapdoor lies open, eerie chanting echoing up from the depths."
+   :enemy magic-cult
    :enter {:goto basement-1-3
            :start-coords {:row 0 :col 0}}})
-(def loc-1-4
+(def loc-1-3
   {:obj (ref (place-obj cultists 2)) 
-   :desc "temple 4"
-   :fight {:alive? (ref true)
-           :enemy dagger-cult}})
+   :desc "The thick velvet curtain seperating the Priest's quarters has been ripped violently to the side, part of it dyed black from fresh blood. The blood trail continues West."
+   :enemy dagger-cult})
+(def loc-1-4
+  {:obj (ref (place-obj health 1)) 
+   :desc "A basin of Holy Water has been replaced with a brackish, foul-smelling, and cloudy fluid. You dare not touch it."})
 (def loc-1-5
-  {:obj (ref (place-obj temple 2)) 
-   :desc "temple 5"})
+  {:obj (ref (place-obj temple 3)) 
+   :desc "A carved monk stands in silent supplication, his marble hands reaching beseechingly upward."
+   :enemy dagger-cult})
 (def loc-1-6
-  {:obj (ref (place-obj temple 1)) 
-   :desc "temple 6"
-   :fight {:alive? (ref true)
-           :enemy dagger-cult}})
+  {:obj (ref (place-obj cultists 1)) 
+   :desc "Smashed wooden pews and ripped pieces of tapistry litter the floor, a trail of fresh blood leading North through the wreckage."})
 (def loc-1-7
-  {:obj (ref (place-obj cultists 3)) 
-   :desc "temple 7"})
-(def loc-1-8
-  {:obj (ref (place-obj cultists 0)) 
-   :desc "temple 8"})
-(def loc-1-9
   {:obj (ref (place-obj health 2)) 
-   :desc "temple 9"
-   :fight {:alive? (ref true)
-           :enemy magic-cult}})
-(def loc-1-10
+   :desc "Soft orange light filters through the stained glass, illuminating a red sun setting over a golden field."
+   :enemy magic-cult})
+(def loc-1-8
   {:obj (ref (place-obj temple 2)) 
-   :desc "temple 10"
-   :fight {:alive? (ref true)
-           :enemy dagger-cult}})
-(def loc-1-11
+   :desc "Bloody handprints mar the stained-glass windows at the back of the Temple. The blood drips into a small pool at the base of the wall and trails Northwest."
+   :enemy dagger-cult})
+(def loc-1-9
   {:obj (ref (place-obj cultists 3)) 
-   :desc "temple 11"})
+   :desc "An intricately carved alter sits untouched on a small dias. You're unsure of why the Cultists have left it alone--perhaps there's something else in here they wanted more."})
 
 (def temple-1 
-  [[loc-0-0 loc-1-0  loc-1-1  loc-0-0]
-   [loc-1-3 loc-1-4  loc-1-5  loc-1-6]
-   [loc-0-0 loc-1-8  loc-1-9  loc-0-0]
-   [loc-0-0 loc-1-10 loc-1-11 loc-0-0]])
+  [[loc-0-0 loc-1-0 loc-1-1  loc-0-0]
+   [loc-1-2 loc-1-3 loc-1-4  loc-1-5]
+   [loc-0-0 loc-1-6 loc-1-7  loc-0-0]
+   [loc-0-0 loc-1-8 loc-1-9 loc-0-0]])
 
 ;mausoleum
 ;exiting mausoleum
 (def loc-2-7-0
   {:obj (ref (place-obj crypt 1)) 
-   :desc "in Mausoleum" 
+   :desc "The heavy crypt doors sit ajar behind you. Strangely worn steps continue down into the darkness--who is trodding them, in this house of the dead?" 
    :exit-start-coords {:row 0 :col 1}})
 (def loc-2-7-1
   {:obj (ref (place-obj skele 0)) 
-   :desc "mausoleum 1"})
+   :desc "The worn steps continue downwards, and you begin to make out recesses in the room beyond, skulls gleaming white in the darkness."})
 (def loc-2-7-2
   {:obj (ref (place-obj skele 0)) 
-   :desc "mausoleum 2"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "The rectangular recess in this wall is stacked with bones, skulls carefully placed in a pyramid atop a circle of long bones."
+   :enemy bow-skele})
 (def loc-2-7-3
   {:obj (ref (place-obj health 2)) 
-   :desc "mausoleum 3"})
+   :desc "Carefully edging forwards, you see the carved stone body of a Templar Knight from days gone by lying on top of an untouched sarcophagus."})
 (def loc-2-7-4
-  {:obj (ref (place-obj crypt 2)) 
-   :desc "mausoleum 4"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+  {:obj (ref (place-obj crypt 1)) 
+   :desc "You push a sarcophagus lid aside and find a skeleton clutching a leather-bound journal protectively. As soon as you touch the journal, it crumbles into dust."
+   :enemy bow-skele})
 (def loc-2-7-5
   {:obj (ref (place-obj health 4)) 
-   :desc "mausoleum 5"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "Several coffins are stacked on top of each other in the corner of the crypt. You gather that whoever was in these either wasn't well liked or wasn't very important."
+   :enemy axe-skele})
 (def loc-2-7-6
-  {:obj (ref (place-obj crypt 0)) 
-   :desc "mausoleum 6"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+  {:obj (ref (place-obj crypt 1)) 
+   :desc "You narrowly avoid stepping in the center of a chalk ring. Spectral runes glow a faint purple inside the circle, but slowly fade as you scrub your toe through the chalk line."
+   :enemy axe-skele})
 (def loc-2-7-7
-  {:obj (ref (place-obj crypt 4)) 
-   :desc "mausoleum 7"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+  {:obj (ref (place-obj crypt 3))
+   :desc "The slight smoky smell of insense hangs in the air above a smouldering censer."
+   :enemy bow-skele})
 
 ;mausoleum
 (def mausoleum-2-7 
@@ -445,49 +442,43 @@
 
 ;graveyard
 (def loc-2-0
-  {:obj (ref (place-obj skele 2)) 
-   :desc "graveyard 0"})
+  {:obj (ref (place-obj health 4)) 
+   :desc " A tiny fence marks the boundary of a family plot. Marigolds have been planted along the inside edge."})
 ;exit graveyard
 (def loc-2-1
   {:obj (ref (place-obj skele 2)) 
-   :desc "You stand inside the graveyard." 
-   :fight {:alive? (ref true)
-           :enemy bow-skele}
+   :desc "You stand just inside the twisting iron gate of the graveyard." 
+   :enemy bow-skele
    :exit-start-coords {:row 1 :col 1}})
 (def loc-2-2
   {:obj (ref (place-obj skele 1)) 
-   :desc "graveyard 2"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc " A small wooden cross mark's a pauper's grave, the name too weathered to read."
+   :enemy axe-skele})
 (def loc-2-3
   {:obj (ref (place-obj skele 0)) 
-   :desc "graveyard 3"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc " 'R. I. P. Commander Agustus Naro, an Inspiration to All' "
+   :enemy axe-skele})
 (def loc-2-4
   {:obj (ref (place-obj skele 2)) 
-   :desc "graveyard 4"})
+   :desc "This gravestone is half-hidden amongst a bunch of bright yellow sunflowers."})
 (def loc-2-5
   {:obj (ref (place-obj skele 1)) 
-   :desc "graveyard 5"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc " 'Here lies Stefan, a Goode Boy until the Ende.' You can just make out the unskilled carving of a Terrier underneith the epitaph. "
+   :enemy bow-skele})
 (def loc-2-6
-  {:obj (ref (place-obj skele 0)) 
-   :desc "graveyard 6"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+  {:obj (ref (place-obj health 1)) 
+   :desc "A tall stone monument tilts to the side, the epitaph hidden under the ivy wrapping its way up the pillar."
+   :enemy axe-skele})
 ;entering mausoleum
 (def loc-2-7
   {:obj (ref (place-obj skele 0)) 
-   :desc "enter mausoleum"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}
+   :desc "Nestled among carefully-pruned bushes sits the Templar Mausoleum, the heavy stone jar cracked slightly open."
+   :enemy bow-skele
    :enter {:goto mausoleum-2-7 
            :start-coords {:row 0 :col 1}}})
 (def loc-2-8
-  {:obj (ref (place-obj skele 1)) 
-   :desc "graveyard 8"})
+  {:obj (ref (place-obj health 1)) 
+   :desc "You crouch under an ancient and tall weeping willow, its branches trailing over several tombstones."})
 
 (def graveyard-2 
   [[loc-2-6 loc-2-7 loc-2-8]
@@ -497,43 +488,38 @@
 ;store
 (def loc-3-0
   {:obj (ref (place-obj gen 2)) 
-   :desc "store 0"})
+   :desc "Bunches of unused candles tied with twine are neatly stacked in this corner."})
 (def loc-3-1
   {:obj (ref (place-obj gen-cult 3)) 
-   :desc "store 1"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "The floor here is littered with hard sugar candy, spilled from their container."
+   :enemy bow-skele})
 (def loc-3-2
   {:obj (ref (place-obj gen-cult 1)) 
-   :desc "store 2"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "The entire corner of the shop is stacked with wooden crates, some marked with an expiration date of several days prior to today's."
+   :enemy axe-skele})
 (def loc-3-3
   {:obj (ref (place-obj gen-cult 2)) 
-   :desc "store 3"})
+   :desc "A curtain, embroidered with tiny cherries, cheerfully hides the gray light filtering through the grimy window."})
 (def loc-3-4
   {:obj (ref (place-obj junk 1)) 
-   :desc "store 4"})
+   :desc "A hand-tied rug dominates the center of the shop, its original colors faded under years of heavy use."})
 (def loc-3-5
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "store 5"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "You examine the main counter piled high with buttons and spools of thread. The store's money tin has been pried open and emptied."
+   :enemy bow-skele})
 (def loc-3-6
   {:obj (ref (place-obj gen 0)) 
-   :desc "store 6"})
+   :desc "The ground arorund a keg of unskilfully tapped cider is still saturated with liquid."})
 ;enter store
 (def loc-3-7
   {:obj (ref (place-obj gen 5)) 
-   :desc "You're inside the store." 
-   :fight {:alive? (ref true)
-           :enemy bow-skele}
+   :desc "Your head brushes against a small brass bell attached to the door and a litle chime rings out." 
+   :enemy bow-skele
    :exit-start-coords {:row 0 :col 4}})
 (def loc-3-8
   {:obj (ref (place-obj gen-cult 3)) 
-   :desc "store 8"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "An oversized shelf stocked high with home goods is squeezed into the corner of the shop."
+   :enemy axe-skele})
 
 (def store-3 
   [[loc-3-0 loc-3-1 loc-3-2]
@@ -543,46 +529,41 @@
 ;mansion
 (def loc-4-0
   {:obj (ref (place-obj gen 0))
-   :desc "mansion 0"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "You stand in a grand dining room. The silver cutlery sparkles in the afternoon sun."
+   :enemy ghost})
 (def loc-4-1
   {:obj (ref (place-obj rich 1))
-   :desc "mansion 1"})
+   :desc "You walk towards a cabinet in the corner of the dinking room and find several empty wine bottles inside."})
 (def loc-4-2
   {:obj (ref (place-obj health 3))
-   :desc "mansion 2"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "Three walls of this room are full-length windows, and clusters of potted plans sit every few feet. A small alchemical workbench is pressed agianst one wall."
+   :enemy ghost})
 (def loc-4-3
   {:obj (ref (place-obj rich 0))
-   :desc "mansion 3"})
+   :desc "An unobtrustive door leads to a washroom, a rare sight in this town. You take some time to slash your face with fresh, cold water from the basin."})
 (def loc-4-4
   {:obj (ref (place-obj rich 2))
-   :desc "mansion 4"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "The door the master suite hangs from one hinge. You can just make out the mayor's bloodied body lying behind the four-poster bed dominating the room."
+   :enemy ghost})
 ;enter mansion
 (def loc-4-5
   {:obj (ref (place-obj health 1))
-   :desc "you're in the mansion"
+   :desc "The foyer of this mansion is decorated with an oil painting of its original owner--the mayor's grandfather, the founder of this town."
    :exit-start-coords {:row 2 :col 2}})
 (def loc-4-6
   {:obj (ref (place-obj gen 0))
-   :desc "mansion 6"})
+   :desc "You rifle through the mayor's study and find a crumpled note in the fire. It is from the captain of the town's guard, and mentions suspicious figures have been seen lurking outside town."})
 (def loc-4-7
-  {:obj (ref (place-obj health 2))
-   :desc "mansion 7"})
+  {:obj (ref (place-obj rich 4))
+   :desc "Two crossed swords hang on the wall above the entrance to the mayor's pursonal armory. You pick through her collection and spot a few pieces you like."})
 (def loc-4-8
-  {:obj (ref (place-obj gen 0))
-   :desc "mansion 8"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+  {:obj (ref (place-obj gen 2))
+   :desc "A dark celler lies behind a battered door. A few beets spill out of a sack in the corner."
+   :enemy ghost})
 (def loc-4-9
   {:obj (ref (place-obj rich 3))
-   :desc "mansion 9"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "You're sure this was a comfortable sitting room at one time, but it's hard to ignore the body slumped forward in an armchair off to the side of the cold fireplace."
+   :enemy ghost})
 
 (def mansion-4 
   [[loc-0-0 loc-4-0 loc-4-1]
@@ -593,32 +574,29 @@
 ;house
 (def loc-5-0
   {:obj (ref (place-obj junk-gen-forge 2))
-   :desc "house 0"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "You lean out the back door and see a small vegetable garden. Empty and half-full sacks of vegetables are stacked by the door."
+   :enemy ghost})
 (def loc-5-1
   {:obj (ref (place-obj gen 2))
-   :desc "house 1"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "A large, rough-hewn shelf sits opposite the wooden table. Jars of herbs and spices are intermixed with sacks of flour and a mortar and pestle."
+   :enemy ghost})
 (def loc-5-2
-  {:obj (ref (place-obj rich 0))
-   :desc "house 2"})
+  {:obj (ref (place-obj gen 1))
+   :desc "A faded lace tablecloth covers a modest wooden table. Dried flowers decorate the window sill."})
 (def loc-5-3
-  {:obj (ref (place-obj health 1))
-   :desc "house 3"})
+  {:obj (ref (place-obj gen 2))
+   :desc "Muddy boots and some small farming equipment are tossed haphazardly by the back door."})
 (def loc-5-4
-  {:obj (ref (place-obj gen 0))
-   :desc "house 4"})
+  {:obj (ref (place-obj health 1))
+   :desc "The kitchen table is piled high with loves of baked bread, some tinged slightly green from herbs. You take a loaf hungrily--though stale, it still tastes very good."})
 (def loc-5-5
   {:obj (ref (place-obj rich 1))
-   :desc "house 5"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "You enter the main room of the house. An old brass key tied to a faded pink ribbon hangs from the wall. Underneith is a large wooden iron-studded chest."
+   :enemy ghost})
 ;enter house
 (def loc-5-6
   {:obj (ref (place-obj health 1))
-   :desc "you're in the house"
+   :desc "A woven basket sits by the front door. A linen cloth has been carefully wrapped around a bundle of herbs and potions."
    :exit-start-coords {:row 3 :col 2}})
 
 (def house-5 
@@ -627,42 +605,38 @@
 
 ;ruins
 (def loc-6-0
-  {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "ruins 0"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+  {:obj (ref (place-obj junk-gen-forge 0)) 
+   :desc "A side of the house has collapsed completely, leaving the surrounding area exposed to the elements. Pockets of moss are beginning to grow on one rain-soaked log."
+   :enemy ghost})
 (def loc-6-1
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "ruins 1"})
+   :desc "You cling to a fallen beam as you cover a patch of cracked and broken flooring."})
 (def loc-6-2
   {:obj (ref (place-obj junk-gen-forge 1)) 
-   :desc "ruins 2"})
+   :desc "Whatever was originally in this pantry has completely burnt to a crisp."})
 ;enter ruins
 (def loc-6-3
   {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "You're inside the ruins." 
+   :desc "You duck under a beam that fell in front of the front door. Blackened wreakage lays around you." 
    :exit-start-coords {:row 3 :col 4}})
 (def loc-6-4
-  {:obj (ref (place-obj junk-gen-forge 0)) 
-   :desc "ruins 4"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+  {:obj (ref (place-obj junk-gen-forge 1)) 
+   :desc "You climb on top of a fallen staircase to get a better look around."
+   :enemy ghost})
 (def loc-6-5
   {:obj (ref (place-obj junk-gen-forge 0)) 
-   :desc "ruins 5"})
+   :desc "You spot a trapdoor behind the ruined staircase. The surrounding earth has sunken into it, filling the basement completely."})
 (def loc-6-6
   {:obj (ref (place-obj junk-gen-forge 4)) 
-   :desc "ruins 6"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "You shift a few large wooden beams and find a pocket of goods untouched by the fire."
+   :enemy ghost})
 (def loc-6-7
   {:obj (ref (place-obj junk-gen-forge 2)) 
-   :desc "ruins 7"})
+   :desc "The only thing left standing in this house is the soot-covered fireplace."})
 (def loc-6-8
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "ruins 8"
-   :fight {:alive? (ref true)
-           :enemy ghost}})
+   :desc "The ground here is sunken and shifted in a small landslide."
+   :enemy ghost})
 
 (def ruins-6 
   [[loc-6-0 loc-6-1 loc-6-2]
@@ -672,26 +646,23 @@
 ;cave
 (def loc-13-0
   {:obj (ref (place-obj skele 1)) 
-   :desc "You're inside the cave." 
+   :desc "The light from the cave entrance does not pierce far into the darkness. Every so often a small 'plink' of water hitting stone echos out of the depths." 
    :exit-start-coords {:row 3 :col 0}})
 (def loc-13-1
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 1"
-   :fight {:alive? (ref true)
-           :enemy magic-cult}})
+   :desc "A small trickle of water feeds a large concentration of dark blue mushrooms. You have no idea if they're edible, and you'd rather not check."
+   :enemy magic-cult})
 (def loc-13-2
   {:obj (ref (place-obj skele 1)) 
-   :desc "cave 2"})
+   :desc "Bats fly around your head as you round a corner. You curse as you pull your left foot out of a squishy pile of guano."})
 (def loc-13-3
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 3"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "A crumbling deer skull glints in the gloom."
+   :enemy axe-skele})
 (def loc-13-4
   {:obj (ref (place-obj skele 0)) 
-   :desc "cave 4"
-   :fight {:alive? (ref true)
-           :enemy rat}})
+   :desc "A rickety woo"
+   :enemy rat})
 (def loc-13-5
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 5"})
@@ -703,43 +674,37 @@
    :desc "cave 7"})
 (def loc-13-8
   {:obj (ref (place-obj skele 1)) 
-   :desc "cave 8"
-   :fight {:alive? (ref true)
-           :enemy rat}})
+   :desc ""
+   :enemy rat})
 (def loc-13-9
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 9"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :enemy bow-skele})
 (def loc-13-10
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 10"
-   :fight {:alive? (ref true)
-           :enemy dagger-cult}})
+   :enemy dagger-cult})
 (def loc-13-11
   {:obj (ref (place-obj cult-skele 3)) 
    :desc "cave 11"})
 (def loc-13-12
   {:obj (ref (place-obj cult-skele 2)) 
-   :desc "cave 12"
-   :fight {:alive? (ref true)
-           :enemy magic-cult}})
+   :desc "A rickety wooden bridge spans the length of a dark chasm in the rocky earth."
+   :enemy magic-cult})
 (def loc-13-13
   {:obj (ref (place-obj skele 1)) 
    :desc "cave 13"
-   :fight {:alive? (ref true)
-           :enemy rat}})
+   :enemy rat})
 (def loc-13-14
   {:obj (ref (place-obj cult-skele 0)) 
    :desc "cave 14"})
 (def loc-13-15
   {:obj (ref (place-obj cult-skele 0)) 
-   :desc "cave 15"})
+   :desc "You nearly tumble off the edge of an underground cliff. You catch your breath, listening to the rumble of the underground river below."})
 (def loc-13-16
   {:obj (ref (place-obj cult-skele 3)) 
    :desc "cave 16"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :enemy bow-skele})
 
 (def cave-13 
   [[loc-0-0  loc-0-0  loc-13-9 loc-13-10 loc-13-11 loc-13-12 loc-13-13 loc-13-14]
@@ -750,54 +715,48 @@
 ;tavern
 (def loc-18-0
   {:obj (ref (place-obj tavern 2)) 
-   :desc "tavern 0"})
+   :desc "You peek into the kitchen, and nearly gag at the smell of days-old dirty plates and mugs soaking in a sink full of foul, rancid water."})
 (def loc-18-1
   {:obj (ref (place-obj gen 1)) 
-   :desc "tavern 1"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "Kegs of beer and barrels of dried meat are stacked against the wall of the storeroom."
+   :enemy bow-skele})
 (def loc-18-2
   {:obj (ref (place-obj junk 2)) 
-   :desc "tavern 2"})
+   :desc "You enter the back room of the tavern, your boots sticking slightly to the floor as you try to avoid piles of spilled food and dried drink."})
 (def loc-18-3
   {:obj (ref (place-obj gen 0)) 
-   :desc "tavern 3"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "You crawl along the edge of the counter, trying not to be seen."
+   :enemy bow-skele})
 (def loc-18-4
   {:obj (ref (place-obj gen 0)) 
-   :desc "tavern 4"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "You squeeze yourself between two heavy armchairs in front of the fireplace."
+   :enemy axe-skele})
 (def loc-18-5
   {:obj (ref (place-obj tavern 1)) 
-   :desc "tavern 5"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "This fireplace is still lit, fed by chair and table legs and smashed bottles of alcohol."
+   :enemy axe-skele})
 (def loc-18-6
-  {:obj (ref (place-obj gen 2)) 
-   :desc "tavern 6"})
+  {:obj (ref (place-obj tavern 2)) 
+   :desc "You duck behind the counter and find a few bottles of untouched beer and liquor."})
 (def loc-18-7
   {:obj (ref (place-obj tavern 2)) 
-   :desc "tavern 7"
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :desc "Someone--or some skeleton--has taken the time to carefully construct a card castle on the edge of the dancefloor. Bottles stand around it like guardtowers."
+   :enemy axe-skele})
 (def loc-18-8
-  {:obj (ref (place-obj gen 0)) 
-   :desc "tavern 8"})
+  {:obj (ref (place-obj tavern 1)) 
+   :desc "A few skeletons lie still on the tavern's makeshift dance floor, thier hands still clutching broken bottles and clubs."})
 (def loc-18-9
   {:obj (ref (place-obj junk-gen-forge 3)) 
-   :desc "tavern 9"})
+   :desc "Tables and chairs have been pushed in a circle to form a make-shift fighting circle."})
 ;enter tavern
 (def loc-18-10
   {:obj (ref (place-obj tavern 1)) 
-   :desc "you are in the tavern"
+   :desc "The front doors of the tavern creak open slowly in the breeze."
    :exit-start-coords {:row 1 :col 4}})
 (def loc-18-11
   {:obj (ref (place-obj tavern 4)) 
-   :desc "tavern 10"
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :desc "A discarded lute lies in the corner next to several overturned chairs. You can just see the edge of a drum peeking out from the nearest table."
+   :enemy bow-skele})
 
 (def tavern-18 
   [[loc-18-0 loc-18-1 loc-18-2]
@@ -815,7 +774,7 @@
    :desc "A cart with a broken wheel lies abandoned on the side of the road."})
 (def loc-1
   {:obj (ref (place-obj letter 1)) 
-   :desc "A temple rises above you, colored light shining through stained glass windows onto the cobblestones below. A carving of a holy knight slaying a demon sits above the door." 
+   :desc "The Templar Temple rises above you, colored light shining through stained glass windows onto the cobblestones below. A carving of a holy knight slaying a demon sits above the door." 
    :enter {:goto temple-1 
            :start-coords {:row 0 :col 1}}})
 (def loc-2
@@ -830,7 +789,7 @@
            :start-coords {:row 2 :col 1}}})
 (def loc-4
   {:obj (ref (place-obj health 1)) 
-   :desc "A grand, old mansion sits in what was once a garden. A single candle flickers behind a stained-glass window." 
+   :desc "A grand, old mansion sits in a dying garden. A single candle flickers behind a stained-glass window." 
    :enter {:goto mansion-4 
            :start-coords {:row 2 :col 0}}}) 
 (def loc-5
@@ -840,32 +799,28 @@
            :start-coords {:row 1 :col 3}}})
 (def loc-6 
   {:obj (ref (place-obj gen 1)) 
-   :desc "A ruined building lies in an overgrown field. It looks like it burned down long ago, but a glint of metal catches your eye." 
+   :desc "A ruined building lies in an overgrown field. It looks like it burned down not long ago, but a glint of metal catches your eye." 
    :enter {:goto ruins-6 
            :start-coords {:row 1 :col 0}}})
 (def loc-7
   {:obj (ref (place-obj gen 2)) 
    :desc "You squeeze into a narrow alleyway between two buildings. A rat scurries away from you." 
-   :fight {:alive? (ref true)
-           :enemy rat}})
+   :enemy rat})
 (def loc-8 
   {:obj (ref (place-obj health-loc-8 8)) 
    :desc "You hide among a small copse of gnarled pine trees, the hanging moss shielding you from view."})
 (def loc-9
   {:obj (ref (place-obj junk-gen-forge 5)) 
    :desc "Broken, cracked cobblestones and smashed stalls form a picture of a town square bustling with ghosts."
-   :fight {:alive? (ref true)
-           :enemy axe-skele}})
+   :enemy axe-skele})
 (def loc-10
   {:obj (ref (place-obj junk-gen-forge 3)) 
    :desc "A half-rotted well lies in the middle of the market square. You drop a small pebble and hear a small 'plink' of it hitting water several seconds later." 
-   :fight {:alive? (ref true) 
-           :enemy zombie}})
+   :enemy zombie})
 (def loc-11
   {:obj (ref (place-obj junk-gen-forge 4)) 
    :desc "Brightly-colored cloth and lanterns lie smashed around a market stall."
-   :fight {:alive? (ref true) 
-           :enemy rat}})
+   :enemy rat})
 (def loc-12
   {:obj (ref (place-obj forge 4)) 
    :desc "You find yourself in front of a forge, long cold."})
@@ -877,18 +832,15 @@
 (def loc-14
   {:obj (ref (place-obj cult-skele 3)) 
    :desc "A small shrine of carved, blackened bones has been constructed on top of a pile of smooth stones." 
-   :fight {:alive? (ref true) 
-           :enemy magic-cult}})
+   :enemy magic-cult})
 (def loc-15
   {:obj (ref (place-obj cultists 4)) 
    :desc "Low chanting drifts over on the wind. In the distance, a small camp surrounds a fire of unearthly purple flames. You crouch lower in the weeds, hoping to not be seen." 
-   :fight {:alive? (ref true) 
-           :enemy dagger-cult}})
+   :enemy dagger-cult})
 (def loc-16
   {:obj (ref (place-obj skele 2)) 
    :desc "A sticky smear of blood leads to a pile of burnt corpses that once were the people who lived here. You feel your stomach turn over and look away."
-   :fight {:alive? (ref true) 
-           :enemy zombie}})
+   :enemy zombie})
 (def loc-17
   {:obj (ref (place-obj gen 2)) 
    :desc "This grain store has been painted with a swirling symbol. You stare at it, trying to make sense of the squiggling lines, and feel your mind bending."})
@@ -900,8 +852,7 @@
 (def loc-19
   {:obj (ref (place-obj gen-skele 4)) 
    :desc "A lone chicken picks for worms in a field littered with traveling packs and household goods, all torn open and looted."
-   :fight {:alive? (ref true)
-           :enemy bow-skele}})
+   :enemy bow-skele})
 
 ;level map is a matrix, each cell corresponds to a location data map
 (def level-1-map
@@ -1329,17 +1280,17 @@
     (print-tavern-skele)
     (do
       (cond
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :rat]) (print-rat)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :cultist]) (print-cultist)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :skeleton]) (print-skele)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :zombie]) (print-zombie)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :ghost]) (print-ghost)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :boss]) (print-boss)
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :minion]) (print-minion)
+        (:rat (:enemy (get-pc-loc pc-loc map-stack))) (print-rat)
+        (:cultist (:enemy (get-pc-loc pc-loc map-stack))) (print-cultist)
+        (:skele (:enemy (get-pc-loc pc-loc map-stack))) (print-skele)
+        (:zombie (:enemy (get-pc-loc pc-loc map-stack))) (print-zombie)
+        (:ghost (:enemy (get-pc-loc pc-loc map-stack))) (print-ghost)
+        (:boss (:enemy (get-pc-loc pc-loc map-stack))) (print-boss)
+        (:minion (:enemy (get-pc-loc pc-loc map-stack))) (print-minion)
         :else (println "this should never print: print-enemy")))))
 
 (defn print-enemy-damage-done [pc-health max-health new-pc-health]
-  (print "            The enemy attacks and deals ")
+  (print "             The enemy attacks and deals ")
   (print (- pc-health new-pc-health))
   (print " damage.")
   (println)
@@ -1356,6 +1307,7 @@
       (System/exit 0))
 
 (defn pc-wins []
+  ;add one screen for cool title text
   (clear-screen)
   (println)
   (with-open [rdr (io/reader "resources/you-win.txt")]
@@ -1375,7 +1327,7 @@
 
 (defn enemy-first [pc-loc map-stack pc-health pc-damage max-health enemy-health] 
   (let [new-pc-health 
-        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:enemy :damage]) (rand-int 3)))]
     (print-enemy-damage-done pc-health max-health new-pc-health)
     (if (<= new-pc-health 0)
       (pc-dead)
@@ -1391,7 +1343,7 @@
     (if (<= new-enemy-health 0)
       [pc-health new-enemy-health]
       (let [new-pc-health (- pc-health 
-                             (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+                             (- (get-in (get-pc-loc pc-loc map-stack) [:enemy :damage]) (rand-int 3)))]
         (print-enemy-damage-done pc-health max-health new-pc-health)
         (if (<= new-pc-health 0)
           (pc-dead)
@@ -1418,7 +1370,7 @@
 (defn run-away [pc-loc map-stack pc-health max-health]
   (println "             As your vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
   (let [new-pc-health 
-        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :damage]) (rand-int 3)))]
+        (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:enemy :damage]) (rand-int 3)))]
     (if (<= new-pc-health 0)
       (pc-dead)
       (do
@@ -1448,7 +1400,6 @@
   (open-combat)
   (print-enemy pc-loc map-stack)
   (open-sword2)
-  ;print description of enemy
   (print-pc-health pc-health max-health)
   (println)
   (print "             Enemy health: ")
@@ -1473,10 +1424,10 @@
     input))
 
 (defn fought-boss? [pc-loc map-stack pc-inv pc-health]
-  (if (= boss (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy]))
+  (if (= boss (get (get-pc-loc pc-loc map-stack) :enemy))
     (pc-wins)
     (do 
-      (println "             With one last snarl, your enemy falls dead at your feet. You win the fight!") 
+      (println "             With one last groan, your enemy falls dead at your feet. You win the fight!") 
       (pause)
       [pc-loc map-stack pc-inv pc-health false])))
 
@@ -1497,20 +1448,19 @@
               (let [new-input (read-line)]
                 (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
 
-
-(defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
+  (print-debug-hit-list "start-combat" hit-list)
   (let [enemy-health 
-        (get-in (get-pc-loc pc-loc map-stack) [:fight :enemy :health])]
+        (:health (:enemy (get-pc-loc pc-loc map-stack)))]
   (print-fight-start pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health) 
     (let [input (read-line)]
       (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] 
             (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
         (if (= alive? false)
-          (do
-            (dosync
-              (ref-set (get-in (get-pc-loc pc-loc map-stack) [:fight :alive?]) false))
-            [new-pc-loc new-map-stack new-pc-inv new-pc-health])
-          [new-pc-loc new-map-stack new-pc-inv new-pc-health])))))
+          ;enemy is dead, add to hit-list
+          [new-pc-loc new-map-stack new-pc-inv new-pc-health (conj hit-list (get-pc-loc new-pc-loc new-map-stack))]
+          ;enemy is not dead, leave hit-list the way it was
+          [new-pc-loc new-map-stack new-pc-inv new-pc-health hit-list])))))
 
 ;menu and user options________________________________________________________________________________________
 
@@ -1571,14 +1521,15 @@
                pc-inv 
                pc-eq 
                pc-health 
-               pc-damage max-health]))))
+               pc-damage 
+               max-health]))))
 
 (defn open-user-menu []
   (with-open [rdr (io/reader "resources/user-menu.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
-(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "takes pc-loc player coordinates and the map stack
   prints a menu of options for the user to see
   then calls parse-user-input
@@ -1587,6 +1538,7 @@
     the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
   if not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
   (open-main-menu)
+  (print-debug-hit-list "check-move" hit-list)
   (if (< pc-health max-health)
     (do
      (println)
@@ -1599,6 +1551,7 @@
   (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
         (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
     (print-debug new-pc-inv)
+    (print-debug-hit-list "check-move 2" hit-list)
     (if (:desc (get-pc-loc new-loc map-stack))
       (do
         [new-loc 
@@ -1607,19 +1560,22 @@
          new-pc-eq 
          new-pc-health 
          new-pc-damage
-         new-max-health])
+         new-max-health
+         hit-list])
       (do
         (if (not= (first map-stack) level-1-map)
           (println "There is a wall in that direction. You move back to where you were.")
           (println "You find yourself at the edge of the village and turn back to where you started."))
         (pause)
+        (print-debug-hit-list "check-move 3" hit-list)
         [pc-loc 
          map-stack 
          new-pc-inv 
          new-pc-eq 
          new-pc-health 
          new-pc-damage
-         new-max-health]))))
+         new-max-health
+         hit-list]))))
 
 ;entering______________________________________________
 
@@ -1661,15 +1617,17 @@
           =(________________________)=")
   (println)(println)(println)(println)(println))
 
-(defn push-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn push-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "called from display-menu, takes in pc-loc and map-stack
   calls check-push-map, which returns an updated pc-coordinate location and map stack, and either true or false
   if true, new map has been loaded and the new pc-coordinates and map stack are returned to loop recur
   if false, calls noromal movement functions (check-move)"
+  (print-debug-hit-list "push-control" hit-list)
   (print-enter pc-loc map-stack)
   (let [[new-loc new-map-stack true-false] 
         (check-push-map pc-loc map-stack)]
     ;will be true if a new map was pushed on 
+    (print-debug-hit-list "push-control 2" hit-list)
     (if true-false
       ;load new map
       [new-loc 
@@ -1678,9 +1636,10 @@
        pc-eq 
        pc-health 
        pc-damage
-       max-health]
+       max-health
+       hit-list]
       ;move normally
-      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
+      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
 
 ;exiting_____________________________________________
 
@@ -1721,14 +1680,16 @@
           =(________________________)=")
   (println)(println)(println)(println)(println))
 
-(defn pop-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn pop-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "called from display-menu, takes in pc-loc and map-stack
   called from check-pop-map, which returns updated pc-loc, map stack, and either true/false
   if true, returns updated pc-loc and map-stack to loop-recur
   if false, calls normal movement functions (check-move)"
+  (print-debug-hit-list "pop-control" hit-list)
   (print-exit)
   (let [[new-loc new-map-stack true-false] 
         (check-pop-map pc-loc map-stack)]
+    (print-debug-hit-list "pop-control 2" hit-list)
     ;will be true if a map was popped off
     (if true-false
       ;load new map
@@ -1738,27 +1699,36 @@
        pc-eq 
        pc-health 
        pc-damage
-       max-health]
+       max-health
+       hit-list]
       ;move normally
-      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)))) 
+      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))) 
 
 ;getting and parsing user input_____________________________
-(defn display-menu [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+(defn display-menu [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "checks to see if a place can be entered or exited from current player location.
   if yes, gives player the option to enter/exit
   if no, just displays normal movement functions (check-move)"
-  (if (:fight (get-pc-loc pc-loc map-stack))
-    (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health] (start-combat pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
-      (clear-screen)
-      (print-loc-desc new-pc-loc new-map-stack)
+  (print-debug-hit-list "display-menu" hit-list)
+  (if (:enemy (get-pc-loc pc-loc map-stack))
+    (if (not (contains? hit-list (get-pc-loc pc-loc map-stack)))
+      (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health new-hit-list] 
+            (start-combat pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)]
+        (print-debug-hit-list "display-menu 2" hit-list)
+        (clear-screen)
+        (print-loc-desc new-pc-loc new-map-stack)
+        (cond
+          (:enter (get-pc-loc new-pc-loc new-map-stack)) (push-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)
+          (:exit-start-coords (get-pc-loc new-pc-loc new-map-stack)) (pop-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)
+          :else (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)))
       (cond
-        (:enter (get-pc-loc new-pc-loc new-map-stack)) (push-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)
-        (:exit-start-coords (get-pc-loc new-pc-loc new-map-stack)) (pop-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)
-        :else (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health)))
+        (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
+        (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
+        :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))
     (cond
-      (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
-      (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)
-      :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health))))
+      (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
+      (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
+      :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
 
 ;MAIN_____________________________________________________________________
 
@@ -1766,10 +1736,12 @@
   ;these are function calls
   (open-title)
   (open-intro)
-  (loop [pc-loc init-pc-loc map-stack init-map-stack pc-inv init-pc-inv pc-eq init-pc-eq pc-health init-pc-health pc-damage init-pc-damage max-health init-max-health]
+  (loop [pc-loc init-pc-loc map-stack init-map-stack pc-inv init-pc-inv pc-eq init-pc-eq pc-health init-pc-health pc-damage init-pc-damage max-health init-max-health hit-list init-hit-list]
       (do (clear-screen)
+          (print-debug-hit-list "main" hit-list)
           (print-loc-desc pc-loc map-stack)
-          (let [[new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
-                (display-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
+          (let [[new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health new-hit-list] 
+                (display-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)]
+            (print-debug-hit-list "main 2" new-hit-list)
             (recur 
-              new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health)))))
+              new-loc map-stack new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health new-hit-list)))))
