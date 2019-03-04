@@ -9,10 +9,12 @@
   false)
 
 (defn print-debug [thing]
+  "debug statement for objects, inventory, equipped, and unequipped lists"
   (if debug
   (println thing)))
 
 (defn print-debug-hit-list [func, hit-list]
+  "debug statement for hit-list (list of places with killed enemies)"
   (if debug-hit-list
     (do
       (println)
@@ -78,6 +80,7 @@
   (clear-screen))
 
 ;ENEMIES________________________________________________________________________________
+;lists of enemy types, coded into locations later on
 
 (def rat
   {:rat true
@@ -121,8 +124,8 @@
   #{})
 
 ;OBJECT DATA____________________________________________________________________________
+;a mix of general objects and specialized objects for player to find at locations
 
-;general obejcts
 (def o1
   {:desc "WOODCUTTER'S AXE: Blunted and notched. +3 SLASHING DAMAGE" 
    :health 0 
@@ -299,7 +302,7 @@
    :health 20 
    :damage 0})
 
-;for place-obj
+;pre-defined sets for place-obj to pull from
 (def health
   [h1 h2 h3])
 (def health-loc-8
@@ -326,18 +329,22 @@
   [o22])
 
 (defn place-obj [obj-list amt]
+  "function that pulls certtain number (amt) of a random assorment of objects
+  piped in through obj-list, and saves them to a location"
   (vec (take amt (repeatedly #(nth obj-list (rand-int (count obj-list)))))))
 
+;initial inventory list
 (def init-pc-inv
   [])
 
+;initial equiped list
 (def init-pc-eq
   [])
 
 ;LEVEL BUILDING___________________________________________________________
 ;exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
 
-;this loc is null. has no description and therefore can't be loaded.
+;nil loc. has no description and therefore can't be loaded.
 (def loc-0-0
   {})
 
@@ -892,9 +899,11 @@
 
 ;PC HEALTH AND DAMAGE________________________________________________________________________
 
+;player's initial max health
 (def init-max-health
   20)
 
+;player's actual health--subtracted during combat
 (def init-pc-health
   20)
 
@@ -904,6 +913,7 @@
   (print " out of ")
   (print max-health))
 
+;player's initial damage--added to by weapons
 (def init-pc-damage
   5)
 
@@ -915,18 +925,29 @@
   (println))
 
 (defn add-damage [pc-inv pc-damage maybe-int]
+  "called when player equippes new weapon.
+   weapon damage is added to player's damage"
   (+ pc-damage (:damage (nth pc-inv (dec maybe-int)))))
 
 (defn add-health [pc-inv health maybe-int]
+  "called when player equippes new armor.
+   armor health is added to player's health"
   (+ health (:health (nth pc-inv (dec maybe-int)))))
 
 (defn sub-damage [pc-eq pc-damage maybe-int]
+  "called when player unequippes a weapon.
+   weapon damage is subtracted from player's damage"
   (- pc-damage (:damage (nth pc-eq (dec maybe-int)))))
 
 (defn sub-health [pc-eq health maybe-int]
+  "called when player unequippes armor.
+   armor health is subtracted from player's damage"
   (- health (:health (nth pc-eq (dec maybe-int)))))
 
 (defn potion-add-health [pc-inv pc-health maybe-int max-health]
+  "called when player drinks a health potion.
+   makes sure that player's health never goes over
+   theoretical max."
   (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec maybe-int))))]
     (if (> new-pc-health max-health)
       max-health
@@ -935,15 +956,19 @@
 ;OBJECT OPTIONS______________________________________________________________________________
 
 (defn get-obj [pc-loc map-stack]
+  "used for getting the object in the location"
   (deref 
     (get (get-pc-loc pc-loc map-stack) :obj)))
 
 (defn get-obj-ref [pc-loc map-stack]
+  "used for changing the actual list of objs in location"
   (get (get-pc-loc pc-loc map-stack) :obj))
 
 ;adding items to inventory____________________________________________________
 
 (defn add-obj-to-inv [pc-loc map-stack pc-inv maybe-int]
+  "takes number of obj user indicated they wanted.
+   that object is gotten from the location obj list and added to inventory list"
   (println)
   (print "That item has been added to your inventory.")
   (println)
@@ -951,6 +976,10 @@
   (vec (conj pc-inv (nth (get-obj pc-loc map-stack) (dec maybe-int)))))
 
 (defn remove-obj-from-loc [pc-loc map-stack maybe-int]
+  "takes number of obj user indicated to pick up. that item is removed
+   from location after being added to player's inventory. removal happens
+   by splitting the vector to two lists (neither one including the obj
+   that was indicated) and then joins them back together."
   (let [pre-obj (subvec (get-obj pc-loc map-stack) 0 (dec maybe-int))
         post-obj  (subvec (get-obj pc-loc map-stack) maybe-int)]
     (dosync
@@ -963,11 +992,17 @@
   (pause)) 
 
 (defn is-int? [input]
-    (try 
-      (Integer/parseInt input)
-      (catch NumberFormatException e (println "That's not a number."))))
+  "try/catch block for user input sanitization. if user didn't input an int,
+   will catch the error instead of killing the program."
+  (try 
+    (Integer/parseInt input)
+    (catch NumberFormatException e (println "That's not a number."))))
 
 (defn something-to-add [pc-loc map-stack pc-inv]
+  "gets user input for item number they want to add,
+   passes to try-catch block for input sanitization.
+   If user input is correct, calls func to add obj to inventory,
+   and calls func to remove obj from location."
   (println) 
   (println "What would you like to add? enter '1' for the first item listed, '2' for the second item listed, and so on.") 
   (println)
@@ -986,6 +1021,7 @@
         (something-to-add pc-loc map-stack pc-inv)))))
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
+  "prevents error if there are no objects to add at that location"
   (if (= [] (get-obj pc-loc map-stack))
     (do 
       (nothing-to-add)
@@ -996,11 +1032,13 @@
 ;print object options_____________________________________________________
 
 (defn print-obj-item [item]
+  "prints item desc"
   (print "                    ")
   (print item)
   (println))
 
 (defn print-obj [pc-loc map-stack]
+  "prints individual items at that loc one by one"
   (if (= [] (get-obj pc-loc map-stack))
     (println "                    You look around, but nothing catches your eye.")
     (doseq [item (map :desc (get-obj pc-loc map-stack))]
@@ -1017,13 +1055,16 @@
       (println line))))
 
 (defn print-obj-commands [pc-loc map-stack]
+  "for user to see options"
   (clear-screen)
   (open-objects)
   (print-obj pc-loc map-stack)
   (open-potions))
 
 (defn obj-control [pc-loc map-stack pc-inv]
-  "prints object descriptions that are in current location"
+  "displays player options, and gets user input.
+   calls function that controls object adding functionality.
+   then prints object descriptions that are in current location"
   (print-obj-commands pc-loc map-stack)
   (print-debug pc-inv)
   (let [input (read-line)]
@@ -1040,6 +1081,7 @@
 ;removing items from inventory_______________________________________________
 
 (defn add-item-to-loc [pc-loc map-stack pc-inv maybe-int]
+  "copies item from inventory to object list at location."
   (print-debug pc-inv)
   (dosync
     (alter (get-obj-ref pc-loc map-stack) conj (nth pc-inv (dec maybe-int)))))
@@ -1050,6 +1092,8 @@
   pc-inv)
 
 (defn something-to-drop [pc-loc map-stack pc-inv]
+  "gets user input, makes sure it's an int, then adds obj from inv to location
+   and removes obj from inv (splits inv in two around obj, then joins segments together)"
   (println)
   (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
@@ -1070,7 +1114,7 @@
         (something-to-drop pc-loc map-stack pc-inv)))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
-  "removes a user-defined item from inventory"
+  "Making sure program won't crash if there's nothing in inv to drop"
   (if (= pc-inv [])
     (nothing-to-drop pc-inv)
     (something-to-drop pc-loc map-stack pc-inv)))
@@ -1078,11 +1122,13 @@
 ;equip and unequip___________________________________________________
 
 (defn print-eq [item]
+  "prints item desc"
   (print "                    ")
   (print (:desc item))
   (println))
 
 (defn print-pc-eq [pc-eq]
+  "gets individual items to print descriptions"
   (if (= pc-eq [])
     (println "             You have no items equipped.")
     (doseq [item pc-eq]
@@ -1097,6 +1143,9 @@
    max-health])
 
 (defn something-to-equip [pc-inv pc-eq pc-health pc-damage max-health]
+  "gets user input (makes sure it's an int), check if it's a potion
+   (can't be equipped), then adds that item to end of equipped list
+   and adds the item's health and damage bonuses to player's."
   (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
   (println) 
   (let [input (read-line)]
@@ -1118,12 +1167,16 @@
         (something-to-drop pc-inv pc-eq pc-health pc-damage max-health)))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
+  "to make sure program doesn't die if there's nothing to equip"
   (println)
   (if (= [] pc-inv)
     (nothing-to-equip pc-eq pc-health pc-damage max-health) 
     (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
 
 (defn something-to-unequip [pc-eq pc-health pc-damage max-health]
+  "gets user input (makes sure it's an int), then remove it from equipped list
+   by splitting equipped list around that object and then joining it together again.
+   subtracts that item's health and damge from player's."
   (println)
   (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
   (println)
@@ -1143,18 +1196,20 @@
         (something-to-unequip pc-eq pc-health pc-damage max-health)))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
-  "removes a user-defined item from inventory"
+  "makes sure program doesn't die if there's nothing equipped"
   (if (= [] pc-eq)
     (nothing-to-equip pc-eq pc-health pc-damage max-health) 
     (something-to-unequip pc-eq pc-health pc-damage max-health)))
 
 (defn not-drinkable [pc-inv pc-health]
+  "non-potions are persistant."
   (println)
   (println "You don't think you can drink that.")
   (println)
   [pc-inv pc-health]) 
 
 (defn drinkable [pc-loc map-stack pc-inv pc-health maybe-int max-health]
+  "adds potion's health bonus to user, and subtracts it from the inventory."
   (println)
   (println "You drink the potion, and immediately feel a little bit better.")
   (print-debug pc-inv)
@@ -1166,6 +1221,8 @@
      (potion-add-health pc-inv pc-health maybe-int max-health)]))
 
 (defn drink-hp [pc-loc map-stack pc-inv pc-health max-health]
+  "gets user input, makes sure it's an int, makes sure it's a potion,
+   then calls function to add potion bonus to user and remove from inventory."
   (println)
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
@@ -1174,7 +1231,7 @@
         (if (<= maybe-int (count pc-inv))
           (if (= maybe-int 0)
             (do
-              (println "That's not an item.")
+              (println "That's not an item you can drink.")
               [pc-inv pc-health])
             (if (not (:potion (nth pc-inv (dec maybe-int))))
               (not-drinkable pc-inv pc-health)
@@ -1187,11 +1244,13 @@
 ;print inventory____________________________________________________
 
 (defn print-item [item]
+  "prints individual item description"
   (print "                    ")
   (print (:desc item))
   (println))
 
-(defn print-pc-inv [pc-inv pc-eq]
+(defn print-pc-inv [pc-inv]
+  "gets individual item to print"
   (if (= pc-inv [])
     (println "             Your inventory is currently empty.")
     (do
@@ -1200,31 +1259,35 @@
       (print-item item)))))
 
 (defn open-inv-menu []
-  "opens inv menu"
+  "displays inv menu"
   (with-open [rdr (io/reader "resources/inv-menu.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
 (defn open-sword []
-  "opens sword"
+  "displays sword"
   (with-open [rdr (io/reader "resources/sword.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
 (defn print-inv-commands [pc-inv pc-eq pc-health pc-damage max-health]
+  "nice printing for inventory"
   (clear-screen)
   (open-inv-menu)
   (open-sword)
   (print-pc-health pc-health max-health)
   (print-pc-damage pc-damage)
   (println "             Your inventory contains the following items:")
-  (print-pc-inv pc-inv pc-eq)
+  (print-pc-inv pc-inv)
   (println)
   (println "             You have equipped the following items:")
   (print-pc-eq pc-eq)
   (println))
 
 (defn inv-control [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health]
+  "for user inventory: displays user menu and gets input. user can:
+   exit the inv menu, remove an item from inventory, equip something, 
+   unequip something, and drink potion."
   (print-inv-commands pc-inv pc-eq pc-health pc-damage max-health)
   (let [input (read-line)]
     (cond
@@ -1285,6 +1348,7 @@
       :else (println "this should never print: print-tavern-skele"))))
 
 (defn print-enemy [pc-loc map-stack]
+  "prints different enemy descriptions"
   (if (= tavern-18 (first map-stack))
     (print-tavern-skele)
     (do
@@ -1301,6 +1365,7 @@
                 (println (:enemy (get-pc-loc pc-loc map-stack))))))))
 
 (defn print-enemy-damage-done [pc-health max-health new-pc-health]
+  "nice display for user"
   (print "             The enemy attacks and deals ")
   (print (- pc-health new-pc-health))
   (print " damage.")
@@ -1310,6 +1375,7 @@
   (println))
 
 (defn pc-dead []
+  "clears screen, displays 'you died' screen, and quits program"
   (clear-screen)
   (println)
   (with-open [rdr (io/reader "resources/you-died.txt")]
@@ -1318,7 +1384,7 @@
       (System/exit 0))
 
 (defn pc-wins []
-  ;add one screen for cool title text
+  "clears screen, displays 'you won' screen, and quits program"
   (clear-screen)
   (println)
   (with-open [rdr (io/reader "resources/you-win.txt")]
@@ -1327,6 +1393,7 @@
       (System/exit 0))
 
 (defn print-pc-damage-done [enemy-health new-enemy-health]
+  "nice display for user"
   (print "             You swing your weapon as hard as you can, hitting your opponent for ") 
   (print (- enemy-health new-enemy-health))
   (print " damage!")
@@ -1337,6 +1404,9 @@
   (println))
 
 (defn enemy-first [pc-loc map-stack pc-health pc-damage max-health enemy-health] 
+  "enemy hits user first. pc's health is lowered by damage taken.
+   then user hits enemy, and enemy's health is lowered by damage taken.
+   if player dies, calls func to end game. if enemy dies, ends combat."
   (let [new-pc-health 
         (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:enemy :damage]) (rand-int 3)))]
     (print-enemy-damage-done pc-health max-health new-pc-health)
@@ -1348,6 +1418,9 @@
         [new-pc-health new-enemy-health]))))
 
 (defn pc-first [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  "player hits enemy first. enemy's health is lowered by damage taken.
+   then enemy hits user, and player's health is lowered by damage taken.
+   if player dies, calls func to end game. if enemy dies, ends combat."
   (let [new-enemy-health 
         (- enemy-health (- pc-damage (rand-int 3)))]
     (print-pc-damage-done enemy-health new-enemy-health)
@@ -1361,6 +1434,7 @@
           [new-pc-health new-enemy-health])))))
 
 (defn combat-round [pc-loc map-stack pc-health pc-damage max-health enemy-health]
+  "Generates random 0 or 1: if 1, user goes first. if 0, enemy goes first."
   (if (= 1 (rand-int 2))
     (do
       (println "             You get the jump on it.")
@@ -1374,11 +1448,13 @@
         [new-pc-health new-enemy-health]))))
 
 (defn first-map [map-stack]
+  "for run-away: pops back to original map to make sure player gets to safe place"
   (if (not= (first map-stack) level-1-map)
     (first-map (rest map-stack))
     map-stack))
 
 (defn run-away [pc-loc map-stack pc-health max-health]
+  "get one hit by enemy, then move player's location to loc-8."
   (println "             As your vision grows grey, you blindly turn and run to a safe place. Your attacker takes a swing at your back, but does not persue you.")
   (let [new-pc-health 
         (- pc-health (- (get-in (get-pc-loc pc-loc map-stack) [:enemy :damage]) (rand-int 3)))]
@@ -1408,6 +1484,7 @@
       (println line))))
     
 (defn print-fight-start [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  "displays combat screen, enemy health, and your inventory."
   (open-combat)
   (print-enemy pc-loc map-stack)
   (open-sword2)
@@ -1418,10 +1495,11 @@
   (println)
   (println)
   (println "             Your inventory contains the following items:")
-  (print-pc-inv pc-inv pc-eq)
+  (print-pc-inv pc-inv)
   (println))
 
 (defn continue [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  "gets user input: either fight or drink a potion"
   (println "What else would you like to do?")
   (let [new-input (read-line)]
     (clear-screen)
@@ -1429,12 +1507,14 @@
     new-input))
 
 (defn im-not-dead-yet [pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health]
+  "if enemy is not dead, get input for next round of combat"
   (let [input (read-line)]
     (clear-screen)
     (print-fight-start pc-loc map-stack pc-inv pc-eq pc-health max-health enemy-health)
     input))
 
 (defn fought-boss? [pc-loc map-stack pc-inv pc-health]
+  "checks if user fought and killed boss. If they did, prints this message, then calls pc-wins function."
   (if (= boss (get (get-pc-loc pc-loc map-stack) :enemy))
     (do
       (println "             Gathering all your remaining strength, you let out a yell and swing your weapon as hard as you can towards the old woman's head.
@@ -1448,23 +1528,26 @@
       [pc-loc map-stack pc-inv pc-health false])))
 
 (defn fight [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input]
-    (cond
-      (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
-                      [new-pc-loc new-map-stack pc-inv new-pc-health true])
-      (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
-                      (let [new-input (continue pc-loc map-stack new-pc-inv pc-eq new-pc-health max-health enemy-health)]
-                        (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
-      (= input "a") (let [[new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
-                      (if (<= new-enemy-health 0)
-                        (fought-boss? pc-loc map-stack pc-inv new-pc-health)
-                        (let [new-input (im-not-dead-yet pc-loc map-stack pc-inv pc-eq new-pc-health max-health new-enemy-health)]
-                          (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input))))
-      :else (do
-              (println "That's not valid input. What do you want to do?")
-              (let [new-input (read-line)]
-                (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
+  "interprets user input, to either run away, attack, or drink a potion. calls fucntions to make that happen."
+  (cond
+    (= input "r") (let [[new-pc-loc new-map-stack new-pc-health] (run-away pc-loc map-stack pc-health max-health)]
+                    [new-pc-loc new-map-stack pc-inv new-pc-health true])
+    (= input "d") (let [[new-pc-inv new-pc-health] (drink-hp pc-loc map-stack pc-inv pc-health max-health)]
+                    (let [new-input (continue pc-loc map-stack new-pc-inv pc-eq new-pc-health max-health enemy-health)]
+                      (fight pc-loc map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health enemy-health new-input)))
+    (= input "a") (let [[new-pc-health new-enemy-health] (combat-round pc-loc map-stack pc-health pc-damage max-health enemy-health)]
+                    (if (<= new-enemy-health 0)
+                      (fought-boss? pc-loc map-stack pc-inv new-pc-health)
+                      (let [new-input (im-not-dead-yet pc-loc map-stack pc-inv pc-eq new-pc-health max-health new-enemy-health)]
+                        (fight pc-loc map-stack pc-inv pc-eq new-pc-health pc-damage max-health new-enemy-health new-input))))
+    :else (do
+            (println "That's not valid input. What do you want to do?")
+            (let [new-input (read-line)]
+              (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health new-input)))))
 
 (defn start-combat [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
+  "gets enemy health, calls combat function (fight). Adds location to hit-list if enemy has been killed,
+   doesn't if player ran away."
   (print-debug-hit-list "start-combat" hit-list)
   (let [enemy-health 
         (:health (:enemy (get-pc-loc pc-loc map-stack)))]
