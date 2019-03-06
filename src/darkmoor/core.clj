@@ -1,3 +1,7 @@
+; The Shadow Over Darkmoor
+;   a text-based game for the terminal
+; copywright (c) CMR, Jan 01 2019
+
 (ns darkmoor.core
   (:require [clojure.java.io :as io])
   (:require [clojure.string :as s]))
@@ -1009,7 +1013,7 @@
   (let [input (read-line)]
     (let [maybe-int (is-int? input)]
       (if maybe-int
-        (if (<= maybe-int (count (get-obj pc-loc map-stack)))
+        (if (or (<= maybe-int (count (get-obj pc-loc map-stack))) (<= maybe-int 0))
           (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv maybe-int)]
             (print-debug new-pc-inv)
             (remove-obj-from-loc pc-loc map-stack maybe-int)
@@ -1099,7 +1103,7 @@
   (let [input (read-line)]
     (let [maybe-int (is-int? input)]
       (if maybe-int
-        (if (<= maybe-int (count pc-inv))
+        (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
           (do
             (print-debug pc-inv)
             (add-item-to-loc pc-loc map-stack pc-inv maybe-int)
@@ -1151,7 +1155,7 @@
   (let [input (read-line)]
     (let [maybe-int (is-int? input)]
       (if maybe-int
-        (if (<= maybe-int (count pc-inv))
+        (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
           (if (:potion (nth pc-inv (dec maybe-int)))
             (do
               (println "You can't equip that.")
@@ -1183,7 +1187,7 @@
   (let [input (read-line)]
     (let [maybe-int (is-int? input)]
       (if maybe-int
-        (if (<= maybe-int (count pc-eq))
+        (if (or (<= maybe-int (count pc-eq)) (<= maybe-int 0))
           (let [pre-eq (subvec pc-eq 0 (dec maybe-int))
                 post-eq (subvec pc-eq maybe-int)]
             [(vec (concat pre-eq post-eq))
@@ -1229,7 +1233,7 @@
     (let [maybe-int (is-int? input)]
       (if maybe-int
         (if (<= maybe-int (count pc-inv))
-          (if (= maybe-int 0)
+          (if (<= maybe-int 0)
             (do
               (println "That's not an item you can drink.")
               [pc-inv pc-health])
