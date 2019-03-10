@@ -1,5 +1,7 @@
 # Introduction to The Shadow Over Darkmoor
 
+See README for more information.
+
 After hearing rumors of necromancers ransacking towns, our protagonist returns home to find their
 village already annhilated. Vowing revenge, the protagonist makes their way through the village to find the person
 or people responsible for the attack and destroy them. Along the way, the protagonist will find plenty of weapons,
@@ -9,10 +11,6 @@ The Shadow Over Darkmoor is a text-based roguelike adventure game set in the fic
 Darkmoor, and features over 100 unique areas, over 250 interactable items to discover, and over 50 enemies
 to fight. Darkmoor runs off of the terminal and has a very gentle learning curve--gameplay is explained as the
 player progresses through the storyline.
-
-Darkmoor is also customizable! To add more enemies, locations, or items to the game,
-copy and alter the code structure used at lines: 90-129 and 1356-1371 (enemies), 131-339 (items),
-380-426 ('indoor' locations), and 789-884 ('outdoor' locations).
 
 # Build Tool
 

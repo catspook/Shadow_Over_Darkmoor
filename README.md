@@ -11,8 +11,8 @@ to fight. Darkmoor runs off of the terminal and has a very gentle learning curve
 player progresses through the storyline.
 
 Darkmoor is also customizable! To add more enemies, locations, or items to the game, 
-copy and alter the code structure used at lines: 90-129 and 1356-1371 (enemies), 131-339 (items), 
-380-426 ('indoor' locations), and 789-884 ('outdoor' locations). 
+copy and alter the code structure used in 'enemies.clj' and lines 560-575 of 'core.clj', 'objects.clj', and 
+'locations.clj'. 
 
 ## Build Tool
 
