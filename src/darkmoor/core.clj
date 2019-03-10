@@ -217,18 +217,17 @@
   (println "What would you like to add? enter '1' for the first item listed, '2' for the second item listed, and so on.") 
   (println)
   (let [input (read-line)]
-    (let [maybe-int (is-int? input)]
-      (if maybe-int
-        (if (or (<= maybe-int (count (get-obj pc-loc map-stack))) (<= maybe-int 0))
-          (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv maybe-int)]
-            (print-debug new-pc-inv)
-            (remove-obj-from-loc pc-loc map-stack maybe-int)
-            (print-debug new-pc-inv)
-            new-pc-inv)
-          (do
-            (println "There's not that many items here.")
-            (something-to-add pc-loc map-stack pc-inv)))
-        (something-to-add pc-loc map-stack pc-inv)))))
+    (if-let [maybe-int (is-int? input)]
+      (if (or (<= maybe-int (count (get-obj pc-loc map-stack))) (<= maybe-int 0))
+        (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv maybe-int)]
+          (print-debug new-pc-inv)
+          (remove-obj-from-loc pc-loc map-stack maybe-int)
+          (print-debug new-pc-inv)
+          new-pc-inv)
+        (do
+          (println "There's not that many items here.")
+          (something-to-add pc-loc map-stack pc-inv)))
+      (something-to-add pc-loc map-stack pc-inv))))
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
   "prevents error if there are no objects to add at that location"
@@ -307,21 +306,20 @@
   (println)
   (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
-    (let [maybe-int (is-int? input)]
-      (if maybe-int
-        (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
-          (do
-            (print-debug pc-inv)
-            (add-item-to-loc pc-loc map-stack pc-inv maybe-int)
-            (let [pre-inv (subvec pc-inv 0 (dec maybe-int))
-                  post-inv (subvec pc-inv maybe-int)]
-              (print-debug pre-inv)
-              (print-debug post-inv)
-              (vec (concat pre-inv post-inv))))
-          (do
-            (println "You don't have that many items in your inventory.")
-            (something-to-drop pc-loc map-stack pc-inv)))
-        (something-to-drop pc-loc map-stack pc-inv)))))
+    (if-let [maybe-int (is-int? input)]
+      (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
+        (do
+          (print-debug pc-inv)
+          (add-item-to-loc pc-loc map-stack pc-inv maybe-int)
+          (let [pre-inv (subvec pc-inv 0 (dec maybe-int))
+                post-inv (subvec pc-inv maybe-int)]
+            (print-debug pre-inv)
+            (print-debug post-inv)
+            (vec (concat pre-inv post-inv))))
+        (do
+          (println "You don't have that many items in your inventory.")
+          (something-to-drop pc-loc map-stack pc-inv)))
+      (something-to-drop pc-loc map-stack pc-inv))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
   "Making sure program won't crash if there's nothing in inv to drop"
@@ -359,22 +357,21 @@
   (println "What item do you want to equip? Enter '1' for the first item listed, '2' for the second item listed, and so in.")
   (println) 
   (let [input (read-line)]
-    (let [maybe-int (is-int? input)]
-      (if maybe-int
-        (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
-          (if (:potion (nth pc-inv (dec maybe-int)))
-            (do
-              (println "You can't equip that.")
-              (pause)
-              [pc-eq pc-health pc-damage max-health])
-            [(vec (conj pc-eq (nth pc-inv (dec maybe-int)))) 
-             (add-health pc-inv pc-health maybe-int) 
-             (add-damage pc-inv pc-damage maybe-int)
-             (add-health pc-inv max-health maybe-int)])
+    (if-let [maybe-int (is-int? input)]
+      (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
+        (if (:potion (nth pc-inv (dec maybe-int)))
           (do
-            (println "You don't have that many items in your inventory.")
-            (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
-        (something-to-drop pc-inv pc-eq pc-health pc-damage max-health)))))
+            (println "You can't equip that.")
+            (pause)
+            [pc-eq pc-health pc-damage max-health])
+          [(vec (conj pc-eq (nth pc-inv (dec maybe-int)))) 
+           (add-health pc-inv pc-health maybe-int) 
+           (add-damage pc-inv pc-damage maybe-int)
+           (add-health pc-inv max-health maybe-int)])
+        (do
+          (println "You don't have that many items in your inventory.")
+          (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
+      (something-to-drop pc-inv pc-eq pc-health pc-damage max-health))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
   "to make sure program doesn't die if there's nothing to equip"
@@ -391,19 +388,18 @@
   (println "What item do you want to unequip? Enter'1' for the first item listed, '2' for the second item listed, and so on.")
   (println)
   (let [input (read-line)]
-    (let [maybe-int (is-int? input)]
-      (if maybe-int
-        (if (or (<= maybe-int (count pc-eq)) (<= maybe-int 0))
-          (let [pre-eq (subvec pc-eq 0 (dec maybe-int))
-                post-eq (subvec pc-eq maybe-int)]
-            [(vec (concat pre-eq post-eq))
-             (sub-health pc-eq pc-health maybe-int) 
-             (sub-damage pc-eq pc-damage maybe-int)
-             (sub-health pc-eq max-health maybe-int)])
-          (do
-            (println "You don't have that many items equipped.")
-            (something-to-unequip pc-eq pc-health pc-damage max-health)))
-        (something-to-unequip pc-eq pc-health pc-damage max-health)))))
+    (if-let [maybe-int (is-int? input)]
+      (if (or (<= maybe-int (count pc-eq)) (<= maybe-int 0))
+        (let [pre-eq (subvec pc-eq 0 (dec maybe-int))
+              post-eq (subvec pc-eq maybe-int)]
+          [(vec (concat pre-eq post-eq))
+           (sub-health pc-eq pc-health maybe-int) 
+           (sub-damage pc-eq pc-damage maybe-int)
+           (sub-health pc-eq max-health maybe-int)])
+        (do
+          (println "You don't have that many items equipped.")
+          (something-to-unequip pc-eq pc-health pc-damage max-health)))
+      (something-to-unequip pc-eq pc-health pc-damage max-health))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
   "makes sure program doesn't die if there's nothing equipped"
@@ -436,20 +432,19 @@
   (println)
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
-    (let [maybe-int (is-int? input)]
-      (if maybe-int
-        (if (<= maybe-int (count pc-inv))
-          (if (<= maybe-int 0)
-            (do
-              (println "That's not an item you can drink.")
-              [pc-inv pc-health])
-            (if (not (:potion (nth pc-inv (dec maybe-int))))
-              (not-drinkable pc-inv pc-health)
-              (drinkable pc-loc map-stack pc-inv pc-health maybe-int max-health)))
+    (if-let [maybe-int (is-int? input)]
+      (if (<= maybe-int (count pc-inv))
+        (if (<= maybe-int 0)
           (do
-            (println "You don't have that many items in your inventory.")
-            (drink-hp pc-loc map-stack pc-inv pc-health max-health)))
-        (drink-hp pc-loc map-stack pc-inv pc-health max-health)))))
+            (println "That's not an item you can drink.")
+            [pc-inv pc-health])
+          (if (not (:potion (nth pc-inv (dec maybe-int))))
+            (not-drinkable pc-inv pc-health)
+            (drinkable pc-loc map-stack pc-inv pc-health maybe-int max-health)))
+        (do
+          (println "You don't have that many items in your inventory.")
+          (drink-hp pc-loc map-stack pc-inv pc-health max-health)))
+      (drink-hp pc-loc map-stack pc-inv pc-health max-health))))
 
 ;print inventory____________________________________________________
 
@@ -765,7 +760,7 @@
     (let [input (read-line)]
       (let [[new-pc-loc new-map-stack new-pc-inv new-pc-health alive?] 
             (fight pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health enemy-health input)]
-        (if (= alive? false)
+        (if-not alive?
           ;enemy is dead, add to hit-list
           [new-pc-loc new-map-stack new-pc-inv new-pc-health (conj hit-list (get-pc-loc new-pc-loc new-map-stack))]
           ;enemy is not dead, leave hit-list the way it was
