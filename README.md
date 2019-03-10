@@ -1,25 +1,45 @@
-# darkmoor
+# The Shadow Over Darkmoor
 
 A Clojure library designed to ... well, that part is up to you.
 
+## Build Tool
 
+This application uses [Leiningen](https://leiningen.org/) to handle the builds/dependencies.
 
-## Usage
+## Code
 
-FIXME
+The code is located in 'src/darkmoor/core.clj', and requires text documents found in
+the 'resources' file.
+
+Source code can be run without compilation by running:
+```$ lein run```
+anywhere in Darkmoor's file system. This won't be as fast as running it off of a 
+standalone jar.
+
+To build a standalone jar:
+
+    ```$ lein compile; lein uberjar```
+
+Afterwhich that can be run with:
+
+    ```$ java -jar target/uberjar/darkmoor-0.1.0-SNAPSHOT-standalone.jar```
+
 
 ## Acknowledgements
 
 Thanks to my wife, without whom I never would have been able to complete this.
 
 All ASCII art taken from: 
-   patorjk.com/software/taag
-   www.asciiart.eu/
-   ascii.co.uk/
+
+patorjk.com/software/taag
+
+www.asciiart.eu/
+
+ascii.co.uk/
 
 ## License
 
-Copyright © 2019 FIXME
+Copyright © 2019 CM Rutz 
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at

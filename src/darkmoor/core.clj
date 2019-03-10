@@ -4,7 +4,8 @@
 
 (ns darkmoor.core
   (:require [clojure.java.io :as io])
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s])
+  (:gen-class))
 
 (def debug
   false)
@@ -949,9 +950,8 @@
   (- health (:health (nth pc-eq (dec maybe-int)))))
 
 (defn potion-add-health [pc-inv pc-health maybe-int max-health]
-  "called when player drinks a health potion.
-   makes sure that player's health never goes over
-   theoretical max."
+  "called when player drinks a health potion. makes sure player health
+   never goes over max."
   (let [new-pc-health (+ pc-health (:health (nth pc-inv (dec maybe-int))))]
     (if (> new-pc-health max-health)
       max-health
