@@ -85,7 +85,7 @@
   (clear-screen))
 
 ;ENEMIES________________________________________________________________________________
-;lists of enemy types, coded into locations later on
+;lists of enemy types, hard-coded into each location below
 
 (def rat
   {:rat true
@@ -130,6 +130,7 @@
 
 ;OBJECT DATA____________________________________________________________________________
 ;a mix of general objects and specialized objects for player to find at locations
+; the function place-obj is called from each location below
 
 (def o1
   {:desc "WOODCUTTER'S AXE: Blunted and notched. +3 SLASHING DAMAGE" 
@@ -347,7 +348,8 @@
   [])
 
 ;LEVEL BUILDING___________________________________________________________
-;exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
+; :exit-start-coords maps to what location the player should be off after popping of the map corresponding to each location
+; :enter maps to what new map should be loaded, as well as what coordinates that player should start at once they are there.
 
 ;nil loc. has no description and therefore can't be loaded.
 (def loc-0-0
