@@ -179,6 +179,16 @@
    :desc "GREATER HEALTH POTION: This potion ruby red sparkles cheerfully in the gloom. After drinking this, you will regain 20 health." 
    :health 20 
    :damage 0})
+(def init1
+  {:potion false
+   :desc "STANDARD ISSUE SWORD: +2 PIERCING DAMAGE"
+   :health 0
+   :damage 2})
+(def init2
+  {:potion false
+   :desc "TRAVELING CLOTHES: +5 HEALTH"
+   :health 5
+   :damage 0})
 
 ;pre-defined sets for place-obj to pull from
 (def health
@@ -213,8 +223,8 @@
 
 ;initial inventory list
 (def init-pc-inv
-  [])
+  [init1 init2])
 
 ;initial equiped list
 (def init-pc-eq
-  [])
+  [init1 init2])

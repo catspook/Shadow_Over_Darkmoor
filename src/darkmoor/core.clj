@@ -112,11 +112,11 @@
 
 ;player's initial max health
 (def init-max-health
-  20)
+  15)
 
 ;player's actual health--subtracted during combat
 (def init-pc-health
-  20)
+  15)
 
 (defn print-pc-health [pc-health max-health]
   (print "             Your current health is ") 
