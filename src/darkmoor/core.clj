@@ -371,7 +371,7 @@
         (do
           (println "You don't have that many items in your inventory.")
           (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
-      (something-to-drop pc-inv pc-eq pc-health pc-damage max-health))))
+      (something-to-equip pc-inv pc-eq pc-health pc-damage max-health))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
   "to make sure program doesn't die if there's nothing to equip"
@@ -521,12 +521,12 @@
   (println "A large rat scuttles out of the shadows, open sores oozing on its back. It bares its yellow teeth at you. "))
  
 (defn print-cultist []
-  (if (= 1 (rand 2))
+  (if (= 1 (rand-int 2))
     (println "A young man in swirling black blood-soaked robes glances around, spotting you immediately. He shouts, drawing a curved dagger dripping with poison.")
     (println "You turn a corner and see a woman with long, grey hair concentrate for a moment before a tiny blue flame appears in her hand. In a second a roaring fire is contained in her palm.")))
 
 (defn print-skele []
-  (if (= 1 (rand 2))
+  (if (= 1 (rand-int 2))
     (println "A skeleton comes rushing towards you, jaw clacking. It raises a cracked bow and fits a rusted arrow to it.")
     (println "This skeleton looks between you and the chipped axe in its bony hand, and a whisper of a sad sigh rattles in its ribcage.")))
 
