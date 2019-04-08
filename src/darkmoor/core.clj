@@ -670,7 +670,7 @@
         (print (- pc-health new-pc-health))
         (print " damage.")
         (println)
-        (print-pc-health pc-health max-health)
+        (print-pc-health new-pc-health max-health)
         (println)
         (let [new-map-stack (first-map map-stack)]
           (let [new-row-pc-loc (assoc pc-loc :row 0)] 
