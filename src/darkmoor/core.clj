@@ -1,6 +1,7 @@
 ; The Shadow Over Darkmoor
 ;   a text-based game for the terminal
 ; copywright (c) CMR, Jan 01 2019
+;847
 
 (ns darkmoor.core
   (:require [clojure.java.io :as io])
@@ -833,29 +834,11 @@
     (doseq [line (line-seq rdr)]
       (println line))))
 
-(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
-  "takes pc-loc player coordinates and the map stack
-  prints a menu of options for the user to see
-  then calls parse-user-input
-    parse-user-input returns an updated set of pc coordinates
-  if a description can be pulled from the new pc-loc (from location data stored in map)
-    the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
-  if not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
-  (open-main-menu)
-  (print-debug-hit-list "check-move" hit-list)
-  (if (< pc-health max-health)
-    (do
-     (println)
-      (print "             You're injured! Your current health is ")
-      (print pc-health)
-      (print " out of ")
-      (print max-health)
-      (print ".")
-      (println)))
+(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list truefalse]
   (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
         (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
     (print-debug new-pc-inv)
-    (print-debug-hit-list "check-move 2" hit-list)
+    (print-debug-hit-list "check-move" hit-list)
     (if (:desc (get-pc-loc new-loc map-stack))
       (do
         [new-loc 
@@ -867,19 +850,32 @@
          new-max-health
          hit-list])
       (do
-        (if (not= (first map-stack) level-1-map)
-          (println "There is a wall in that direction. You move back to where you were.")
-          (println "You find yourself at the edge of the village and turn back to where you started."))
-        (pause)
-        (print-debug-hit-list "check-move 3" hit-list)
-        [pc-loc 
-         map-stack 
-         new-pc-inv 
-         new-pc-eq 
-         new-pc-health 
-         new-pc-damage
-         new-max-health
-         hit-list]))))
+        (if (= truefalse false)
+          (if (not= (first map-stack) level-1-map)
+            (println "There is a wall in that direction. You move back to where you were. What else would you like to do?")
+            (println "You find yourself at the edge of the village and turn back to where you started. What else would you like to do?")))
+        (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list true)))))
+
+(defn display-main-menu [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
+  "takes pc-loc player coordinates and the map stack
+  prints a menu of options for the user to see
+  then calls parse-user-input
+    parse-user-input returns an updated set of pc coordinates
+  if a description can be pulled from the new pc-loc (from location data stored in map)
+    the new move is valid and the new pc-loc is returned (along with the unchanged map stack). 
+  if not, it's not a valid move, and the old pc-loc is returned (along with the unchanged map stack)"
+  (open-main-menu)
+  (print-debug-hit-list "display-main-menu" hit-list)
+  (if (< pc-health max-health)
+    (do
+      (println)
+      (print "             You're injured! Your current health is ")
+      (print pc-health)
+      (print " out of ")
+      (print max-health)
+      (print ".")
+      (println)))
+  (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list false))
 
 ;entering______________________________________________
 
@@ -925,7 +921,7 @@
   "called from display-menu, takes in pc-loc and map-stack
   calls check-push-map, which returns an updated pc-coordinate location and map stack, and either true or false
   if true, new map has been loaded and the new pc-coordinates and map stack are returned to loop recur
-  if false, calls noromal movement functions (check-move)"
+  if false, calls noromal movement functions (display-main-menu)"
   (print-debug-hit-list "push-control" hit-list)
   (print-enter pc-loc map-stack)
   (let [[new-loc new-map-stack true-false] 
@@ -943,7 +939,7 @@
        max-health
        hit-list]
       ;move normally
-      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
+      (display-main-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
 
 ;exiting_____________________________________________
 
@@ -988,7 +984,7 @@
   "called from display-menu, takes in pc-loc and map-stack
   called from check-pop-map, which returns updated pc-loc, map stack, and either true/false
   if true, returns updated pc-loc and map-stack to loop-recur
-  if false, calls normal movement functions (check-move)"
+  if false, calls normal movement functions (display-main-menu)"
   (print-debug-hit-list "pop-control" hit-list)
   (print-exit)
   (let [[new-loc new-map-stack true-false] 
@@ -1006,13 +1002,13 @@
        max-health
        hit-list]
       ;move normally
-      (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))) 
+      (display-main-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))) 
 
 ;getting and parsing user input_____________________________
 (defn display-menu [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "checks to see if a place can be entered or exited from current player location.
   if yes, gives player the option to enter/exit
-  if no, just displays normal movement functions (check-move)"
+  if no, just displays normal movement functions (display-main-menu)"
   (print-debug-hit-list "display-menu" hit-list)
   (if (:enemy (get-pc-loc pc-loc map-stack))
     (if (not (contains? hit-list (get-pc-loc pc-loc map-stack)))
@@ -1024,15 +1020,15 @@
         (cond
           (:enter (get-pc-loc new-pc-loc new-map-stack)) (push-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)
           (:exit-start-coords (get-pc-loc new-pc-loc new-map-stack)) (pop-control new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)
-          :else (check-move new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)))
+          :else (display-main-menu new-pc-loc new-map-stack new-pc-inv pc-eq new-pc-health pc-damage max-health new-hit-list)))
       (cond
         (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
         (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
-        :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))
+        :else (display-main-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)))
     (cond
       (:enter (get-pc-loc pc-loc map-stack)) (push-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
       (:exit-start-coords (get-pc-loc pc-loc map-stack)) (pop-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list)
-      :else (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
+      :else (display-main-menu pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list))))
 
 ;MAIN_____________________________________________________________________
 
