@@ -784,32 +784,37 @@
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health]
+                       max-health
+                       "n"]
       (= input "s")  [(assoc pc-loc :row (inc (:row pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health]
+                       max-health
+                       "s"]
       (= input "e")  [(assoc pc-loc :col (inc (:col pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health] 
+                       max-health
+                       "e"] 
       (= input "w")  [(assoc pc-loc :col (dec (:col pc-loc))) 
                        pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage
-                       max-health] 
+                       max-health
+                       "w"] 
       (= input "o") (let [new-pc-inv (obj-control pc-loc map-stack pc-inv)]
                       [pc-loc 
                        new-pc-inv 
                        pc-eq 
                        pc-health 
                        pc-damage 
-                       max-health])
+                       max-health
+                       "o"])
       (= input "i") (let [[new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
                           (inv-control pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
                       [pc-loc 
@@ -817,7 +822,8 @@
                        new-pc-eq 
                        new-pc-health 
                        new-pc-damage
-                       new-max-health])
+                       new-max-health
+                       "i"])
       (= input "x") (System/exit 0) 
       :else (do 
               (println "That's not a valid choice.") 
@@ -827,15 +833,16 @@
                pc-eq 
                pc-health 
                pc-damage 
-               max-health]))))
+               max-health
+               "parse-user-input"]))))
 
 (defn open-user-menu []
   (with-open [rdr (io/reader "resources/user-menu.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
-(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list truefalse]
-  (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health] 
+(defn check-move [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list wall-message-printed old-user-input]
+  (let [[new-loc new-pc-inv new-pc-eq new-pc-health new-pc-damage new-max-health new-user-input] 
         (parse-user-input pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health)]
     (print-debug new-pc-inv)
     (print-debug-hit-list "check-move" hit-list)
@@ -850,11 +857,11 @@
          new-max-health
          hit-list])
       (do
-        (if (= truefalse false)
+        (if (or (= wall-message-printed false) (not= new-user-input old-user-input))
           (if (not= (first map-stack) level-1-map)
             (println "There is a wall in that direction. You move back to where you were. What else would you like to do?")
             (println "You find yourself at the edge of the village and turn back to where you started. What else would you like to do?")))
-        (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list true)))))
+        (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list true new-user-input)))))
 
 (defn display-main-menu [pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list]
   "takes pc-loc player coordinates and the map stack
@@ -875,7 +882,7 @@
       (print max-health)
       (print ".")
       (println)))
-  (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list false))
+  (check-move pc-loc map-stack pc-inv pc-eq pc-health pc-damage max-health hit-list false "display-main-menu"))
 
 ;entering______________________________________________
 
