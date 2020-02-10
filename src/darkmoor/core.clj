@@ -219,15 +219,15 @@
   (println)
   (let [input (read-line)]
     (if-let [maybe-int (is-int? input)]
-      (if (or (<= maybe-int (count (get-obj pc-loc map-stack))) (<= maybe-int 0))
+      (if (or (> maybe-int (count (get-obj pc-loc map-stack))) (<= maybe-int 0))
+        (do
+          (println "There's not that many items here.")
+          (something-to-add pc-loc map-stack pc-inv))
         (let [new-pc-inv (add-obj-to-inv pc-loc map-stack pc-inv maybe-int)]
           (print-debug new-pc-inv)
           (remove-obj-from-loc pc-loc map-stack maybe-int)
           (print-debug new-pc-inv)
-          new-pc-inv)
-        (do
-          (println "There's not that many items here.")
-          (something-to-add pc-loc map-stack pc-inv)))
+          new-pc-inv))
       (something-to-add pc-loc map-stack pc-inv))))
 
 (defn add-to-inv [pc-loc map-stack pc-inv]
@@ -308,7 +308,10 @@
   (println "What item do you want to drop? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (if-let [maybe-int (is-int? input)]
-      (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
+      (if (or (> maybe-int (count pc-inv)) (<= maybe-int 0))
+        (do
+          (println "You don't have that many items in your inventory.")
+          (something-to-drop pc-loc map-stack pc-inv))
         (do
           (print-debug pc-inv)
           (add-item-to-loc pc-loc map-stack pc-inv maybe-int)
@@ -316,10 +319,7 @@
                 post-inv (subvec pc-inv maybe-int)]
             (print-debug pre-inv)
             (print-debug post-inv)
-            (vec (concat pre-inv post-inv))))
-        (do
-          (println "You don't have that many items in your inventory.")
-          (something-to-drop pc-loc map-stack pc-inv)))
+            (vec (concat pre-inv post-inv)))))
       (something-to-drop pc-loc map-stack pc-inv))))
 
 (defn remove-item-from-inv [pc-loc map-stack pc-inv]
@@ -359,7 +359,10 @@
   (println) 
   (let [input (read-line)]
     (if-let [maybe-int (is-int? input)]
-      (if (or (<= maybe-int (count pc-inv)) (<= maybe-int 0))
+      (if (or (> maybe-int (count pc-inv)) (<= maybe-int 0))
+        (do
+          (println "You don't have that many items in your inventory.")
+          (something-to-equip pc-inv pc-eq pc-health pc-damage max-health))
         (if (:potion (nth pc-inv (dec maybe-int)))
           (do
             (println "You can't equip that.")
@@ -368,10 +371,7 @@
           [(vec (conj pc-eq (nth pc-inv (dec maybe-int)))) 
            (add-health pc-inv pc-health maybe-int) 
            (add-damage pc-inv pc-damage maybe-int)
-           (add-health pc-inv max-health maybe-int)])
-        (do
-          (println "You don't have that many items in your inventory.")
-          (something-to-equip pc-inv pc-eq pc-health pc-damage max-health)))
+           (add-health pc-inv max-health maybe-int)]))
       (something-to-equip pc-inv pc-eq pc-health pc-damage max-health))))
 
 (defn equip-item [pc-inv pc-eq pc-health pc-damage max-health]
@@ -390,16 +390,16 @@
   (println)
   (let [input (read-line)]
     (if-let [maybe-int (is-int? input)]
-      (if (or (<= maybe-int (count pc-eq)) (<= maybe-int 0))
+      (if (or (> maybe-int (count pc-eq)) (<= maybe-int 0))
+        (do
+          (println "You don't have that many items equipped.")
+          (something-to-unequip pc-eq pc-health pc-damage max-health))
         (let [pre-eq (subvec pc-eq 0 (dec maybe-int))
               post-eq (subvec pc-eq maybe-int)]
           [(vec (concat pre-eq post-eq))
            (sub-health pc-eq pc-health maybe-int) 
            (sub-damage pc-eq pc-damage maybe-int)
-           (sub-health pc-eq max-health maybe-int)])
-        (do
-          (println "You don't have that many items equipped.")
-          (something-to-unequip pc-eq pc-health pc-damage max-health)))
+           (sub-health pc-eq max-health maybe-int)]))
       (something-to-unequip pc-eq pc-health pc-damage max-health))))
 
 (defn unequip-item [pc-eq pc-health pc-damage max-health]
@@ -434,7 +434,7 @@
   (println "What item do you want to drink? Enter '1' for the first item listed, '2' for the second item listed, and so on.")
   (let [input (read-line)]
     (if-let [maybe-int (is-int? input)]
-      (if (<= maybe-int (count pc-inv))
+      (if (> maybe-int (count pc-inv))
         (if (<= maybe-int 0)
           (do
             (println "That's not an item you can drink.")
