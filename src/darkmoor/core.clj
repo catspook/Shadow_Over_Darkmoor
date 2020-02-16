@@ -1055,14 +1055,57 @@
 (defn get-loc-exit [player map-stack loc-info]
   (get-in loc-info [(get-player-loc player map-stack) :exit]))
 
-(defn find-loot [player map-stack loc-info]
-  (println (get-loc-loot player map-stack loc-info))
-  [player loc-info])
+; inventory functions-------------
 
-(defn access-inv [player map-stack loc-info]
-  (println (:inv player))
-  (println (:equip player))
-  [player loc-info])
+(defn equip-item [player map-stack loc-info id]
+  
+  )
+
+(defn unequip-item [player map-stack loc-info id])
+
+;unequip then drop
+(defn drop-item [player map-stack loc-info id])
+
+(defn inv-menu [player map-stack loc-info]
+  (clear-screen)
+  ;FIXME -- have in own function
+  (println "INV!")
+  (println (str "player inv: " (:inv player)))
+  (println (str "player eq: " (:equip player)))
+  (let [input (read-line)]
+    ;input may contain just letter, or letter and item id
+    (let [input-arr (seq (chars (char-array input)))]
+      (cond
+        (= (first (input)) "e") (equip-item player map-stack loc-info (str (rest input-arr)))
+        (= (first (input)) "u") (unequip-item player map-stack loc-info (str (rest input-arr)))
+        (= (first (input)) "d") (drop-item player map-stack loc-info (str (rest input-arr)))
+        (= input "r") ([player map-stack loc-info])
+        (= input "h") (do (help) (inv-menu player map-stack loc-info))
+        :else (inv-menu player-map-stack loc-info)))))
+    
+; loot functions-------------
+
+(defn add-item [player map-stack loc-info id])
+
+(defn add-to-equip-item [player map-stack loc-info id])
+
+(defn loot-menu [player map-stack loc-info]
+  (clear-screen)
+  ;FIXME -- have in own function
+  (println "LOOT!")
+  (println (str "loc loot: " (get-loc-loot player map-stack loc-info)))
+  (println (str "player eq: " (:equip player)))
+  (let [input (read-line)]
+    ;input may contain just letter, or letter and item id
+    (let [input-arr (seq (chars (char-array input)))]
+      (cond
+        (= (first (input)) "a") (add-item player map-stack loc-info (str (rest input-arr)))
+        (= (first (input)) "e") (add-to-equip-item player map-stack loc-info (str (rest input-arr)))
+        (= input "r") ([player map-stack loc-info])
+        (= input "h") (do (help) (inv-menu player map-stack loc-info))
+        :else (inv-menu player-map-stack loc-info)))))
+   
+;movement and menu----------------
 
 (defn enter-loc [player map-stack loc-info]
   (let [new-map-stack (cons (:goto (get-loc-enter player map-stack loc-info)) map-stack)
