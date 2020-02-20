@@ -1099,6 +1099,7 @@
       ;if no--equip in empty 2nd space
       (assoc-in player [:eq :hand] [(first (item-slot (:eq player))) id]))
     ;if no--equip in empty 1st space
+    ;FIXME same
     (assoc-in player [:eq :hand] [id (last (item-slot (:eq player)))])))
 
 (defn equip-item [player id]
@@ -1110,6 +1111,7 @@
       (if (item-slot (:eq player))
         ;unequip item and then equip
         (assoc-in (unequip-item player id) [:eq item-slot] id)
+        ;FIXME what the fuuuuck why does it think id isn't an int?
         (assoc-in player [:eq item-slot] id)))))
 
 (defn add-to-loc [player map-stack loc-info id]
@@ -1187,16 +1189,16 @@
 
 (defn add-item [player map-stack loc-info id]
   (if (get (:inv player) id)
-    [(assoc-in player [:inv id] (+ (get-in player [:inv id]) 1))
+    [(assoc-in player [:inv id] (+ (get (:inv player) id) 1))
      (dec-loc-loot-item player map-stack loc-info id)]
     [(assoc-in player [:inv id] 1)
      (dec-loc-loot-item player map-stack loc-info id)]))
 
 (defn add-to-equip-item [player map-stack loc-info id]
-  (let [player-added-item (add-item player map-stack loc-info id)]
+  (let [[player-added-item loc-remove-item] (add-item player map-stack loc-info id)]
     [(equip-item player-added-item id)
     ;remove from loc
-    (dec-loc-loot-item player map-stack loc-info id)]))
+    (dec-loc-loot-item player map-stack loc-remove-item id)]))
 
 (defn check-loc-id-num [player map-stack loc-info id]
   (println "check-loc-id-num")
@@ -1263,27 +1265,27 @@
         (assoc new-hp-count-player :health [max-health max-health])
         (assoc new-hp-count-player :health [(+ health-gain current-health) max-health])))))
 
-(defn get-user-input [player map-stack loc-info enter? exit? loot? n s e w]
+(defn get-user-input [player map-stack loc-info enter? exit? loot? inv? n s e w]
   ;FIXME put in library
   (let [input (read-line)]
     (cond
       (= input "n") (if (first n)
                       [(assoc player :row (dec (:row player))) map-stack loc-info]
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
       (= input "s") (if (first s)
                       [(assoc player :row (inc (:row player))) map-stack loc-info]
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
       (= input "e") (if (first e)
                       [(assoc player :col (inc (:col player))) map-stack loc-info]
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
       (= input "w") (if (first w)
                       [(assoc player :col (dec (:col player))) map-stack loc-info]
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
 
       (= input "l") (if loot?
                       (let [[new-player new-loc-info] (loot-menu player map-stack loc-info)]
                         [new-player map-stack new-loc-info])
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
 
       (= input "x") (if enter?
                       (let [[new-player new-map-stack] (enter-loc player map-stack loc-info)]
@@ -1291,17 +1293,18 @@
                       (if exit?
                         (let [[new-player new-map-stack] (exit-loc player map-stack loc-info)]
                           [new-player new-map-stack loc-info])
-                        (get-user-input player map-stack loc-info enter? exit? loot? n s e w)))
+                        (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w)))
 
-      (= input "i") (let [[new-player new-loc-info] (inv-menu player map-stack loc-info)]
-                      [new-player map-stack new-loc-info])
-
+      (= input "i") (if inv?
+                      (let [[new-player new-loc-info] (inv-menu player map-stack loc-info)]
+                        [new-player map-stack new-loc-info])
+                        (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
       (= input "p") (if (> (:hp player) 0)
                       [(drink-hp player) map-stack loc-info]
-                      (get-user-input player map-stack loc-info enter? exit? loot? n s e w))
+                      (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
 
       (= input "q") (System/exit 0)
-      :else (get-user-input player map-stack loc-info enter? exit? loot? n s e w))))
+      :else (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))))
 
 ;main menu functions -----------
 
@@ -1322,6 +1325,9 @@
                 false)))
     [true (:yes (get-loc-loot-desc player map-stack loc-info))]
     [false (:no (get-loc-loot-desc player map-stack loc-info))]))
+
+(defn inv-empty? [player] 
+  (every? true? (for [v (:inv player)] (= v 0))))
 
 (defn get-new-loc-desc [loc-info map-stack dir row col]
   (if dir
@@ -1347,7 +1353,8 @@
   (let [enter? (can-enter? player map-stack loc-info)
         exit? (can-exit? player map-stack loc-info)
         loot? (is-there-loot? player map-stack loc-info)
-        nsew? (valid-directions player map-stack loc-info)]
+        nsew? (valid-directions player map-stack loc-info)
+        inv? (inv-empty? player)]
     (println (str "You are at the: " (get-loc-desc player map-stack loc-info)))
     (println)
     (if enter?
@@ -1387,9 +1394,11 @@
         (println (str "Your damage is: " (:damage player)))
         (println)
         (println (str "(p) Drink a Health Potion to restore 25% of your health (" (:hp player) " remaining)"))
-        (println "(i) Open your inventory")
+        (if inv?
+          (println "    Your inventory is empty.")
+          (println "(i) Open your inventory"))
         (println)
-        (get-user-input player map-stack loc-info enter? exit? (first loot?) n s e w)))))
+        (get-user-input player map-stack loc-info enter? exit? (first loot?) inv? n s e w)))))
 
 ;check to see if loot needs to go in locations
 (defn put-loot-in-new-locs [player map-stack loc-info]
