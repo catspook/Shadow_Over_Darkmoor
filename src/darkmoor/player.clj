@@ -7,11 +7,11 @@
    :eq {:head nil  ; name of item equipped in this slot
         :neck nil
         :shoulders nil
-        :body starting-clothes
+        :body 1
         :gloves nil
         :fingers nil
         :boots nil
-        :hand [starting-sword nil]
+        :hand [2 nil]
         :hands nil
         :potion nil}
    ;FIXME put in monad
