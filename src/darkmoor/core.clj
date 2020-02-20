@@ -1198,7 +1198,7 @@
   (let [[player-added-item loc-remove-item] (add-item player map-stack loc-info id)]
     [(equip-item player-added-item id)
     ;remove from loc
-    (dec-loc-loot-item player map-stack loc-remove-item id)]))
+    loc-remove-item]))
 
 (defn check-loc-id-num [player map-stack loc-info id]
   (println "check-loc-id-num")
@@ -1411,8 +1411,7 @@
            ;loc loot is stored key: id, value: count
           (let [half-updated-loc-info (assoc-in loc-info [player-loc-name :loot] {(:id (first loot-list)) 1 
                                                                                   (:id (last loot-list)) 1})] 
-            (let [new-loc-info (assoc-in half-updated-loc-info [get-loot-from :get-loot-from] nil)]
-              new-loc-info)))))))
+            (assoc-in half-updated-loc-info [player-loc-name :get-loot-from] nil)))))))
 
 ;MAIN_____________________________________________________________________
 
