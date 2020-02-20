@@ -206,12 +206,85 @@
         nil)
       nil)))
 
+;FIXME -- have in library 
+(defn print-item [player k]
+  (let [item (get id-obj k)]
+    ;only print if item count is > 0
+    (if (> (get (:inv player) k) 0)
+      (do
+
+        ;is it equipped?
+        (if (= (:slot item) :hand)
+          (if (for [hand (:hand (:eq player))] (= hand k))
+            (print " ********  ")
+            (print "           "))
+          (if (get (:eq player) (:slot item))
+            (print " ********  ")
+            (print "           ")))
+
+        ;print item id
+        (print (str (:id item)))
+
+        ;print " " if id < 10
+        (if (> (:id item) 10)
+          (print "  ")
+          (print "   "))
+
+        ;print item's name
+        (print (:name item))
+
+        ;print item quantity if > 1 
+        (if (> (get (:inv player) k) 1)
+          (print (str " (" (get (:inv player) k) ")"))
+          (print "    "))
+        ;print extra spaces so things line up
+        (doseq [space (repeat (- 27 (count (:name item))) " ")] (print space))
+
+        ;print item health
+        (if (> (:health item) -1)
+          (do
+            (print (str "+" (:health item)))
+            (if (< (:health item) 10) (print " ")))
+          (do
+            (print (str "-" (:health item)))
+            (if (> (:health item) -10) (print " "))))
+
+        (print "     ")
+
+        ;print item damage
+        (if (> (:damage item) -1)
+          (do
+            (print (str "+" (:damage item)))
+            (if (< (:damage item) 10) (print " ")))
+          (do
+            (print (str "-" (:damage item)))
+            (if (> (:damage item) -10) (print " "))))
+
+        ;print item damage type
+        (println (str "     " (:d-type item)))))))
+
+;FIXME -- have in library 
+(defn print-inv-menu [player]
+  (println "INVENTORY\n")
+  (println (str "Your health is: " (first (:health player)) "/" (last (:health player))))
+  (println (str "Your damage is: " (:damage player) "\n"))
+  (println " EQUIPPED  ID  ITEM NAME                      HEALTH  DAMAGE  DAMAGE TYPE")
+  (println " ========================================================================\n")
+  (doseq [k (keys (:inv player))] (print-item player k)))
+    
+    ;item is (get id-obj i)
+    ;if (get (:inv player) i) > 0:
+    ;is it equipped? " *** " "     "
+    ;"id " (" " if id < 10)
+    ;(:name item)
+    ;if (get (:inv player) i) > 1: " (" (get (:inv player) i) ")" else: "    "
+    ;" H" (if (:health item) > 0) "+" "-" (:health item) if (:health item) < 9: " "
+    ;" D" (if (:damage item) > 0) "+" "-" (:damage item) if (:damage item) < 9: " "
+    ;(subs (str (:d-type item)) 1)
+
 (defn inv-menu [player map-stack loc-info]
   (clear-screen)
-  ;FIXME -- have in library 
-  (println "INV!")
-  (println (str "player inv: " (:inv player)))
-  (println (str "player eq: " (:eq player)))
+  (print-inv-menu player)
   ;FIXME -- have in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id

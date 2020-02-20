@@ -11,7 +11,7 @@
    :slot :hands 
    :health 0 
    :damage 5
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def leather-armor
   {
@@ -19,7 +19,8 @@
    :name "Cracked Leather Armor" 
    :slot :body 
    :health 10
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def cult-dagger 
   {
@@ -28,7 +29,7 @@
    :slot :hand
    :health 0 
    :damage 5 
-   :d-type :necro})
+   :d-type "NECROTIC"})
 
 (def flame-shield 
   {
@@ -37,7 +38,7 @@
    :slot :hand 
    :health 3
    :damage 1 
-   :d-type :arcane})
+   :d-type "ARCANE"})
 
 (def butcher-gloves 
   {
@@ -45,7 +46,8 @@
    :name "Butcher's Chain Gloves"
    :slot :gloves 
    :health 3 
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def femur 
   {
@@ -54,7 +56,7 @@
    :slot :hands 
    :health 0 
    :damage 5
-   :d-type :blunt})
+   :d-type "BLUDGEONING"})
 
 (def half-plate 
   {
@@ -62,7 +64,8 @@
    :name "Dirty Half-Plate Armor"
    :slot :body 
    :health 15 
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def speed-boots
   {
@@ -70,7 +73,8 @@
    :name "Boots of Speed"
    :slot :boots
    :health 5 
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def scythe 
   {
@@ -79,7 +83,7 @@
    :slot :hand
    :health 0 
    :damage 5
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def flail 
   {
@@ -88,7 +92,7 @@
    :slot :hand
    :health 0 
    :damage 7 
-   :d-type :pierce})
+   :d-type "PIERCING"})
 
 (def pole-axe 
   {
@@ -97,7 +101,7 @@
    :slot :hands
    :health 0
    :damage 5 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def guard-chainmail 
   {
@@ -105,7 +109,8 @@
    :name "Town Guard's Chainmail"
    :slot :body 
    :health 20 
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def cult-robe 
   {
@@ -114,7 +119,7 @@
    :slot :body 
    :health 10 
    :damage 3 
-   :d-type :arcane})
+   :d-type "ARCANE"})
 
 (def silver-sword 
   {
@@ -123,7 +128,7 @@
    :slot :hand
    :health 0
    :damage 6 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def severed-arm 
   {
@@ -132,7 +137,7 @@
    :slot :hand
    :health 0
    :damage 5 
-   :d-type :necro})
+   :d-type "NECROTIC"})
 
 (def warhammer
   {
@@ -141,7 +146,7 @@
    :slot :hands
    :health 0
    :damage 7
-   :d-type :blunt})
+   :d-type "BLUDGEONING"})
 
 (def scepter 
   {
@@ -150,7 +155,7 @@
    :slot :hands
    :health 0 
    :damage 10 
-   :d-type :arcane})
+   :d-type "ARCANE"})
 
 (def great-axe 
   {
@@ -159,7 +164,7 @@
    :slot :hands
    :health 0
    :damage 6 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def spike-shield
   {
@@ -168,7 +173,7 @@
    :slot :hand
    :health 4 
    :damage 1 
-   :d-type :pierce})
+   :d-type "PIERCING"})
 
 (def spike-gloves
   {
@@ -177,7 +182,7 @@
    :slot :gloves
    :health 3 
    :damage 1 
-   :d-type :pierce})
+   :d-type "PIERCING"})
 
 (def spike-shoulders 
   {
@@ -185,7 +190,8 @@
    :name "Spiked Pauldrons"
    :slot :shoulders 
    :health 3 
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def holy-mace 
   {
@@ -194,7 +200,7 @@
    :slot :hand
    :health 0 
    :damage 5 
-   :d-type :radiant})
+   :d-type "RADIANT"})
 
 (def chair-leg
   {
@@ -203,7 +209,7 @@
    :slot :hand
    :health 0
    :damage 4
-   :d-type :blunt})
+   :d-type "BLUDGEONING"})
 
 (def broken-bottle
   {
@@ -212,7 +218,7 @@
    :slot :hand
    :health 0
    :damage 5 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def rum
   {
@@ -220,7 +226,8 @@
    :name "Bottle of Rum"
    :slot :potion
    :health 1
-   :damage -1})
+   :damage -1
+   :d-type ""})
 
 (def moonshine 
   {
@@ -229,7 +236,7 @@
    :slot :potion
    :health -1
    :damage 1
-   :d-type :blunt})
+   :d-type "BLUDGEONING"})
 
 (def holy-shield
   {
@@ -238,7 +245,7 @@
    :slot :hand
    :health 3
    :damage 2 
-   :d-type :radiant})
+   :d-type "RADIANT"})
 
 (def holy-armor 
   {
@@ -246,7 +253,8 @@
    :name "Rising Sun Plate"
    :slot :body 
    :health 22
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def holy-ring 
   {
@@ -255,7 +263,7 @@
    :slot :finger 
    :health 2
    :damage 2 
-   :d-type :radiant})
+   :d-type "RADIANT"})
 
 (def arcane-dagger
   {
@@ -264,7 +272,7 @@
    :slot :hand
    :health 0
    :damage 10 
-   :d-type :arcane})
+   :d-type "ARCANE"})
 
 (def hunt-knife
   {
@@ -273,7 +281,7 @@
    :slot :hand
    :health 0 
    :damage 5 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def hunt-bow 
   {
@@ -282,7 +290,7 @@
    :slot :hands
    :health 2
    :damage 6 
-   :d-type :pierce})
+   :d-type "PIERCING"})
 
 (def necro-wand 
   {
@@ -291,7 +299,7 @@
    :slot :hand
    :health 0
    :damage 2 
-   :d-type :necro})
+   :d-type "NECROTIC"})
 
 (def necro-amulet 
   {
@@ -300,7 +308,7 @@
    :slot :neck 
    :health 2
    :damage 2 
-   :d-type :necro})
+   :d-type "NECROTIC"})
 
 (def hp
   {:name "HEALTH POTION"
@@ -313,7 +321,7 @@
    :slot :hand
    :health 0
    :damage 3 
-   :d-type :slash})
+   :d-type "SLASHING"})
 
 (def starting-clothes
   {
@@ -321,7 +329,8 @@
    :name "TRAVELING CLOTHES"
    :slot :body 
    :health 5
-   :damage 0})
+   :damage 0
+   :d-type ""})
 
 (def id-obj 
   {
