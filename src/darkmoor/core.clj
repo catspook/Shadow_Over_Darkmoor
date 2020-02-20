@@ -95,12 +95,6 @@
 
 ;INVENTORY FUNCTIONS---------------
 
-(defn inspect [label expr]
-  (do
-    (println label)
-    (println expr)
-    expr))
-
 (defn sub-player-hp-damage [player id]
   (let [old-health (:health player)
         old-damage (:damage player)
@@ -111,12 +105,11 @@
  
 (defn unequip-item-hand [player id]
   ;is item equipped in first hand?
-  (inspect "GAAAAAH" id)
-  (if (= ( inspect "CAATS" (get id-obj (first (inspect "CAT?HANDS" (:hand (:eq player)))))) (inspect "kittycats" (get id-obj id)))
-    (assoc-in (inspect "?? GRR RRARRR??" (sub-player-hp-damage player id)) [:eq :hand] [nil (last (:hand (:eq player)))])
+  (if (= (get id-obj (first (:hand (:eq player)))) (get id-obj id))
+    (assoc-in (sub-player-hp-damage player id) [:eq :hand] [nil (last (:hand (:eq player)))])
     ;is item in second hand?
-    (if (= (inspect "CaTTbutTTs" (get id-obj (last (:hand (:eq player))))) (inspect "Butts" id))
-      (assoc-in (inspect "RARR" (sub-player-hp-damage player id)) [:eq :hand] [(first (:hand (:eq player))) nil])
+    (if (= (get id-obj (last (:hand (:eq player)))) id)
+      (assoc-in (sub-player-hp-damage player id) [:eq :hand] [(first (:hand (:eq player))) nil])
       player)))
 
 (defn unequip-item [player id]
@@ -127,7 +120,7 @@
       ;if not, is item equipped?
       (if (= (get id-obj (item-slot (:eq player))) (get id-obj id))
         ;if it is, let that space just be nil
-        (assoc-in (inspect "ASDF" (sub-player-hp-damage player id)) [:eq item-slot] nil)
+        (assoc-in (sub-player-hp-damage player id) [:eq item-slot] nil)
         player))))
 
 (defn item-already-in-hand [player id]
@@ -170,8 +163,8 @@
         (equip-item-hand updated-player id)
         ;if slot is taken, unequip it first
         (if (item-slot (:eq updated-player))
-          (inspect "Equipped" (assoc-in (unequip-item updated-player id) [:eq item-slot] id))
-          (inspect "Updated player" (assoc-in updated-player [:eq item-slot] id)))))))
+          (assoc-in (unequip-item updated-player id) [:eq item-slot] id)
+          (assoc-in updated-player [:eq item-slot] id))))))
 
 (defn add-to-loc [player map-stack loc-info id]
   (if (get (get-loc-loot player map-stack loc-info) id)
