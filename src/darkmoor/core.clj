@@ -3,7 +3,8 @@
 
 (ns darkmoor.core
   (:require [clojure.java.io :as io])
-  (:require [clojure.string :as s])
+  (:require [clojure.string :as cstr])
+  (:require [clojure.edn :as edn])
   (:gen-class))
 
 (load "enemies")
@@ -1061,149 +1062,180 @@
 
 ; inventory functions-------------
 
+(defn unequip-item-head [player id]
+  ;is item equipped in first hand?
+  (if (= (first (:hand (:eq player))) (get id-obj id))
+    ;if yes--let first hand be nil
+    (assoc-in player [:eq :hand] [nil (last (:hand (:eq player)))])
+    ;if no--is item equipped in second hand?
+    (if (= (last (:hand (:eq player))) (get id-obj id))
+      ;if no--return unchanged
+      player
+      ;if yes--let second hand be nil
+      (assoc-in player [:eq :hand] [(first (:hand (:eq player))) nil]))))
+
 (defn unequip-item [player id]
-  (if (= id ((:slot (id id-obj)) (:eq player)))
-    (assoc-in player [:eq (:slot (id id-obj))] nil)
-    player))
+  (let [item-slot (:slot (get id-obj id))]
+    ;because :hand is an array, we need special function
+    (println (str "item-slot: " item-slot))
+    (println (item-slot (:eq player)))
+    (println (get id-obj id))
+    (println (= (item-slot (:eq player)) (get id-obj id)))
+    (if (= item-slot :hand)
+      (unequip-item-head player id)
+      ;if not, is item equipped?
+      (if (= (item-slot (:eq player)) (get id-obj id))
+        ;if it is, let that space just be nil
+        (assoc-in player [:eq item-slot] nil)
+        player))))
+
+(defn equip-item-head [player id item-slot]
+  ;is an item equiped in first hand?
+  (if (first (:hand (:eq player)))
+    ;if yes--is there an item equipped in 2nd hand?
+    (if (last (:hand (:eq player)))
+      ;if yes--unequip 2nd item and equip 
+      (assoc-in (unequip-item player id) [:eq :hand] [(first (:hand (:eq player))) id])
+      ;if no--equip in empty 2nd space
+      (assoc-in player [:eq :hand] [(first (item-slot (:eq player))) id]))
+    ;if no--equip in empty 1st space
+    (assoc-in player [:eq :hand] [id (last (item-slot (:eq player)))])))
 
 (defn equip-item [player id]
-  ;look to see if an item is already in the equipped slot the new item would go in
-  ;ex: the item id belongs to takes up the :head slot,
-  ;    look up (:head (:eq player)) to see if it's nil
-  (if ((:slot (id id-obj)) (:eq player))
-    (assoc-in (unequip-item player id) [:eq (:slot (id id-obj))] id)
-    (assoc-in player [:eq (:slot (id id-obj))] id)))
+  (let [item-slot (:slot (get id-obj id))]
+    ;because :hand is an array, we need special function
+    (if (= item-slot :hand)
+      (equip-item-head player id item-slot)
+      ;if something is equipped there...
+      (if (item-slot (:eq player))
+        ;unequip item and then equip
+        (assoc-in (unequip-item player id) [:eq item-slot] id)
+        (assoc-in player [:eq item-slot] id)))))
 
 (defn add-to-loc [player map-stack loc-info id]
-  (if (id (get-loc-loot player map-stack loc-info))
-    (assoc-in loc-info [(get-player-loc player map-stack loc-info) :loot id] (+ (get-loc-loot player map-stack loc-info) 1))
-    (assoc-in loc-info [(get-player-loc player map-stack loc-info) :loot id] 1)))
+  (if (get (get-loc-loot player map-stack loc-info) id)
+    (assoc-in loc-info [(get-player-loc player map-stack) :loot id] (+ (get-loc-loot player map-stack loc-info) 1))
+    (assoc-in loc-info [(get-player-loc player map-stack) :loot id] 1)))
 
-(defn drop-item [player map-stack loc-info id]
-  ;is it equipped? is there only 1 of that item in inventory?
-  (if (and ((:slot (id id-obj)) (:eq player)) (= 1 (id (:inv player))))
-    ;if so, unequip item
-    [(assoc-in (unequip-item player id) [:inv id] (- (id (:inv player)) 1))
+(defn drop-item-hand [player map-stack loc-info id]
+  ;if item is equipped and there is only 1 in inventory, unequip then drop
+  (if (and (some true? (for [v (:hand (:eq player))] (= v (get id-obj id)))) (= 1 (get (:inv player) id)))
+    [(assoc-in (unequip-item player id) [:inv id] (- (get (:inv player) id) 1))
      (add-to-loc player map-stack loc-info id)]
-    [(assoc-in player [:inv id] (- (id (:inv player)) 1))
+    [(assoc-in player [:inv id] (- (get (:inv player) id) 1))
      (add-to-loc player map-stack loc-info id)]))
 
-(defn check-inv-item [player id]
-  ;is item in inv?
-  (if (id (:inv player))
-    ;is inv count positive? 
-    (if (> (id (:inv player)) 0)
-      true
-      false)
-   false))
+(defn drop-item [player map-stack loc-info id]
+  (let [item-slot (:slot (get id-obj id))]
+    ;because :hand is an array, we need special function
+    (if (= item-slot :hand)
+      (drop-item-hand player map-stack loc-info id)
+      ;is item equipped, and is here only 1 equipped?
+      (if (and (item-slot (:eq player)) (= 1 (get (:inv player) id)))
+        ;if so, unequip item before dropping
+        [(assoc-in (unequip-item player id) [:inv id] (- (get (:inv player) id) 1))
+         (add-to-loc player map-stack loc-info id)]
+        [(assoc-in player [:inv id] (- (get (:inv player) id) 1))
+         (add-to-loc player map-stack loc-info id)]))))
 
 (defn check-inv-id-num [player id]
-  (let [id-num (try (int id)
+  (let [id-num (try (edn/read-string id)
                     (catch Exception e -1))]
-    (if (or (> id-num (count id-obj)) (< id-num 0))
-      nil
-      (if (check-inv-item player id-num)
+    ;check if input is an object id
+    (if (get id-obj id-num)
+      ;check if more than 0 of that item is at that loc
+      (if (> (get (:inv player) id-num) 0)
         id-num
-        nil))))
+        nil)
+      nil)))
 
 (defn inv-menu [player map-stack loc-info]
   (clear-screen)
   ;FIXME -- have in library 
   (println "INV!")
   (println (str "player inv: " (:inv player)))
-  (println (str "player eq: " (:equip player)))
+  (println (str "player eq: " (:eq player)))
   ;FIXME -- have in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id
     (cond
-      (= (str (first input)) "e") (let [id-num? (check-inv-id-num player (clojure.string/join (rest input-arr)))]
+      (= (str (first input)) "e") (let [id-num? (check-inv-id-num player (cstr/join (rest input)))]
                                       ;if id-num is a number and matches an item id that's in the inventory and above 0, call equip-item
                                       (if id-num?
-                                        [(equip-item player id-num?)
-                                         map-stack
-                                         loc-info]
+                                        (inv-menu (equip-item player id-num?) map-stack loc-info)
                                         (inv-menu player map-stack loc-info)))
-      (= (str (first input)) "u") (let [id-num? (check-inv-id-num player (clojure.string/join (rest input-arr)))]
+      (= (str (first input)) "u") (let [id-num? (check-inv-id-num player (cstr/join (rest input)))]
                                       ;if id-num is a number and matches an item id that's in the inventory and above 0, call unequip-item
                                       (if id-num?
-                                        [(unequip-item player id-num?)
-                                         map-stack
-                                         loc-info]
+                                        (inv-menu (unequip-item player id-num?) map-stack loc-info)
                                         (inv-menu player map-stack loc-info)))
-      (= (str (first input)) "d") (let [id-num? (check-inv-id-num player (clojure.string/join (rest input-arr)))]
+      (= (str (first input)) "d") (let [id-num? (check-inv-id-num player (cstr/join (rest input)))]
                                       ;if id-num is a number and matches an item id that's in the inventory and above 0, call drop-item
                                       (if id-num?
                                         (let [[new-player new-loc-info] (drop-item player map-stack loc-info id-num?)]
-                                          [new-player
-                                           map-stack
-                                           new-loc-info])
+                                          (inv-menu new-player map-stack new-loc-info))
                                         (inv-menu player map-stack loc-info)))
       (= input "r") [player loc-info]
       (= input "h") (do (help) (inv-menu player map-stack loc-info))
+      (= input "q") (System/exit 0)
       :else (inv-menu player map-stack loc-info))))
     
 ; loot functions-------------
 
+(defn dec-loc-loot-item [player map-stack loc-info id]
+  (assoc-in loc-info [(get-player-loc player map-stack) :loot id] (- (get (get-loc-loot player map-stack loc-info) id) 1)))
+
 (defn add-item [player map-stack loc-info id]
-  (if (id (:inv player))
+  (if (get (:inv player) id)
     [(assoc-in player [:inv id] (+ (get-in player [:inv id]) 1))
-     ;remove from loc
-     (assoc-in loc-info [(get-player-loc player map-stack loc-info) :loot id] (- (get-loc-loot player map-stack loc-info) 1))]
+     (dec-loc-loot-item player map-stack loc-info id)]
     [(assoc-in player [:inv id] 1)
-     ;remove from loc
-     (assoc-in loc-info [(get-player-loc player map-stack loc-info) :loot id] (- (get-loc-loot player map-stack loc-info) 1))]))
+     (dec-loc-loot-item player map-stack loc-info id)]))
 
 (defn add-to-equip-item [player map-stack loc-info id]
-  [(equip-item (add-item player id) map-stack loc-info id)
-   ;remove from loc
-   (assoc-in loc-info [(get-player-loc player map-stack loc-info) :loot id] (- (get-loc-loot player map-stack loc-info) 1))])
-
-(defn check-loc-item [player map-stack loc-info id]
-  ;is item at loc?
-  (if (id (get-loc-loot player map-stack loc-info))
-    ;is loc count positive? 
-    (if (> (id (get-loc-loot player map-stack loc-info)) 0)
-      true
-      false)
-   false))
+  (let [player-added-item (add-item player map-stack loc-info id)]
+    [(equip-item player-added-item id)
+    ;remove from loc
+    (dec-loc-loot-item player map-stack loc-info id)]))
 
 (defn check-loc-id-num [player map-stack loc-info id]
-  (let [id-num (try (int id)
+  (println "check-loc-id-num")
+  (let [id-num (try (edn/read-string id)
                     (catch Exception e -1))]
-    (if (or (> id-num (count id-obj)) (< id-num 0))
-      nil
-      (if (check-loc-item player map-stack loc-info id-num)
+    (println (str "id-num: " id-num))
+    ;check if input is an object id
+    (if (get id-obj id-num)
+      ;check if more than one of item is at that loc
+      (if (> (get (get-loc-loot player map-stack loc-info) id-num) 0)
         id-num
-        nil))))
+        nil)
+      nil)))
 
 (defn loot-menu [player map-stack loc-info]
   (clear-screen)
   ;FIXME put in library 
   (println "LOOT!")
   (println (str "loc loot: " (get-loc-loot player map-stack loc-info)))
-  (println (str "player eq: " (:equip player)))
+  (println (str "player eq: " (:eq player)))
   ;FIXME put in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id
     (cond
-      (= (str (first input)) "a") (let [id-num? (check-loc-id-num player map-stack loc-info (clojure.string/join (rest input)))]
+      (= (str (first input)) "a") (let [id-num? (check-loc-id-num player map-stack loc-info (cstr/join (rest input)))]
                                       ;if id-num is a number and matches a loot id that's in the location and above 0, call add-item
                                       (if id-num?
                                         (let [[new-player new-loc-info] (add-item player map-stack loc-info id-num?)]
-                                          [new-player
-                                           map-stack
-                                           new-loc-info])
+                                          (loot-menu new-player map-stack new-loc-info))
                                         (loot-menu player map-stack loc-info)))
-      (= (str (first input)) "e") (let [id-num? (check-loc-id-num player map-stack loc-info (clojure.string/join (rest input)))]
+      (= (str (first input)) "e") (let [id-num? (check-loc-id-num player map-stack loc-info (cstr/join (rest input)))]
                                       ;if id-num is a number and matches a loot id that's in the location and above 0, call add-to-equip-item
                                       (if id-num?
                                         (let [[new-player new-loc-info] (add-to-equip-item player map-stack loc-info id-num?)]
-                                          [new-player
-                                           map-stack
-                                           new-loc-info])
+                                          (loot-menu new-player map-stack new-loc-info))
                                         (loot-menu player map-stack loc-info)))
       (= input "r") [player loc-info]
       (= input "h") (do (help) (loot-menu player map-stack loc-info))
+      (= input "q") (System/exit 0)
       :else (loot-menu player map-stack loc-info))))
    
 ;movement and menu----------------
@@ -1281,6 +1313,8 @@
 
 (defn is-there-loot? [player map-stack loc-info]
   ;are there non-zero values in loot?
+  (println (str "loc loot: " (get-loc-loot player map-stack loc-info)))
+  (println (str "loc loot: " (vals (get-loc-loot player map-stack loc-info))))
   (if (some true? 
             (for [v (vals (get-loc-loot player map-stack loc-info))]
               (if (not= 0 v) 
