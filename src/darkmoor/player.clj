@@ -11,7 +11,7 @@
         :gloves nil
         :fingers nil
         :boots nil
-        :hand [2 nil]
+        :hand {:r 2 :l nil}
         :hands nil
         :potion nil}
    ;FIXME put in monad
