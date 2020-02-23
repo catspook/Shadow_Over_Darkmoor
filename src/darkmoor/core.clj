@@ -219,7 +219,9 @@
                   (= (get id-obj k) (get id-obj (:l (:hand (:eq player))))))
             (print " ********  ")
             (print "           "))
-          (if (get (:eq player) (:slot item))
+          ;get the id of the eq slot that's the same as the items
+          (if (= (get id-obj (get (:eq player) (:slot item)))
+                 item)
             (print " ********  ")
             (print "           ")))
 
