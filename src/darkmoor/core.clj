@@ -95,153 +95,219 @@
 
 ;INVENTORY FUNCTIONS---------------
 
-(defn sub-player-hp-damage [player id]
+(defn get-item [id]
+  (get id-obj id))
+
+(defn sub-hp-dmg [player id]
   (let [old-health (:health player)
         old-damage (:damage player)
-        item (get id-obj id)]
+        item (get-item id)]
   (assoc player :health [(- (first old-health) (:health item))
                          (- (last old-health) (:health item))]
                 :damage (- old-damage (:damage item)))))
+
+(defn get-r-hand [player]
+  (get-item (:r (:hand (:eq player)))))
+
+(defn set-r-hand [player value]
+  (assoc-in player [:eq :hand :r] value))
+
+(defn get-l-hand [player]
+  (get-item (:l (:hand (:eq player)))))
+
+(defn set-l-hand [player value]
+  (assoc-in player [:eq :hand :l] value))
+
+(defn item-eq-in-r-hand? [player id]
+  (= (get-r-hand player) (get-item id)))
  
+(defn item-eq-in-l-hand? [player id]
+  (= (get-l-hand player) (get-item id)))
+
 (defn unequip-item-hand [player id]
-  ;is item equipped in first hand?
-  (if (= (get id-obj (:r (:hand (:eq player)))) (get id-obj id))
-    (assoc-in (sub-player-hp-damage player id) [:eq :hand :r] nil)
-    ;is item in second hand?
-    (if (= (get id-obj (:l (:hand (:eq player)))) (get id-obj id))
-      (assoc-in (sub-player-hp-damage player id) [:eq :hand :l] nil)
+  (if (item-eq-in-r-hand? player id)
+    (let [uneq-player (sub-hp-dmg player id)]
+      (set-r-hand uneq-player nil))
+    (if (item-eq-in-l-hand? player id)
+      (let [uneq-player (sub-hp-dmg player id)]
+        (set-l-hand uneq-player nil))
       player)))
 
+(defn get-item-slot [id]
+  (:slot (get-item id)))
+
+(defn get-eq-slot [player slot]
+  (get-item (slot (:eq player))))
+
+(defn item-eq-in-non-hand? [player slot id]
+  (= (get-eq-slot player slot) (get-item id)))
+
+(defn set-eq-slot [player slot value] 
+  (assoc-in player [:eq slot] value))
+
 (defn unequip-item [player id]
-  (let [item-slot (:slot (get id-obj id))]
+  (let [item-slot (get-item-slot id)]
     ;because :hand is an array, we need special function
     (if (= item-slot :hand)
       (unequip-item-hand player id)
-      ;if not, is item equipped?
-      (if (= (get id-obj (item-slot (:eq player))) (get id-obj id))
-        ;if it is, let that space just be nil
-        (assoc-in (sub-player-hp-damage player id) [:eq item-slot] nil)
+      (if (item-eq-in-non-hand? player item-slot id)
+        (let [uneq-player (sub-hp-dmg player id)]
+          (set-eq-slot uneq-player item-slot nil))
         player))))
+
+(defn get-l-hand-id [player]
+  (:l (:hand (:eq player))))
+
+(defn unequip-eq-hand [player]
+  (let [uneq-player (sub-hp-dmg player (get-l-hand-id player))]
+    (set-l-hand uneq-player nil)))
+
+(defn unequip-eq [player id]
+  (let [old-id ((get-item-slot id) (:eq player))]
+    (let [uneq-player (sub-hp-dmg player old-id)]
+      (set-eq-slot uneq-player (get-item-slot id) nil))))
+  
+(defn get-inv-item-count [player id]
+  (get (:inv player) id))
 
 (defn item-already-in-hand [player id]
   ;if item is already equipped and < 2 are in inv, don't equip   
-  (if (some true? (for [k (vals (:hand (:eq player)))] (= k id)))    
-    (if (< (get (:inv player) id) 2)
+  (if (or (item-eq-in-r-hand? player id)
+          (item-eq-in-l-hand? player id))
+    (if (< (get-inv-item-count player id) 2)
       true
       false)
     false))
 
-(defn equip-item-hand [player id]
-  ;if item is already equipped and < 2 are in inv, don't equip   
-  (if (item-already-in-hand player id)
-    player
-    ;is an item equiped in first hand?
-    (if (:r (:hand (:eq player)))
-      ;if yes--is there an item equipped in 2nd hand?
-      (if (:l (:hand (:eq player)))
-        ;if yes--unequip 2nd item and equip 
-        (assoc-in (unequip-item player id) [:eq :hand :l] id)
-        ;if no--equip in empty 2nd space
-        (assoc-in player [:eq :hand :l] id))
-      ;if no--equip in empty 1st space
-      (assoc-in player [:eq :hand :r] id))))
-
-(defn add-player-hp-damage [player id]
+(defn add-hp-dmg [player id]
   (let [old-health (:health player)
         old-damage (:damage player)
-        item (get id-obj id)]
+        item (get-item id)]
   (assoc player :health [(+ (first old-health) (:health item))
                          (+ (last old-health) (:health item))]
                 :damage (+ old-damage (:damage item)))))
  
+(defn equip-item-hand [player id]
+  ;if item is already equipped and < 2 are in inv, don't equip   
+  (if (item-already-in-hand player id)
+    player
+    ;new stats for player (used if unequip not needed)
+    (let [new-stats-player (add-hp-dmg player id)]
+      (if (get-r-hand player)
+        (if (get-l-hand player)
+          ;both hands are full, so unequip 2nd hand
+          (let [uneq-player (unequip-eq-hand player)]
+            ;then add item's health to player
+            (let [new-player (add-hp-dmg uneq-player id)]
+              ;and eq new item
+              (set-l-hand new-player id)))
+          (set-l-hand new-stats-player id))
+        (set-r-hand new-stats-player id)))))
+
 (defn equip-item [player id]
-  (let [item-slot (:slot (get id-obj id))]
-    ;add health and damage
-    (let [updated-player (add-player-hp-damage player id)]
-      ;because :hand is an array, we need special function
-      (if (= item-slot :hand)
-        (equip-item-hand updated-player id)
-        ;if slot is taken, unequip it first
-        (if (item-slot (:eq updated-player))
-          (assoc-in (unequip-item updated-player id) [:eq item-slot] id)
-          (assoc-in updated-player [:eq item-slot] id))))))
+  (let [item-slot (get-item-slot id)]
+    ;because :hand is an array, we need special function
+    (if (= item-slot :hand)
+      (equip-item-hand player id)
+      (if (item-slot (:eq player))
+        ;unequip item if slot is taken
+        (let [uneq-player (unequip-eq player id)]
+          ;add new stats to player
+          (let [new-player (add-hp-dmg uneq-player id)]
+            (set-eq-slot new-player item-slot id)))
+        (let [new-player (add-hp-dmg player id)]
+          (set-eq-slot new-player item-slot id))))))
+
+(defn get-loot-item-count [player map-stack loc-info id]
+  (get (get-loc-loot player map-stack loc-info) id))
+
+(defn set-loot-item-count [player map-stack loc-info id value]
+  (assoc-in loc-info [(get-player-loc player map-stack) :loot id] value))
 
 (defn add-to-loc [player map-stack loc-info id]
-  (if (get (get-loc-loot player map-stack loc-info) id)
-    (assoc-in loc-info [(get-player-loc player map-stack) :loot id] (+ (get (get-loc-loot player map-stack loc-info) id) 1))
-    (assoc-in loc-info [(get-player-loc player map-stack) :loot id] 1)))
+  (if (get-loot-item-count player map-stack loc-info id)
+    (set-loot-item-count player map-stack loc-info id (inc (get-loot-item-count player map-stack loc-info id)))
+    (set-loot-item-count player map-stack loc-info id 1)))
+
+(defn set-inv-item [player id value]
+  (assoc-in player [:inv id] value))
 
 (defn drop-item-hand [player map-stack loc-info id]
   ;if item is equipped and there is only 1 in inventory, unequip then drop
-  (if (and (some true? (for [v (vals (:hand (:eq player)))] (= v (get id-obj id)))) (= 1 (get (:inv player) id)))
-    [(assoc-in (unequip-item player id) [:inv id] (- (get (:inv player) id) 1))
+  (if (and (or (item-eq-in-r-hand? player id) 
+               (item-eq-in-l-hand? player id))
+           (= 1 (get-inv-item-count player id)))
+    [(let [uneq-player (unequip-item player id)]
+       (set-inv-item uneq-player id (dec (get-inv-item-count player id))))
      (add-to-loc player map-stack loc-info id)]
-    [(assoc-in player [:inv id] (- (get (:inv player) id) 1))
+    [(set-inv-item player id (dec (get-inv-item-count player id)))
      (add-to-loc player map-stack loc-info id)]))
 
+
 (defn drop-item [player map-stack loc-info id]
-  (let [item-slot (:slot (get id-obj id))]
+  (let [item-slot (get-item-slot id)]
     ;because :hand is an array, we need special function
     (if (= item-slot :hand)
       (drop-item-hand player map-stack loc-info id)
-      ;is item equipped, and is here only 1 equipped?
-      (if (and (item-slot (:eq player)) (= 1 (get (:inv player) id)))
+      ;is item equipped, and is there only 1 in inv?
+      (if (and (item-eq-in-non-hand? player item-slot id) 
+               (= 1 (get-inv-item-count player id)))
         ;if so, unequip item before dropping
-        [(assoc-in (unequip-item player id) [:inv id] (- (get (:inv player) id) 1))
+        [(let [uneq-player (unequip-item player id)]
+           (set-inv-item uneq-player id (dec (get-inv-item-count player id))))
          (add-to-loc player map-stack loc-info id)]
-        [(assoc-in player [:inv id] (- (get (:inv player) id) 1))
+        [(set-inv-item player id (dec (get-inv-item-count player id)))
          (add-to-loc player map-stack loc-info id)]))))
 
-(defn is-item-in-inv [player id-num]
+(defn is-item-in-inv? [player id-num]
   (some true? (for [k (keys (:inv player))] (= k id-num))))
 
 (defn check-inv-id-num [player id]
   (let [id-num (try (edn/read-string id)
                     (catch Exception e -1))]
     ;check if input is at that loc 
-    (if (is-item-in-inv player id-num)
+    (if (is-item-in-inv? player id-num)
       ;check if item is "in stock" 
-      (if (> (get (:inv player) id-num) 0)
+      (if (> (get-inv-item-count player id-num) 0)
         id-num
         nil)
       nil)))
 
 ;FIXME -- have in library 
 (defn print-item [player k]
-  (let [item (get id-obj k)]
+  (let [item (get-item k)]
     ;only print if item count is > 0
-    (if (> (get (:inv player) k) 0)
+    (if (> (get-inv-item-count player k) 0)
       (do
 
         ;is it equipped?
-        (if (= (:slot item) :hand)
-          (if (or (= (get id-obj k) (get id-obj (:r (:hand (:eq player)))))
-                  (= (get id-obj k) (get id-obj (:l (:hand (:eq player))))))
-            (print " ********  ")
-            (print "           "))
-          ;get the id of the eq slot that's the same as the items
-          (if (= (get id-obj (get (:eq player) (:slot item)))
-                 item)
-            (print " ********  ")
-            (print "           ")))
+       (if (= (:slot item) :hand)
+          (if (or (item-eq-in-r-hand? player k)
+                  (item-eq-in-l-hand? player k))
+            (print " ********   ")
+            (print "            "))
+          ;get the id of the eq slot that's the
+          (if (item-eq-in-non-hand? player (get-item-slot k) k)
+            (print " ********   ")
+            (print "            ")))
 
         ;print item id
         (print (str (:id item)))
 
         ;print " " if id < 10
-        (if (> (:id item) 10)
-          (print "  ")
+        (if (< (:id item) 10)
+          (print "    ")
           (print "   "))
 
         ;print item's name
         (print (:name item))
 
         ;print item quantity if > 1 
-        (if (> (get (:inv player) k) 1)
-          (print (str " (" (get (:inv player) k) ")"))
+        (if (> (get-inv-item-count player k) 1)
+          (print (str " (" (get-inv-item-count player k) ")"))
           (print "    "))
         ;print extra spaces so things line up
-        (doseq [space (repeat (- 27 (count (:name item))) " ")] (print space))
+        (doseq [space (repeat (- 28 (count (:name item))) " ")] (print space))
 
         ;print item health
         (if (> (:health item) -1)
@@ -252,7 +318,7 @@
             (print (str "-" (:health item)))
             (if (> (:health item) -10) (print " "))))
 
-        (print "     ")
+        (print "      ")
 
         ;print item damage
         (if (> (:damage item) -1)
@@ -268,11 +334,17 @@
 
 ;FIXME -- have in library 
 (defn print-inv-menu [player]
-  (println "INVENTORY\n")
-  (println (str "Your health is: " (first (:health player)) "/" (last (:health player))))
-  (println (str "Your damage is: " (:damage player) "\n"))
-  (println " EQUIPPED  ID  ITEM NAME                      HEALTH  DAMAGE  DAMAGE TYPE")
-  (println " ========================================================================\n")
+  (println " INVENTORY\n
+ (eID) Equip an item
+ (uID) Unequip an item
+ (rID) Remove and item from your inventory
+ (x) Exit your inventory
+ (h) Help menu
+ (q) Quit the game\n")
+  (println (str " Your health is: " (first (:health player)) "/" (last (:health player))))
+  (println (str " Your damage is: " (:damage player) "\n"))
+  (println " EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
+  (println " =============================================================================\n")
   (doseq [k (keys (:inv player))] (print-item player k)))
     
 (defn inv-menu [player map-stack loc-info]
@@ -292,13 +364,13 @@
                                       (if id-num?
                                         (inv-menu (unequip-item player id-num?) map-stack loc-info)
                                         (inv-menu player map-stack loc-info)))
-      (= (str (first input)) "d") (let [id-num? (check-inv-id-num player (cstr/join (rest input)))]
+      (= (str (first input)) "r") (let [id-num? (check-inv-id-num player (cstr/join (rest input)))]
                                       ;if id-num is a number and matches an item id that's in the inventory and above 0, call drop-item
                                       (if id-num?
                                         (let [[new-player new-loc-info] (drop-item player map-stack loc-info id-num?)]
                                           (inv-menu new-player map-stack new-loc-info))
                                         (inv-menu player map-stack loc-info)))
-      (= input "r") [player loc-info]
+      (= input "x") [player loc-info]
       (= input "h") (do (help) (inv-menu player map-stack loc-info))
       (= input "q") (System/exit 0)
       :else (inv-menu player map-stack loc-info))))
@@ -324,39 +396,29 @@
     loc-remove-item]))
 
 ;FIXME -- have in library 
-(defn print-loc [player k]
-  (let [item (get id-obj k)]
+(defn print-loot [player map-stack loc-info k]
+  (let [item (get-item k)]
     ;only print if item count is > 0
-    (if (> (get (:inv player) k) 0)
+    (if (> (get-loot-item-count player map-stack loc-info k) 0)
       (do
 
-        ;is it equipped?
-        (if (= (:slot item) :hand)
-          (if (or (= (get id-obj k) (get id-obj (:r (:hand (:eq player)))))
-                  (= (get id-obj k) (get id-obj (:l (:hand (:eq player))))))
-            (print " ********  ")
-            (print "           "))
-          (if (get (:eq player) (:slot item))
-            (print " ********  ")
-            (print "           ")))
-
         ;print item id
-        (print (str (:id item)))
+        (print (str " " (:id item)))
 
         ;print " " if id < 10
-        (if (> (:id item) 10)
-          (print "  ")
+        (if (< (:id item) 10)
+          (print "    ")
           (print "   "))
 
         ;print item's name
         (print (:name item))
 
         ;print item quantity if > 1 
-        (if (> (get (:inv player) k) 1)
-          (print (str " (" (get (:inv player) k) ")"))
+        (if (> (get-loot-item-count player map-stack loc-info k) 1)
+          (print (str " (" (get-loot-item-count player map-stack loc-info k) ")"))
           (print "    "))
         ;print extra spaces so things line up
-        (doseq [space (repeat (- 27 (count (:name item))) " ")] (print space))
+        (doseq [space (repeat (- 28 (count (:name item))) " ")] (print space))
 
         ;print item health
         (if (> (:health item) -1)
@@ -367,7 +429,7 @@
             (print (str "-" (:health item)))
             (if (> (:health item) -10) (print " "))))
 
-        (print "     ")
+        (print "      ")
 
         ;print item damage
         (if (> (:damage item) -1)
@@ -380,6 +442,21 @@
 
         ;print item damage type
         (println (str "     " (:d-type item)))))))
+
+;FIXME -- have in library 
+(defn print-loot-menu [player map-stack loc-info]
+  (println " LOOT\n
+ (aID) Add an item to your inventory
+ (eID) Add and equip an item
+ (x) Exit the loot menu
+ (h) Help menu
+ (q) Quit the game\n")
+  (println (str " Your health is: " (first (:health player)) "/" (last (:health player))))
+  (println (str " Your damage is: " (:damage player) "\n"))
+  (println " ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
+  (println " ==================================================================\n")
+  (doseq [k (keys (get-loc-loot player map-stack loc-info))] (print-loot player map-stack loc-info k)))
+    
 (defn is-item-at-loc [player map-stack loc-info id-num]
   (some true? (for [k (keys (get-loc-loot player map-stack loc-info))] (= k id-num))))
 
@@ -395,11 +472,9 @@
       nil)))
 
 (defn loot-menu [player map-stack loc-info]
-  (clear-screen)
   ;FIXME put in library 
-  (println "LOOT!")
-  (println (str "loc loot: " (get-loc-loot player map-stack loc-info)))
-  (println (str "player eq: " (:eq player)))
+  (clear-screen)
+  (print-loot-menu player map-stack loc-info)
   ;FIXME put in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id
@@ -416,7 +491,7 @@
                                         (let [[new-player new-loc-info] (add-to-equip-item player map-stack loc-info id-num?)]
                                           (loot-menu new-player map-stack new-loc-info))
                                         (loot-menu player map-stack loc-info)))
-      (= input "r") [player loc-info]
+      (= input "x") [player loc-info]
       (= input "h") (do (help) (loot-menu player map-stack loc-info))
       (= input "q") (System/exit 0)
       :else (loot-menu player map-stack loc-info))))
@@ -531,16 +606,16 @@
         loot? (is-there-loot? player map-stack loc-info)
         nsew? (valid-directions player map-stack loc-info)
         inv? (inv-not-empty? player)]
-    (println (str "You are at the: " (get-loc-desc player map-stack loc-info)))
+    (println (str " " (get-loc-desc player map-stack loc-info)))
     (println)
     (if enter?
-      (println (str "(x) You can enter " enter? " from here.\n")))
+      (println (str " (x) You can enter " enter? " from here.\n")))
     (if exit?
-      (println (str "(x) You can exit to " exit? " from here.\n")))
+      (println (str " (x) You can exit to " exit? " from here.\n")))
     ; want to make sure that there's a non-0 value
     (if (first loot?) 
-      (println (str "(l) " (last loot?)))
-      (println (str "    " (last loot?))))
+      (println (str " (l) " (last loot?)))
+      (println (str " " (last loot?))))
     (println)
       
     ;can't invoke side effects in list comprehensions, so this is the best way
@@ -550,13 +625,13 @@
           e (nth nsew? 2)
           w (last nsew?)]
       (if (first n)
-        (println (str (nth n 1) " To the " (nth n 2) ", you see " (first n))))
+        (println (str " " (nth n 1) " To the " (nth n 2) ", you see " (first n))))
       (if (first s)
-        (println (str (nth s 1) " To the " (nth s 2) ", you see " (first s))))
+        (println (str " " (nth s 1) " To the " (nth s 2) ", you see " (first s))))
       (if (first e)
-        (println (str (nth e 1) " To the " (nth e 2) ", you see " (first e))))
+        (println (str " " (nth e 1) " To the " (nth e 2) ", you see " (first e))))
       (if (first w)
-        (println (str (nth w 1) " To the " (nth w 2) ", you see " (first w))))
+        (println (str " " (nth w 1) " To the " (nth w 2) ", you see " (first w))))
       (let [cant-move
             (remove nil? 
                     (flatten 
@@ -564,17 +639,17 @@
                          (if (false? (first dir))
                            (nth dir 2)))))]
         (if (not (empty? cant-move))
-            (println (str "You cannot move " (apply str (interpose ", " cant-move)))))
+            (println (str " You cannot move " (apply str (interpose ", " cant-move)))))
         (println)
-        (println (str "Your health is: " (first (:health player)) "/" (last (:health player))))
-        (println (str "Your damage is: " (:damage player)))
+        (println (str " Your health is: " (first (:health player)) "/" (last (:health player))))
+        (println (str " Your damage is: " (:damage player)))
         (println)
         (if (> (:hp player) 0)
-          (println (str "(p) Drink a Health Potion to restore 25% of your health (" (:hp player) " remaining)"))
-          (println (str "    You are out of Health Potions.")))
+          (println (str " (p) Drink a Health Potion to restore 25% of your health (" (:hp player) " remaining)"))
+          (println (str " You are out of Health Potions.")))
         (if inv?
-          (println "(i) Open your inventory")
-          (println "    Your inventory is empty."))
+          (println " (i) Open your inventory")
+          (println " Your inventory is empty."))
         (println)
         (get-user-input player map-stack loc-info enter? exit? (first loot?) inv? n s e w)))))
 

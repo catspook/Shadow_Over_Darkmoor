@@ -2,7 +2,7 @@
 (load "objects")
 
 (def init-player
-  {:health [8 10] ; [current health remaining, total health pool]
+  {:health [10 10] ; [current health remaining, total health pool]
    :damage 8   ; amount of total damage done per attack 
    :eq {:head nil  ; name of item equipped in this slot
         :neck nil
