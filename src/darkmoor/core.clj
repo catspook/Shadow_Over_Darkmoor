@@ -71,8 +71,18 @@
     (doseq [line (line-seq rdr)]
       (println line))))
 
+(defn open-inv-menu-end []
+  (with-open [rdr (io/reader "resources/inv-menu-end.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
 (defn open-loot-menu []
   (with-open [rdr (io/reader "resources/loot-menu.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-loot-menu-end []
+  (with-open [rdr (io/reader "resources/loot-menu-end.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
@@ -348,25 +358,28 @@
         ;print item damage type
         (println (str "      " (:d-type item)))))))
 
-(defn print-inv-hp-dmg [player]
-  (println)
-  (doseq [space (repeat 15 " ")] (print space))
-  (doseq [divider (repeat 12 "<<>>")] (print divider))
-  (println)
-  
-  (doseq [space (repeat 24 " ")] (print space))
-  (print (str "\u2665 " (first (:health player)) "/" (last (:health player))))
-  (doseq [space (repeat 21 " ")] (print space))
-  (print (str "\u2718 " (:damage player) "\n"))
-
-  (doseq [space (repeat 15 " ")] (print space))
-  (doseq [divider (repeat 12 "<<>>")] (print divider))
-  (println "\n"))
-
 (defn print-inv-menu [player]
   (open-inv-menu)
-  (print-inv-hp-dmg player)
-  (println " EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
+  (print (str "                 "
+              "| \u2665 " 
+              (first (:health player)) 
+              "/" 
+              (last (:health player))))
+  (if (> (last (:health player)) 9)
+    (if (> (first (:health player)) 9)
+      (println "                                 |")
+      (println "                                  |"))
+    (println "                                   |"))
+
+  (print (str "                 "
+              "| \u2718 " 
+              (:damage player)))
+  (if (> (:damage player) 9)
+    (println "                                    |")
+    (println "                                     |"))
+
+  (open-inv-menu-end)
+  (println "\n\n EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
   (println " -----------------------------------------------------------------------------")
   (doseq [k (keys (:inv player))] (print-item player k))
   (println))
@@ -477,25 +490,28 @@
         ;print item damage type
         (println (str "      " (:d-type item)))))))
 
-(defn print-loot-hp-dmg [player]
-  (println)
-  (doseq [space (repeat 11 " ")] (print space))
-  (doseq [divider (repeat 11 "<<>>")] (print divider))
-  (println)
-  
-  (doseq [space (repeat 18 " ")] (print space))
-  (print (str "\u2665 " (first (:health player)) "/" (last (:health player))))
-  (doseq [space (repeat 20 " ")] (print space))
-  (print (str "\u2718 " (:damage player) "\n"))
-
-  (doseq [space (repeat 11 " ")] (print space))
-  (doseq [divider (repeat 11 "<<>>")] (print divider))
-  (println "\n"))
-
 (defn print-loot-menu [player map-stack loc-info]
   (open-loot-menu)
-  (print-loot-hp-dmg player)
-  (println " ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
+  (print (str "             "
+              "| \u2665 " 
+              (first (:health player)) 
+              "/" 
+              (last (:health player)))) 
+  (if (> (last (:health player)) 9)
+    (if (> (first (:health player)) 9)
+      (println "                              |")
+      (println "                               |"))
+    (println "                                |"))
+
+  (print (str "             "
+              "| \u2718 " 
+              (:damage player)))
+  (if (> (:damage player) 9)
+    (println "                                 |")
+    (println "                                  |"))
+
+  (open-loot-menu-end)
+  (println "\n\n ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
   (println " ------------------------------------------------------------------")
   (doseq [k (keys (get-loc-loot player map-stack loc-info))] (print-loot player map-stack loc-info k))
   (println))
