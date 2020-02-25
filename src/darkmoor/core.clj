@@ -43,11 +43,19 @@
 
 (defn open-title []
   "opens title sequence, pauses screen for time to read it, then clears screen"
-  (print (str (char 27) "[2J")) ;clear screen using ANSI escape
+  (clear-screen)
   (with-open [rdr (io/reader "resources/title.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
   (pause-screen3)
+  (clear-screen))
+
+(defn open-help []
+  (clear-screen)
+  (with-open [rdr (io/reader "resources/help.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line)))
+  (pause)
   (clear-screen))
 
 (defn open-intro []
@@ -56,12 +64,17 @@
     (doseq [line (line-seq rdr)]
       (println line)))
   (pause)
-  (clear-screen)
-  (with-open [rdr (io/reader "resources/intro-cont.txt")]
+  (open-help))
+
+(defn open-inv-menu []
+  (with-open [rdr (io/reader "resources/inv-menu.txt")]
     (doseq [line (line-seq rdr)]
-      (println line)))
-  (pause)
-  (clear-screen))
+      (println line))))
+
+(defn open-loot-menu []
+  (with-open [rdr (io/reader "resources/loot-menu.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
 
 ;HELPER FUNCTIONS---------------
 
@@ -95,16 +108,9 @@
 
 ;INVENTORY FUNCTIONS---------------
 
+;helper
 (defn get-item [id]
   (get id-obj id))
-
-(defn sub-hp-dmg [player id]
-  (let [old-health (:health player)
-        old-damage (:damage player)
-        item (get-item id)]
-  (assoc player :health [(- (first old-health) (:health item))
-                         (- (last old-health) (:health item))]
-                :damage (- old-damage (:damage item)))))
 
 (defn get-r-hand [player]
   (get-item (:r (:hand (:eq player)))))
@@ -124,15 +130,6 @@
 (defn item-eq-in-l-hand? [player id]
   (= (get-l-hand player) (get-item id)))
 
-(defn unequip-item-hand [player id]
-  (if (item-eq-in-r-hand? player id)
-    (let [uneq-player (sub-hp-dmg player id)]
-      (set-r-hand uneq-player nil))
-    (if (item-eq-in-l-hand? player id)
-      (let [uneq-player (sub-hp-dmg player id)]
-        (set-l-hand uneq-player nil))
-      player)))
-
 (defn get-item-slot [id]
   (:slot (get-item id)))
 
@@ -145,27 +142,8 @@
 (defn set-eq-slot [player slot value] 
   (assoc-in player [:eq slot] value))
 
-(defn unequip-item [player id]
-  (let [item-slot (get-item-slot id)]
-    ;because :hand is an array, we need special function
-    (if (= item-slot :hand)
-      (unequip-item-hand player id)
-      (if (item-eq-in-non-hand? player item-slot id)
-        (let [uneq-player (sub-hp-dmg player id)]
-          (set-eq-slot uneq-player item-slot nil))
-        player))))
-
 (defn get-l-hand-id [player]
   (:l (:hand (:eq player))))
-
-(defn unequip-eq-hand [player]
-  (let [uneq-player (sub-hp-dmg player (get-l-hand-id player))]
-    (set-l-hand uneq-player nil)))
-
-(defn unequip-eq [player id]
-  (let [old-id ((get-item-slot id) (:eq player))]
-    (let [uneq-player (sub-hp-dmg player old-id)]
-      (set-eq-slot uneq-player (get-item-slot id) nil))))
   
 (defn get-inv-item-count [player id]
   (get (:inv player) id))
@@ -179,6 +157,37 @@
       false)
     false))
 
+(defn set-inv-item [player id value]
+  (assoc-in player [:inv id] value))
+
+(defn is-item-in-inv? [player id-num]
+  (some true? (for [k (keys (:inv player))] (= k id-num))))
+
+(defn check-inv-id-num [player id]
+  (let [id-num (try (edn/read-string id)
+                    (catch Exception e -1))]
+    ;check if input is at that loc 
+    (if (is-item-in-inv? player id-num)
+      ;check if item is "in stock" 
+      (if (> (get-inv-item-count player id-num) 0)
+        id-num
+        nil)
+      nil)))
+
+;loot helper funcs
+(defn get-loot-item-count [player map-stack loc-info id]
+  (get (get-loc-loot player map-stack loc-info) id))
+
+(defn set-loot-item-count [player map-stack loc-info id value]
+  (assoc-in loc-info [(get-player-loc player map-stack) :loot id] value))
+
+(defn add-to-loc [player map-stack loc-info id]
+  (if (get-loot-item-count player map-stack loc-info id)
+    (set-loot-item-count player map-stack loc-info id (inc (get-loot-item-count player map-stack loc-info id)))
+    (set-loot-item-count player map-stack loc-info id 1)))
+
+;controller inv functions
+
 (defn add-hp-dmg [player id]
   (let [old-health (:health player)
         old-damage (:damage player)
@@ -186,7 +195,43 @@
   (assoc player :health [(+ (first old-health) (:health item))
                          (+ (last old-health) (:health item))]
                 :damage (+ old-damage (:damage item)))))
- 
+
+(defn sub-hp-dmg [player id]
+  (let [old-health (:health player)
+        old-damage (:damage player)
+        item (get-item id)]
+  (assoc player :health [(- (first old-health) (:health item))
+                         (- (last old-health) (:health item))]
+                :damage (- old-damage (:damage item)))))
+
+(defn unequip-item-hand [player id]
+  (if (item-eq-in-r-hand? player id)
+    (let [uneq-player (sub-hp-dmg player id)]
+      (set-r-hand uneq-player nil))
+    (if (item-eq-in-l-hand? player id)
+      (let [uneq-player (sub-hp-dmg player id)]
+        (set-l-hand uneq-player nil))
+      player)))
+
+(defn unequip-item [player id]
+  (let [item-slot (get-item-slot id)]
+    ;because :hand is an array, we need special function
+    (if (= item-slot :hand)
+      (unequip-item-hand player id)
+      (if (item-eq-in-non-hand? player item-slot id)
+        (let [uneq-player (sub-hp-dmg player id)]
+          (set-eq-slot uneq-player item-slot nil))
+        player))))
+
+(defn unequip-eq-hand [player]
+  (let [uneq-player (sub-hp-dmg player (get-l-hand-id player))]
+    (set-l-hand uneq-player nil)))
+
+(defn unequip-eq [player id]
+  (let [old-id ((get-item-slot id) (:eq player))]
+    (let [uneq-player (sub-hp-dmg player old-id)]
+      (set-eq-slot uneq-player (get-item-slot id) nil))))
+
 (defn equip-item-hand [player id]
   ;if item is already equipped and < 2 are in inv, don't equip   
   (if (item-already-in-hand player id)
@@ -218,20 +263,6 @@
         (let [new-player (add-hp-dmg player id)]
           (set-eq-slot new-player item-slot id))))))
 
-(defn get-loot-item-count [player map-stack loc-info id]
-  (get (get-loc-loot player map-stack loc-info) id))
-
-(defn set-loot-item-count [player map-stack loc-info id value]
-  (assoc-in loc-info [(get-player-loc player map-stack) :loot id] value))
-
-(defn add-to-loc [player map-stack loc-info id]
-  (if (get-loot-item-count player map-stack loc-info id)
-    (set-loot-item-count player map-stack loc-info id (inc (get-loot-item-count player map-stack loc-info id)))
-    (set-loot-item-count player map-stack loc-info id 1)))
-
-(defn set-inv-item [player id value]
-  (assoc-in player [:inv id] value))
-
 (defn drop-item-hand [player map-stack loc-info id]
   ;if item is equipped and there is only 1 in inventory, unequip then drop
   (if (and (or (item-eq-in-r-hand? player id) 
@@ -242,7 +273,6 @@
      (add-to-loc player map-stack loc-info id)]
     [(set-inv-item player id (dec (get-inv-item-count player id)))
      (add-to-loc player map-stack loc-info id)]))
-
 
 (defn drop-item [player map-stack loc-info id]
   (let [item-slot (get-item-slot id)]
@@ -258,22 +288,8 @@
          (add-to-loc player map-stack loc-info id)]
         [(set-inv-item player id (dec (get-inv-item-count player id)))
          (add-to-loc player map-stack loc-info id)]))))
-
-(defn is-item-in-inv? [player id-num]
-  (some true? (for [k (keys (:inv player))] (= k id-num))))
-
-(defn check-inv-id-num [player id]
-  (let [id-num (try (edn/read-string id)
-                    (catch Exception e -1))]
-    ;check if input is at that loc 
-    (if (is-item-in-inv? player id-num)
-      ;check if item is "in stock" 
-      (if (> (get-inv-item-count player id-num) 0)
-        id-num
-        nil)
-      nil)))
-
-;FIXME -- have in library 
+    
+;view io functions
 (defn print-item [player k]
   (let [item (get-item k)]
     ;only print if item count is > 0
@@ -330,27 +346,34 @@
             (if (> (:damage item) -10) (print " "))))
 
         ;print item damage type
-        (println (str "     " (:d-type item)))))))
+        (println (str "      " (:d-type item)))))))
 
-;FIXME -- have in library 
+(defn print-inv-hp-dmg [player]
+  (println)
+  (doseq [space (repeat 15 " ")] (print space))
+  (doseq [divider (repeat 12 "<<>>")] (print divider))
+  (println)
+  
+  (doseq [space (repeat 24 " ")] (print space))
+  (print (str "\u2665 " (first (:health player)) "/" (last (:health player))))
+  (doseq [space (repeat 21 " ")] (print space))
+  (print (str "\u2718 " (:damage player) "\n"))
+
+  (doseq [space (repeat 15 " ")] (print space))
+  (doseq [divider (repeat 12 "<<>>")] (print divider))
+  (println "\n"))
+
 (defn print-inv-menu [player]
-  (println " INVENTORY\n
- (eID) Equip an item
- (uID) Unequip an item
- (rID) Remove and item from your inventory
- (x) Exit your inventory
- (h) Help menu
- (q) Quit the game\n")
-  (println (str " Your health is: " (first (:health player)) "/" (last (:health player))))
-  (println (str " Your damage is: " (:damage player) "\n"))
+  (open-inv-menu)
+  (print-inv-hp-dmg player)
   (println " EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
-  (println " =============================================================================\n")
-  (doseq [k (keys (:inv player))] (print-item player k)))
-    
+  (println " -----------------------------------------------------------------------------")
+  (doseq [k (keys (:inv player))] (print-item player k))
+  (println))
+   
 (defn inv-menu [player map-stack loc-info]
   (clear-screen)
   (print-inv-menu player)
-  ;FIXME -- have in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id
     (cond
@@ -371,23 +394,34 @@
                                           (inv-menu new-player map-stack new-loc-info))
                                         (inv-menu player map-stack loc-info)))
       (= input "x") [player loc-info]
-      (= input "h") (do (help) (inv-menu player map-stack loc-info))
+      (= input "h") (do (open-help) (inv-menu player map-stack loc-info))
       (= input "q") (System/exit 0)
       :else (inv-menu player map-stack loc-info))))
-    
+
 ;LOOT FUNCTIONS-----------------
-;get item count
-;get specific item
 
-(defn dec-loc-loot-item [player map-stack loc-info id]
-  (assoc-in loc-info [(get-player-loc player map-stack) :loot id] (- (get (get-loc-loot player map-stack loc-info) id) 1)))
+;helper
+(defn is-item-at-loc [player map-stack loc-info id-num]
+  (some true? (for [k (keys (get-loc-loot player map-stack loc-info))] (= k id-num))))
 
+(defn check-loc-id-num [player map-stack loc-info id]
+  (let [id-num (try (edn/read-string id)
+                    (catch Exception e -1))]
+    ;check if input is at that loc
+    (if (is-item-at-loc player map-stack loc-info id-num)
+      ;check if item is at "in stock"
+      (if (> (get-loot-item-count player map-stack loc-info id-num) 0)
+        id-num
+        nil)
+      nil)))
+
+;controller
 (defn add-item [player map-stack loc-info id]
-  (if (get (:inv player) id)
-    [(assoc-in player [:inv id] (+ (get (:inv player) id) 1))
-     (dec-loc-loot-item player map-stack loc-info id)]
-    [(assoc-in player [:inv id] 1)
-     (dec-loc-loot-item player map-stack loc-info id)]))
+  (if (get-inv-item-count player id)
+    [(set-inv-item player id (inc (get-inv-item-count player id)))
+     (set-loot-item-count player map-stack loc-info id (dec (get-loot-item-count player map-stack loc-info id)))]
+    [(set-inv-item player id 1)
+     (set-loot-item-count player map-stack loc-info id (dec (get-loot-item-count player map-stack loc-info id)))]))
 
 (defn add-to-equip-item [player map-stack loc-info id]
   (let [[player-added-item loc-remove-item] (add-item player map-stack loc-info id)]
@@ -395,7 +429,7 @@
     ;remove from loc
     loc-remove-item]))
 
-;FIXME -- have in library 
+;view io
 (defn print-loot [player map-stack loc-info k]
   (let [item (get-item k)]
     ;only print if item count is > 0
@@ -441,41 +475,34 @@
             (if (> (:damage item) -10) (print " "))))
 
         ;print item damage type
-        (println (str "     " (:d-type item)))))))
+        (println (str "      " (:d-type item)))))))
 
-;FIXME -- have in library 
+(defn print-loot-hp-dmg [player]
+  (println)
+  (doseq [space (repeat 11 " ")] (print space))
+  (doseq [divider (repeat 11 "<<>>")] (print divider))
+  (println)
+  
+  (doseq [space (repeat 18 " ")] (print space))
+  (print (str "\u2665 " (first (:health player)) "/" (last (:health player))))
+  (doseq [space (repeat 20 " ")] (print space))
+  (print (str "\u2718 " (:damage player) "\n"))
+
+  (doseq [space (repeat 11 " ")] (print space))
+  (doseq [divider (repeat 11 "<<>>")] (print divider))
+  (println "\n"))
+
 (defn print-loot-menu [player map-stack loc-info]
-  (println " LOOT\n
- (aID) Add an item to your inventory
- (eID) Add and equip an item
- (x) Exit the loot menu
- (h) Help menu
- (q) Quit the game\n")
-  (println (str " Your health is: " (first (:health player)) "/" (last (:health player))))
-  (println (str " Your damage is: " (:damage player) "\n"))
+  (open-loot-menu)
+  (print-loot-hp-dmg player)
   (println " ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
-  (println " ==================================================================\n")
-  (doseq [k (keys (get-loc-loot player map-stack loc-info))] (print-loot player map-stack loc-info k)))
+  (println " ------------------------------------------------------------------")
+  (doseq [k (keys (get-loc-loot player map-stack loc-info))] (print-loot player map-stack loc-info k))
+  (println))
     
-(defn is-item-at-loc [player map-stack loc-info id-num]
-  (some true? (for [k (keys (get-loc-loot player map-stack loc-info))] (= k id-num))))
-
-(defn check-loc-id-num [player map-stack loc-info id]
-  (let [id-num (try (edn/read-string id)
-                    (catch Exception e -1))]
-    ;check if input is at that loc
-    (if (is-item-at-loc player map-stack loc-info id-num)
-      ;check if item is at "in stock"
-      (if (> (get (get-loc-loot player map-stack loc-info) id-num) 0)
-        id-num
-        nil)
-      nil)))
-
 (defn loot-menu [player map-stack loc-info]
-  ;FIXME put in library 
   (clear-screen)
   (print-loot-menu player map-stack loc-info)
-  ;FIXME put in library 
   (let [input (read-line)]
     ;input may contain just letter, or letter and item id
     (cond
@@ -492,12 +519,13 @@
                                           (loot-menu new-player map-stack new-loc-info))
                                         (loot-menu player map-stack loc-info)))
       (= input "x") [player loc-info]
-      (= input "h") (do (help) (loot-menu player map-stack loc-info))
+      (= input "h") (do (open-help) (loot-menu player map-stack loc-info))
       (= input "q") (System/exit 0)
       :else (loot-menu player map-stack loc-info))))
    
 ;MOVEMENT AND MENU----------------
 
+;controller
 (defn enter-loc [player map-stack loc-info]
   (let [new-map-stack (cons (:goto (get-loc-enter player map-stack loc-info)) map-stack)
         half-updated-player (assoc player :row (get-in (get-loc-enter player map-stack loc-info) [:start-coords :row]))]
@@ -522,7 +550,6 @@
         (assoc new-hp-count-player :health [(+ health-gain current-health) max-health])))))
 
 (defn get-user-input [player map-stack loc-info enter? exit? loot? inv? n s e w]
-  ;FIXME put in library
   (let [input (read-line)]
     (cond
       (= input "n") (if (first n)
@@ -559,16 +586,34 @@
                       [(drink-hp player) map-stack loc-info]
                       (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
 
+      (= input "h") (do (open-help) (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))
       (= input "q") (System/exit 0)
       :else (get-user-input player map-stack loc-info enter? exit? loot? inv? n s e w))))
 
-;MAIN MENU FUNCTIONS--------------
+  ;check to see if loot needs to go in locations
+(defn put-loot-in-new-locs [player map-stack loc-info]
+  (let [player-loc-name (get-player-loc player map-stack)]
+    (let [get-loot-from (get-in loc-info [player-loc-name :get-loot-from])]
+      (if (nil? get-loot-from)
+        loc-info ;already been at this location, don't need to add loot
+        ;FIXME - shuffle needs to be in a library 
+        (let [loot-list (take 2 (shuffle (get-loot-from loot-types)))]
+           ;loc loot is stored key: id, value: count
+          (let [half-updated-loc-info (assoc-in loc-info [player-loc-name :loot] {(:id (first loot-list)) 1 
+                                                                                  (:id (last loot-list)) 1})] 
+            (assoc-in half-updated-loc-info [player-loc-name :get-loot-from] nil)))))))
 
+;helper funcs
 (defn can-enter? [player map-stack loc-info]
   (:new-map-name (get-loc-enter player map-stack loc-info)))
 
 (defn can-exit? [player map-stack loc-info]
   (:old-map-name (get-loc-exit player map-stack loc-info)))
+
+(defn get-new-loc-desc [loc-info map-stack dir row col]
+  (if dir
+    (get-in loc-info [(nth (nth (first map-stack) row) col) :desc])
+    false))
 
 (defn is-there-loot? [player map-stack loc-info]
   ;are thee non-zero values in loot?
@@ -579,11 +624,6 @@
                 false)))
     [true (:yes (get-loc-loot-desc player map-stack loc-info))]
     [false (:no (get-loc-loot-desc player map-stack loc-info))]))
-
-(defn get-new-loc-desc [loc-info map-stack dir row col]
-  (if dir
-    (get-in loc-info [(nth (nth (first map-stack) row) col) :desc])
-    false))
 
 (defn valid-directions [player map-stack loc-info]
   (let [dec-row (dec (:row player)) 
@@ -599,7 +639,7 @@
        [e? "(e)" "East"]
        [w? "(w)" "West"]])))
 
-;FIXME -- put in lib
+;view io funcs
 (defn main-menu [player map-stack loc-info]
   (let [enter? (can-enter? player map-stack loc-info)
         exit? (can-exit? player map-stack loc-info)
@@ -645,26 +685,15 @@
         (println (str " Your damage is: " (:damage player)))
         (println)
         (if (> (:hp player) 0)
-          (println (str " (p) Drink a Health Potion to restore 25% of your health (" (:hp player) " remaining)"))
+          (println (str " (p) Drink a Health Potion (" (:hp player) " remaining)"))
           (println (str " You are out of Health Potions.")))
         (if inv?
           (println " (i) Open your inventory")
           (println " Your inventory is empty."))
+        (println "\n (h) Help!")
+        (println " (q) Quit the game")
         (println)
         (get-user-input player map-stack loc-info enter? exit? (first loot?) inv? n s e w)))))
-
-;check to see if loot needs to go in locations
-(defn put-loot-in-new-locs [player map-stack loc-info]
-  (let [player-loc-name (get-player-loc player map-stack)]
-    (let [get-loot-from (get-in loc-info [player-loc-name :get-loot-from])]
-      (if (nil? get-loot-from)
-        loc-info ;already been at this location, don't need to add loot
-        ;FIXME - shuffle needs to be in a library 
-        (let [loot-list (take 2 (shuffle (get-loot-from loot-types)))]
-           ;loc loot is stored key: id, value: count
-          (let [half-updated-loc-info (assoc-in loc-info [player-loc-name :loot] {(:id (first loot-list)) 1 
-                                                                                  (:id (last loot-list)) 1})] 
-            (assoc-in half-updated-loc-info [player-loc-name :get-loot-from] nil)))))))
 
 ;MAIN_____________________________________________________________________
 

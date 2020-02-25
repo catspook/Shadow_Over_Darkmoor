@@ -1,5 +1,7 @@
 # The Shadow Over Darkmoor
 
+CURRENTLY UNDERGOING A COMPLETE REWRITE! Better code and improved gameplay coming very soon.
+
 After hearing rumors of necromancers ransacking towns, our protagonist returns home to find their 
 village already annhilated. Vowing revenge, the protagonist makes their way through the village to find the person
 or people responsible for the attack and destroy them. Along the way, the protagonist will find plenty of weapons,
@@ -32,7 +34,7 @@ with the command: ```$ java -jar target/uberjar/darkmoor-0.1.0-SNAPSHOT-standalo
 
 ## Acknowledgements
 
-Thanks to my wife, without whose advice I never would have been able to complete this.
+Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who helped me get this off the ground.
 
 All ASCII art taken from: 
 
@@ -44,7 +46,7 @@ ascii.co.uk/
 
 ## License
 
-Copyright © 2019 CM Rutz 
+Copyright © 2019-2020 CM Rutz 
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at

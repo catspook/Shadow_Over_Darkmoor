@@ -1,19 +1,11 @@
 
-
-
-
-
-
-
  _                                                                                                  
-- - /, /,       ,,                                      ,                         ,,                
-  )/ )/ )       ||                                     ||          _   ;          ||                
-  )__)__)  _-_  ||  _-_  /'\\ \\/\\/\\  _-_           =||= ,._-_  < \, \\/\  _-_  ||  _-_  ,._-_    
- ~)__)__) || \\ || ||   || || || || || || \\           ||   ||    /-|| || | || \\ || || \\  ||      
-  )  )  ) ||/   || ||   || || || || || ||/             ||   ||   (( || || | ||/   || ||/    ||      
- /-_/-_/  \\,/  \\ \\,/ \\,/  \\ \\ \\ \\,/  <>        \\,  \\,   \/\\ \\/  \\,/  \\ \\,/   \\,  <> 
-                                              )
-
+- - /, /,       ,,
+  )/ )/ )       ||
+  )__)__)  _-_  ||  _-_  /'\\ \\/\\/\\  _-_
+ ~)__)__) || \\ || ||   || || || || || || \\
+  )  )  ) ||/   || ||   || || || || || ||/  
+ /-_/-_/  \\,/  \\ \\,/ \\,/  \\ \\ \\ \\,/  <>
 
 
 It is a chilly fall afternoon. Thin, watery light filters down to you through the canopy of orange and yellow leaves above your head. 
@@ -23,25 +15,6 @@ attacking villagers have reached your post and you set out as soon as you could 
 The acrid scent hits you first--the smell of smoke, and death. You're too late. You grip your standard-issue sword tightly. 
 
 Someone will pay for this. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
