@@ -374,10 +374,10 @@
 (def loot-types
   {:temple-loot [holy-shield holy-armor holy-ring holy-mace arcane-dagger cult-robe]
    :graveyard-loot [wood-axe cult-dagger femur half-plate leather-armor cult-robe severed-arm]
-   :guardhouse-loot [half-plate flail pole-axe guard-chainmail speed-boots silver-sword warhammer great-axe spike-shield spike-gloves spike-shoulders]
+   :armory-loot [half-plate flail pole-axe guard-chainmail speed-boots silver-sword warhammer great-axe spike-shield spike-gloves spike-shoulders]
    :wizard-tower-loot [flame-shield scepter arcane-dagger speed-boots necro-wand necro-amulet]
-   :house-loot [wood-axe butcher-gloves silver-sword hunt-knife hunt-bow leather-armor great-axe warhammer scythe]
-   :ruins-loot [hunt-knife hunt-bow cult-dagger half-plate cult-robe chair-leg femur]
+   :haunted-house-loot [wood-axe butcher-gloves silver-sword hunt-knife hunt-bow leather-armor great-axe warhammer scythe]
+   :archive-loot [hunt-knife hunt-bow cult-dagger half-plate cult-robe chair-leg femur]
    :cave-loot [necro-wand necro-amulet severed-arm silver-sword cult-robe half-plate femur cult-dagger leather-armor]
    :tavern-loot [chair-leg broken-bottle rum moonshine wood-axe]
    :gen-loot [wood-axe leather-armor flame-shield femur severed-arm cult-dagger butcher-gloves 
