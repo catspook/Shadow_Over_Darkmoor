@@ -22,7 +22,7 @@
 (defn pause []
   "pauses by asking for user input"
   (println) 
-  (println "Press ENTER to continue.")
+  (println " Hit ENTER to continue.")
   (read-line))
 
 (defn pause-screen3 []
@@ -86,6 +86,11 @@
     (doseq [line (line-seq rdr)]
       (println line))))
 
+(defn open-you-died []
+  (with-open [rdr (io/reader "resources/you-died.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
 ;HELPER FUNCTIONS---------------
 
 (defn get-player-loc [player map-stack]
@@ -116,6 +121,17 @@
 (defn inv-not-empty? [player] 
   (not-every? true? (for [v (vals (:inv player))] (= v 0))))
 
+(defn drink-hp [player]
+  (let [current-health (first (:health player))
+        max-health (last (:health player))
+        health-gain (int (* 0.25 (last (:health player))))
+        hp-count (:hp player)]
+    (let [new-health (+ health-gain current-health)
+          new-hp-player (assoc player :hp (dec hp-count) :moved? false)]
+      (if (>= new-health max-health)
+        (assoc new-hp-player :health [max-health max-health])
+        (assoc new-hp-player :health [(+ health-gain current-health) max-health])))))
+
 ;INVENTORY FUNCTIONS---------------
 
 ;helper
@@ -123,16 +139,16 @@
   (get id-obj id))
 
 (defn get-r-hand [player]
-  (get-item (:r (:hand (:eq player)))))
+  (get-item (:r-hand (:eq player))))
 
 (defn set-r-hand [player value]
-  (assoc-in player [:eq :hand :r] value))
+  (assoc-in player [:eq :r-hand] value))
 
 (defn get-l-hand [player]
-  (get-item (:l (:hand (:eq player)))))
+  (get-item (:l-hand (:eq player))))
 
 (defn set-l-hand [player value]
-  (assoc-in player [:eq :hand :l] value))
+  (assoc-in player [:eq :l-hand] value))
 
 (defn item-eq-in-r-hand? [player id]
   (= (get-r-hand player) (get-item id)))
@@ -146,14 +162,14 @@
 (defn get-eq-slot [player slot]
   (get-item (slot (:eq player))))
 
-(defn item-eq-in-non-hand? [player slot id]
+(defn is-item-eq? [player slot id]
   (= (get-eq-slot player slot) (get-item id)))
 
 (defn set-eq-slot [player slot value] 
   (assoc-in player [:eq slot] value))
 
 (defn get-l-hand-id [player]
-  (:l (:hand (:eq player))))
+  (:l-hand (:eq player)))
   
 (defn get-inv-item-count [player id]
   (get (:inv player) id))
@@ -229,7 +245,7 @@
     ;because :hand is an array, we need special function
     (if (= item-slot :hand)
       (unequip-item-hand player id)
-      (if (item-eq-in-non-hand? player item-slot id)
+      (if (is-item-eq? player item-slot id)
         (let [uneq-player (sub-hp-dmg player id)]
           (set-eq-slot uneq-player item-slot nil))
         player))))
@@ -291,7 +307,7 @@
     (if (= item-slot :hand)
       (drop-item-hand player map-stack loc-info id)
       ;is item equipped, and is there only 1 in inv?
-      (if (and (item-eq-in-non-hand? player item-slot id) 
+      (if (and (is-item-eq? player item-slot id) 
                (= 1 (get-inv-item-count player id)))
         ;if so, unequip item before dropping
         [(let [uneq-player (unequip-item player id)]
@@ -314,7 +330,7 @@
             (print " ********   ")
             (print "            "))
           ;get the id of the eq slot that's the
-          (if (item-eq-in-non-hand? player (get-item-slot k) k)
+          (if (is-item-eq? player (get-item-slot k) k)
             (print " ********   ")
             (print "            ")))
 
@@ -417,7 +433,7 @@
   (print-inv-menu player)
   (let [[command item-id] (parse-inv-input player)]
     (cond
-      (= command :exit)    [player loc-info]
+      (= command :exit)    [(assoc player :moved? false) loc-info]
       (= command :help)    (do (open-help) (inv-menu player map-stack loc-info))
       (= command :equip)   (inv-menu (equip-item player item-id) map-stack loc-info)
       (= command :unequip) (inv-menu (unequip-item player item-id) map-stack loc-info)
@@ -547,37 +563,332 @@
   (print-loot-menu player map-stack loc-info)
   (let [[command item-id] (parse-loot-input player map-stack loc-info)]
     (cond
-      (= command :exit)  [player loc-info]
+      (= command :exit)  [(assoc player :moved? false) loc-info]
       (= command :help)  (do (open-help) (loot-menu player map-stack loc-info))
       (= command :equip) (let [[new-player new-loc-info] (add-to-equip-item player map-stack loc-info item-id)]
                            (loot-menu new-player map-stack new-loc-info))
       (= command :add)   (let [[new-player new-loc-info] (add-item player map-stack loc-info item-id)]
                                           (loot-menu new-player map-stack new-loc-info)))))
  
+;FIGHT FUNCTIONS-------------------
+
+(defn get-player-dmg-types [player]
+  (for [v (vals (:eq player))] (:d-type (get-item v))))
+
+(defn count-dmg-matches [player en-weak]
+   (reduce (fn [cnt val] (if val (inc cnt) cnt)) 
+          0
+          (for [pl (get-player-dmg-types player) en en-weak] (= pl en))))
+
+(defn get-player-extra-dmg [player en-weak]
+  (let [extra-dmg-percent (int (/ (* 10 (count-dmg-matches player en-weak)) 100))]
+    (let [extra-dmg (* (:damage player) extra-dmg-percent)]
+      (if (< extra-dmg 1)
+        (+ 1 (:damage player))
+        (+ extra-dmg (:damage player))))))
+
+(defn print-enemy-player-stats [player enemy en-h en-dmg en-weak]
+  (clear-screen)
+  (print (str " " (first enemy) "\n \u2665 " en-h "\n \u2718 " en-dmg))
+  (println (str "\n Weak to " (apply str (interpose ", " en-weak)) "."))
+  (let [pl-dmg (get-player-extra-dmg player en-weak)]
+    (print (str "\n\n THE HERO OF DARKMOOR"  "\n \u2665 " (first (:health player)) "/" (second (:health player)) "\n \u2718 " pl-dmg))
+    (let [pl-dmg-types (filter #(and (not (nil? %)) (not= "" %)) (get-player-dmg-types player))]
+      (println (str "\n Damage type: " (apply str (interpose ", " pl-dmg-types))))
+      (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n"))))
+
+(defn get-new-player-health [player en-dmg hit-chance]
+  (cond 
+    (= hit-chance 0) player
+    (= hit-chance 9) (assoc player :health [(- (first (:health player)) (int (* 1.5 en-dmg))) (last (:health player))])
+    :else (assoc player :health [(- (first (:health player)) en-dmg) (last (:health player))])))
+
+(defn print-enemy-attack [player enemy en-dmg hit-chance]
+  (pause-screen1)
+  (cond
+    (= hit-chance 0) (println (str " Miss! You take 0 " (last enemy) " damage.\n"))
+    (= hit-chance 9) (println (str " Critical hit! You take " (int (* 1.5 en-dmg)) " " (last enemy) " damage.\n"))
+    :else (println (str " Hit! You take " en-dmg " " (last enemy) " damage.\n")))
+  (pause-screen1)
+  (pause))
+
+(defn enemy-attack [player enemy en-dmg]
+  (println (str " " (second enemy)))
+  (let [hit-chance (rand-int 10)]
+    (print-enemy-attack player enemy en-dmg hit-chance)
+    (get-new-player-health player en-dmg hit-chance)))
+
+(defn inv-has-weapons? [player]
+  (some true? (for [k (keys (:inv player))] (and (not= (get (:inv player) k) 0) 
+                                                 (= :hand (get-item-slot k))))))
+
+(defn print-fight-item [player k]
+  (let [item (get-item k)]
+    ;only print if item count is > 0 and it's a weapon
+    (if (and (> (get-inv-item-count player k) 0)
+             (= :hand (get-item-slot k)))
+      (do
+
+        ;is it equipped?
+        (if (or (item-eq-in-r-hand? player k)
+                (item-eq-in-l-hand? player k))
+          (print " ********   ")
+          (print "            "))
+
+        ;print item id
+        (print (str (:id item)))
+
+        ;print " " if id < 10
+        (if (< (:id item) 10)
+          (print "    ")
+          (print "   "))
+
+        ;print item's name
+        (print (:name item))
+
+        ;print item quantity if > 1 
+        (if (> (get-inv-item-count player k) 1)
+          (print (str " (" (get-inv-item-count player k) ")"))
+          (print "    "))
+        ;print extra spaces so things line up
+        (doseq [space (repeat (- 28 (count (:name item))) " ")] (print space))
+
+        ;print item health
+        (if (> (:health item) -1)
+          (do
+            (print (str "+" (:health item)))
+            (if (< (:health item) 10) (print " ")))
+          (do
+            (print (str "-" (:health item)))
+            (if (> (:health item) -10) (print " "))))
+
+        (print "      ")
+
+        ;print item damage
+        (if (> (:damage item) -1)
+          (do
+            (print (str "+" (:damage item)))
+            (if (< (:damage item) 10) (print " ")))
+          (do
+            (print (str "-" (:damage item)))
+            (if (> (:damage item) -10) (print " "))))
+
+        ;print item damage type
+        (println (str "      " (:d-type item)))))))
+
+(defn print-fight-inv-menu [player enemy en-weak]
+  (open-inv-menu)
+  (print (str "                 "
+              "| \u2665 " 
+              (first (:health player)) 
+              "/" 
+              (last (:health player))))
+  (if (> (last (:health player)) 9)
+    (if (> (first (:health player)) 9)
+      (println "                                 |")
+      (println "                                  |"))
+    (println "                                   |"))
+
+  (print (str "                 "
+              "| \u2718 " 
+              (:damage player)))
+  (if (> (:damage player) 9)
+    (println "                                    |")
+    (println "                                     |"))
+
+  (open-inv-menu-end)
+  (println (str "\n\n " (first enemy) " is weak to: " (apply str (interpose ", " en-weak)) "."))
+  (println "\n\n EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
+  (println " -----------------------------------------------------------------------------")
+  (doseq [k (keys (:inv player))] (print-fight-item player k))
+  (println))
+   
+(defn fight-check-inv-item-id [player id]
+  (let [item-id? (try (edn/read-string id)
+                    (catch Exception e -1))]
+    ;check if input is at that loc  and that it's a weapon
+    (if (and (is-item-in-inv? player item-id?)
+             (= :hand (get-item-slot item-id?)))
+      ;check if item is "in stock" 
+      (if (> (get-inv-item-count player item-id?) 0)
+        (do
+        (print item-id?)
+        item-id?)
+        nil)
+      nil)))
+
+(defn parse-fight-inv-input [player]
+  (let [input (read-line)]
+    (cond 
+      (= input "x") [:exit nil]
+      (= input "q") (System/exit 0) 
+      (= input "h") [:help nil]
+      :else (let [command (str (first input))
+                  item-id (fight-check-inv-item-id player (cstr/join (rest input)))]
+              (cond
+                (and item-id (= command "e")) [:equip item-id]
+                (and item-id (= command "u")) [:unequip item-id]
+                :else (parse-fight-inv-input player))))))
+
+(defn fight-inv-menu [player map-stack loc-info enemy en-weak]
+  (clear-screen)
+  (print-fight-inv-menu player enemy en-weak)
+  (let [[command item-id] (parse-fight-inv-input player)]
+    (cond
+      (= command :exit)    player 
+      (= command :help)    (do (open-help) (fight-inv-menu player map-stack loc-info enemy en-weak))
+      (= command :equip)   (fight-inv-menu (equip-item-hand player item-id) map-stack loc-info enemy en-weak)
+      (= command :unequip) (fight-inv-menu (unequip-item-hand player item-id) map-stack loc-info enemy en-weak))))
+
+(defn player-attack-drink-potion [player enemy en-h en-dmg en-weak]
+  (println " You drink the potion, and immediately feel a little better.\n\n")
+  (pause)
+  (clear-screen) 
+  (print-enemy-player-stats (drink-hp player) enemy en-h en-dmg en-weak)
+  (drink-hp player))
+
+(defn get-new-enemy-health [en-h pl-dmg hit-chance]
+  (cond
+    (= hit-chance 0) en-h
+    (= hit-chance 9) (- en-h (int (* 1.5 pl-dmg)))
+    :else (- en-h pl-dmg)))
+
+(defn bonus-weapon-dmg [player enemy pl-dmg]
+  (print (str " " (first enemy) " takes "))
+  (if (> pl-dmg (:damage player))
+    (print (str (int (* 1.5 (- pl-dmg (:damage player))))))
+    (print (str (- pl-dmg (:damage player)))))
+  (print " bonus weapon damage!\n"))
+
+(defn player-attack [player enemy en-h pl-dmg]
+  ;(pause-screen1) 
+  (println " You attack!") 
+  (let [hit-chance (rand-int 10)] 
+    (pause-screen1)
+    (cond
+      (= 0 hit-chance) (println " Miss! Your hit goes wide and you do 0 damage.")
+      (= 9 hit-chance) (println (str " Critical hit! You do " (int (* 1.5 pl-dmg)) " damage."))
+      :else (println (str " Hit! You do " pl-dmg " damage.")))
+    (if (> pl-dmg (:damage player))
+      (bonus-weapon-dmg player enemy pl-dmg))
+    (pause-screen1)
+    (pause)
+    [player (get-new-enemy-health en-h pl-dmg hit-chance)]))
+
+(defn print-player-attack-menu [player]
+  (println "\n a Attack!")
+  (if (inv-has-weapons? player)
+    (println " w Switch out a weapon")
+    (println " You have no other weapons to switch to."))
+  (if (> (:hp player) 0)
+    (println (str " p Drink a health potion (" (:hp player) " remaining)"))
+    (println " You are out of health potions."))
+  (println " h Help!\n q Quit the game\n\n"))
+
+(defn parse-player-attack-input [player]
+  (let [input (read-line)]
+    (cond
+      (= input "a") :attack
+      (= input "w") (if (inv-has-weapons? player)
+                      :inv
+                      (parse-player-attack-input player))
+      (= input "p") (if (> (:hp player) 0) 
+                      :hp
+                      (parse-player-attack-input player))
+      (= input "h") :help
+      (= input "q") (System/exit 0)
+      :else (parse-player-attack-input player))))
+
+(defn player-attack-menu [player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg]
+  (print-player-attack-menu player)
+  (let [command (parse-player-attack-input player)]
+    (cond
+      (= command :attack) (player-attack player enemy en-h pl-dmg)
+      (= command :inv) [(fight-inv-menu player map-stack loc-info enemy en-weak) en-h]
+      (= command :hp) (player-attack-menu (player-attack-drink-potion player enemy en-h en-dmg en-weak) map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)
+      (= command :help) (do 
+                          (open-help) 
+                          (clear-screen) 
+                          (print-enemy-player-stats player enemy en-h en-dmg en-weak) 
+                          (player-attack-menu player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)))))
+
+(defn fight-loop [player map-stack loc-info enemy en-h en-dmg en-weak en-goes-first?]
+  (let [pl-dmg (get-player-extra-dmg player en-weak)]
+    (clear-screen)
+    (print-enemy-player-stats player enemy en-h en-dmg en-weak)
+    (if en-goes-first? ;switch between player and enemy as fight goes on
+      (let [new-player (enemy-attack player enemy en-dmg)]
+        (if (<= (first (:health new-player)) 0)
+          [new-player enemy]
+          (fight-loop new-player map-stack loc-info enemy en-h en-dmg en-weak false)))
+      (let [[new-player new-en-h] (player-attack-menu player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)]
+        (pause-screen1)
+        (if (<= new-en-h 0)
+          [new-player enemy]
+          (fight-loop new-player map-stack loc-info enemy new-en-h en-dmg en-weak true))))))
+
+(defn print-fight-start [player map-stack loc-info enemy]
+  (clear-screen)
+  (println (str " You arrive at " (get-loc-desc player map-stack loc-info) ".\n"))
+  (pause-screen1)
+  (println (str " " (first enemy) " jumps out and attacks you!\n"))
+  (pause-screen1)
+  (println " FIGHT!\n")
+  (pause-screen1)
+  (pause))
+
+(defn did-player-win? [player enemy]
+  (if (<= (first (:health player)) 0)
+    (do
+      (clear-screen)
+      (open-you-died)
+      (System/exit 0))
+    (do 
+      (clear-screen)
+      (println (str " You killed " (first enemy) "!"))
+      (println " You gained a health potion!\n")
+      (pause-screen1)
+      (pause)
+      (clear-screen)
+      (assoc player :hp (inc (:hp player)) :moved? false))))
+
+(defn get-enemy-info [player map-stack loc-info]
+    (let [rand-enemy-index (rand-int (count (get-loc-enemy player map-stack loc-info)))]
+      (let [enemy-type (nth (get-loc-enemy player map-stack loc-info) rand-enemy-index)
+            en-h (int (* 0.4 (last (:health player))))
+            en-dmg (int (* 0.4 (:damage player)))]
+        (let [rand-desc-index (rand-int (count (:desc enemy-type)))]
+          (let [enemy (nth (:desc enemy-type) rand-desc-index)
+                en-weak (:weak enemy-type)
+                en-goes-first? (even? (count (vals (:inv player))))]
+            ;{:desc (first enemy) :attack-desc (second enemy) :dmg-type (last enemy) :health en-h :dmg en-dmg :first? en-goes-first?}
+            [enemy en-h en-dmg en-weak en-goes-first?])))))
+
+(defn fight-menu [player map-stack loc-info]
+  ;are we fighting?
+  (if (and (:moved? player) 
+           (< (rand-int 10) 4))
+    (let [[enemy en-h en-dmg en-weak en-goes-first?] (get-enemy-info player map-stack loc-info)]
+      (print-fight-start player map-stack loc-info enemy)
+      (let [[new-player enemy] (fight-loop player map-stack loc-info enemy en-h en-dmg en-weak en-goes-first?)]
+        (did-player-win? new-player enemy)))
+    player))
+
 ;MOVEMENT AND MENU----------------
 
 (defn enter-loc [player map-stack loc-info]
   (let [new-map-stack (cons (:goto (get-loc-enter player map-stack loc-info)) map-stack)
-        half-updated-player (assoc player :row (get-in (get-loc-enter player map-stack loc-info) [:start-coords :row]))]
-    (let [new-player (assoc half-updated-player :col (get-in (get-loc-enter player map-stack loc-info) [:start-coords :col]))]
-      [new-player new-map-stack])))
+        new-player (assoc player :row (get-in (get-loc-enter player map-stack loc-info) [:start-coords :row])
+                                 :col (get-in (get-loc-enter player map-stack loc-info) [:start-coords :col])
+                                 :moved? true)]
+      [new-player new-map-stack]))
 
 (defn exit-loc [player map-stack loc-info]
   (let [new-map-stack (rest map-stack)
-        half-updated-player (assoc player :row (:row (get-loc-exit player map-stack loc-info)))]
-    (let [new-player (assoc half-updated-player :col (:col (get-loc-exit player map-stack loc-info)))]
-      [new-player new-map-stack])))
-
-(defn drink-hp [player]
-  (let [current-health (first (:health player))
-        max-health (last (:health player))
-        health-gain (int (* 0.25 (last (:health player))))
-        hp-count (:hp player)]
-    (let [new-health (+ health-gain current-health)
-          new-hp-count-player (assoc player :hp (dec hp-count))]
-      (if (>= new-health max-health)
-        (assoc new-hp-count-player :health [max-health max-health])
-        (assoc new-hp-count-player :health [(+ health-gain current-health) max-health])))))
+        new-player (assoc player :row (:row (get-loc-exit player map-stack loc-info))
+                                 :col (:col (get-loc-exit player map-stack loc-info))
+                                 :moved? true)]
+      [new-player new-map-stack]))
 
 ;main menu parsing and printing
 (defn print-main-menu [player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?]
@@ -594,15 +905,15 @@
   (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n")
   
   (if (first n)
-    (println (str " " (nth n 1) "  To the " (nth n 2) ", you see " (first n))))
+    (println (str " " (second n) "  To the " (last n) ", you see " (first n))))
   (if (first s)
-    (println (str " " (nth s 1) "  To the " (nth s 2) ", you see " (first s))))
+    (println (str " " (second s) "  To the " (last s) ", you see " (first s))))
   (if (first e)
-    (println (str " " (nth e 1) "  To the " (nth e 2) ", you see " (first e))))
+    (println (str " " (second e) "  To the " (last e) ", you see " (first e))))
   (if (first w)
-  (println (str " " (nth w 1) "  To the " (nth w 2) ", you see " (first w))))
+  (println (str " " (second w) "  To the " (last w) ", you see " (first w))))
   (if (not (empty? cant-move))
-      (println (str " You cannot move " (apply str (interpose ", " cant-move)))))
+      (println (str " You cannot move " (apply str (interpose ", " cant-move)) ".")))
   (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n")
 
   (println (str "    \u2665 " (first (:health player)) "/" (last (:health player))))
@@ -663,7 +974,7 @@
         [n s e w] (valid-directions player map-stack loc-info)
         inv? (inv-not-empty? player)
         hp? (> (:hp player) 0)]
-    (let [cant-move (remove nil? (flatten (for [dir (list n s e w)] (if (false? (first dir)) (nth dir 2)))))]
+    (let [cant-move (remove nil? (flatten (for [dir (list n s e w)] (if (false? (first dir)) (second dir)))))]
       (print-main-menu player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?)
       (let [input (read-line)]
         (cond 
@@ -690,27 +1001,26 @@
           :else (parse-main-input player map-stack loc-info))))))
 
 (defn main-menu [player map-stack loc-info]
-  (let [command (parse-main-input player map-stack loc-info)]
-    (cond
-      (= command :enter) (let [[new-player new-map-stack] (enter-loc player map-stack loc-info)]
-                           [new-player new-map-stack loc-info])
-      (= command :exit)  (let [[new-player new-map-stack] (exit-loc player map-stack loc-info)]
-                           [new-player new-map-stack loc-info])
-      (= command :loot)  (let [[new-player new-loc-info] (loot-menu player map-stack loc-info)]
-                           [new-player map-stack new-loc-info])
-
-      (= command :n) [(assoc player :row (dec (:row player))) map-stack loc-info]
-      (= command :s) [(assoc player :row (inc (:row player))) map-stack loc-info]
-      (= command :e) [(assoc player :col (inc (:col player))) map-stack loc-info]
-      (= command :w) [(assoc player :col (dec (:col player))) map-stack loc-info]
-
-      (= command :loot) (let [[new-player new-loc-info] (loot-menu player map-stack loc-info)]
-                          [new-player map-stack new-loc-info])
-      (= command :inv)  (let [[new-player new-loc-info] (inv-menu player map-stack loc-info)]
-                          [new-player map-stack new-loc-info])
-
-      (= command :hp) [(drink-hp player) map-stack loc-info]
-      (= command :help)  (do (open-help) (main-menu player map-stack loc-info)))))
+  (let [new-player (fight-menu player map-stack loc-info)]
+    (let [command (parse-main-input new-player map-stack loc-info)]
+      (cond
+        (= command :enter) (let [[enter-player enter-map-stack] (enter-loc new-player map-stack loc-info)]
+                             [enter-player enter-map-stack loc-info])
+        (= command :exit)  (let [[exit-player exit-map-stack] (exit-loc new-player map-stack loc-info)]
+                             [exit-player exit-map-stack loc-info])
+        (= command :loot)  (let [[loot-player loot-loc-info] (loot-menu new-player map-stack loc-info)]
+                             [loot-player map-stack loot-loc-info])
+  
+        (= command :n) [(assoc new-player :moved? true :row (dec (:row new-player))) map-stack loc-info]
+        (= command :s) [(assoc new-player :moved? true :row (inc (:row new-player))) map-stack loc-info]
+        (= command :e) [(assoc new-player :moved? true :col (inc (:col new-player))) map-stack loc-info]
+        (= command :w) [(assoc new-player :moved? true :col (dec (:col new-player))) map-stack loc-info]
+  
+        (= command :inv)  (let [[inv-player inv-loc-info] (inv-menu new-player map-stack loc-info)]
+                            [inv-player map-stack inv-loc-info])
+  
+        (= command :hp) [(drink-hp new-player) map-stack loc-info]
+        (= command :help)  (do (open-help) (main-menu (assoc new-player :moved? false) map-stack loc-info))))))
 
 (defn put-loot-in-new-locs [player map-stack loc-info]
   (let [player-loc-name (get-player-loc player map-stack)]

@@ -8,7 +8,7 @@
   {
    :id 36
    :name "Woodcutter's Axe"
-   :slot :hands 
+   :slot :hand 
    :health 0 
    :damage 5
    :d-type "SLASHING"})
@@ -53,7 +53,7 @@
   {
    :id 31
    :name "Femur"
-   :slot :hands 
+   :slot :hand 
    :health 0 
    :damage 5
    :d-type "BLUDGEONING"})
@@ -98,7 +98,7 @@
   {
    :id 26
    :name "Pole Axe"
-   :slot :hands
+   :slot :hand
    :health 0
    :damage 5 
    :d-type "SLASHING"})
@@ -143,7 +143,7 @@
   {
    :id 21
    :name "Carved Warhammer"
-   :slot :hands
+   :slot :hand
    :health 0
    :damage 7
    :d-type "BLUDGEONING"})
@@ -152,7 +152,7 @@
   {
    :id 20
    :name "Archmage's Scepter"
-   :slot :hands
+   :slot :hand
    :health 0 
    :damage 10 
    :d-type "ARCANE"})
@@ -161,7 +161,7 @@
   {
    :id 19
    :name "Great Axe"
-   :slot :hands
+   :slot :hand
    :health 0
    :damage 6 
    :d-type "SLASHING"})
@@ -287,7 +287,7 @@
   {
    :id 5
    :name "Fine Hunting Bow"
-   :slot :hands
+   :slot :hand
    :health 2
    :damage 6 
    :d-type "PIERCING"})

@@ -574,8 +574,8 @@
    ;main map
    :stables    {:desc "The Decrepit Stables"
                :loot {}
-               :loot-desc {:yes "Yes loot" 
-                           :no "no loot"}
+               :loot-desc {:yes "You find some hunting supplies among the piles of manure and tack." 
+                           :no "You'd rather not search the manure piles for loot."}
                :get-loot-from :gen-loot
                :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :temple  {:desc "The Derelict Temple of the Dawn" 

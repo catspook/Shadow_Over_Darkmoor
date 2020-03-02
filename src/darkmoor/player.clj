@@ -11,12 +11,13 @@
         :gloves nil
         :fingers nil
         :boots nil
-        :hand {:r 2 :l nil}
-        :hands nil
+        :r-hand 2
+        :l-hand nil
         :potion nil}
    ;FIXME put in monad
    :row (rand-int 4) ; coordinates of player's position
    :col (rand-int 3)
+   :moved? true
    :inv {1 1 ;key: object id, value: count of how many are in inventory
          2 1} 
    :hp 3 ; how many health potions does player have on them
