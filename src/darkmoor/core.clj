@@ -587,36 +587,40 @@
         (+ 1 (:damage player))
         (+ extra-dmg (:damage player))))))
 
-(defn print-enemy-player-stats [player enemy en-h en-dmg en-weak]
+(defn print-enemy-player-stats [player enemy]
   (clear-screen)
-  (print (str " " (first enemy) "\n \u2665 " en-h "\n \u2718 " en-dmg))
-  (println (str "\n Weak to " (apply str (interpose ", " en-weak)) "."))
-  (let [pl-dmg (get-player-extra-dmg player en-weak)]
+  (print (str " " (:desc enemy) "\n \u2665 " (:health enemy) "\n \u2718 " (:damage enemy)))
+  (println (str "\n Weak to " (apply str (interpose ", " (:weak enemy))) "."))
+  (let [pl-dmg (get-player-extra-dmg player (:weak enemy))]
     (print (str "\n\n THE HERO OF DARKMOOR"  "\n \u2665 " (first (:health player)) "/" (second (:health player)) "\n \u2718 " pl-dmg))
     (let [pl-dmg-types (filter #(and (not (nil? %)) (not= "" %)) (get-player-dmg-types player))]
       (println (str "\n Damage type: " (apply str (interpose ", " pl-dmg-types))))
       (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n"))))
 
-(defn get-new-player-health [player en-dmg hit-chance]
+(defn get-new-player-health [player enemy hit-chance]
   (cond 
     (= hit-chance 0) player
-    (= hit-chance 9) (assoc player :health [(- (first (:health player)) (int (* 1.5 en-dmg))) (last (:health player))])
-    :else (assoc player :health [(- (first (:health player)) en-dmg) (last (:health player))])))
+    (= hit-chance 9) (assoc player :health [(- (first (:health player)) 
+                                               (int (* 1.5 (:damage enemy)))) 
+                                            (last (:health player))])
+    :else (assoc player :health [(- (first (:health player)) 
+                                    (:damage enemy)) 
+                                 (last (:health player))])))
 
-(defn print-enemy-attack [player enemy en-dmg hit-chance]
+(defn print-enemy-attack [player enemy hit-chance]
   (pause-screen1)
   (cond
-    (= hit-chance 0) (println (str " Miss! You take 0 " (last enemy) " damage.\n"))
-    (= hit-chance 9) (println (str " Critical hit! You take " (int (* 1.5 en-dmg)) " " (last enemy) " damage.\n"))
-    :else (println (str " Hit! You take " en-dmg " " (last enemy) " damage.\n")))
+    (= hit-chance 0) (println (str " Miss! You take 0 " (:dmg-type enemy) " damage.\n"))
+    (= hit-chance 9) (println (str " Critical hit! You take " (int (* 1.5 (:damage enemy))) " " (:dmg-type enemy) " damage.\n"))
+    :else (println (str " Hit! You take " (:damage enemy) " " (:dmg-type enemy) " damage.\n")))
   (pause-screen1)
   (pause))
 
-(defn enemy-attack [player enemy en-dmg]
-  (println (str " " (second enemy)))
+(defn enemy-attack [player enemy]
+  (println (str " " (:attack-desc enemy)))
   (let [hit-chance (rand-int 10)]
-    (print-enemy-attack player enemy en-dmg hit-chance)
-    (get-new-player-health player en-dmg hit-chance)))
+    (print-enemy-attack player enemy hit-chance)
+    (get-new-player-health player enemy hit-chance)))
 
 (defn inv-has-weapons? [player]
   (some true? (for [k (keys (:inv player))] (and (not= (get (:inv player) k) 0) 
@@ -676,7 +680,7 @@
         ;print item damage type
         (println (str "      " (:d-type item)))))))
 
-(defn print-fight-inv-menu [player enemy en-weak]
+(defn print-fight-inv-menu [player enemy]
   (open-inv-menu)
   (print (str "                 "
               "| \u2665 " 
@@ -697,7 +701,7 @@
     (println "                                     |"))
 
   (open-inv-menu-end)
-  (println (str "\n\n " (first enemy) " is weak to: " (apply str (interpose ", " en-weak)) "."))
+  (println (str "\n\n " (:desc enemy) " is weak to: " (apply str (interpose ", " (:weak enemy))) "."))
   (println "\n\n EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
   (println " -----------------------------------------------------------------------------")
   (doseq [k (keys (:inv player))] (print-fight-item player k))
@@ -730,38 +734,39 @@
                 (and item-id (= command "u")) [:unequip item-id]
                 :else (parse-fight-inv-input player))))))
 
-(defn fight-inv-menu [player map-stack loc-info enemy en-weak]
+(defn fight-inv-menu [player map-stack loc-info enemy]
   (clear-screen)
-  (print-fight-inv-menu player enemy en-weak)
+  (print-fight-inv-menu player enemy)
   (let [[command item-id] (parse-fight-inv-input player)]
     (cond
       (= command :exit)    player 
-      (= command :help)    (do (open-help) (fight-inv-menu player map-stack loc-info enemy en-weak))
-      (= command :equip)   (fight-inv-menu (equip-item-hand player item-id) map-stack loc-info enemy en-weak)
-      (= command :unequip) (fight-inv-menu (unequip-item-hand player item-id) map-stack loc-info enemy en-weak))))
+      (= command :help)    (do (open-help) (fight-inv-menu player map-stack loc-info enemy))
+      (= command :equip)   (fight-inv-menu (equip-item-hand player item-id) map-stack loc-info enemy)
+      (= command :unequip) (fight-inv-menu (unequip-item-hand player item-id) map-stack loc-info enemy))))
 
-(defn player-attack-drink-potion [player enemy en-h en-dmg en-weak]
+(defn player-attack-drink-potion [player enemy]
   (println " You drink the potion, and immediately feel a little better.\n\n")
   (pause)
   (clear-screen) 
-  (print-enemy-player-stats (drink-hp player) enemy en-h en-dmg en-weak)
+  (print-enemy-player-stats (drink-hp player) enemy)
   (drink-hp player))
 
-(defn get-new-enemy-health [en-h pl-dmg hit-chance]
+(defn get-new-enemy-health [enemy pl-dmg hit-chance]
   (cond
-    (= hit-chance 0) en-h
-    (= hit-chance 9) (- en-h (int (* 1.5 pl-dmg)))
-    :else (- en-h pl-dmg)))
+    (= hit-chance 0) (:health enemy)
+    (= hit-chance 9) (assoc enemy :health (- (:health enemy) 
+                                             (int (* 1.5 pl-dmg))))
+    :else (assoc enemy :health (- (:health enemy) 
+                                  pl-dmg))))
 
 (defn bonus-weapon-dmg [player enemy pl-dmg]
-  (print (str " " (first enemy) " takes "))
+  (print (str " " (:desc enemy) " takes "))
   (if (> pl-dmg (:damage player))
     (print (str (int (* 1.5 (- pl-dmg (:damage player))))))
     (print (str (- pl-dmg (:damage player)))))
   (print " bonus weapon damage!\n"))
 
-(defn player-attack [player enemy en-h pl-dmg]
-  ;(pause-screen1) 
+(defn player-attack [player enemy pl-dmg]
   (println " You attack!") 
   (let [hit-chance (rand-int 10)] 
     (pause-screen1)
@@ -773,7 +778,7 @@
       (bonus-weapon-dmg player enemy pl-dmg))
     (pause-screen1)
     (pause)
-    [player (get-new-enemy-health en-h pl-dmg hit-chance)]))
+    [player (get-new-enemy-health enemy pl-dmg hit-chance)]))
 
 (defn print-player-attack-menu [player]
   (println "\n a Attack!")
@@ -799,43 +804,42 @@
       (= input "q") (System/exit 0)
       :else (parse-player-attack-input player))))
 
-(defn player-attack-menu [player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg]
+(defn player-attack-menu [player map-stack loc-info enemy pl-dmg]
   (print-player-attack-menu player)
   (let [command (parse-player-attack-input player)]
     (cond
-      (= command :attack) (player-attack player enemy en-h pl-dmg)
-      (= command :inv) [(fight-inv-menu player map-stack loc-info enemy en-weak) en-h]
-      (= command :hp) (player-attack-menu (player-attack-drink-potion player enemy en-h en-dmg en-weak) map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)
+      (= command :attack) (player-attack player enemy pl-dmg)
+      (= command :inv) [(fight-inv-menu player map-stack loc-info enemy ) enemy]
+      (= command :hp) (player-attack-menu (player-attack-drink-potion player enemy) map-stack loc-info enemy pl-dmg)
       (= command :help) (do 
                           (open-help) 
                           (clear-screen) 
-                          (print-enemy-player-stats player enemy en-h en-dmg en-weak) 
-                          (player-attack-menu player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)))))
+                          (print-enemy-player-stats player enemy) 
+                          (player-attack-menu player map-stack loc-info enemy pl-dmg)))))
 
-(defn fight-loop [player map-stack loc-info enemy en-h en-dmg en-weak en-goes-first?]
-  (let [pl-dmg (get-player-extra-dmg player en-weak)]
+(defn fight-loop [player map-stack loc-info enemy]
+  (let [pl-dmg (get-player-extra-dmg player (:weak enemy))]
     (clear-screen)
-    (print-enemy-player-stats player enemy en-h en-dmg en-weak)
-    (if en-goes-first? ;switch between player and enemy as fight goes on
-      (let [new-player (enemy-attack player enemy en-dmg)]
+    (print-enemy-player-stats player enemy)
+    (if (:first? enemy) ;switch between player and enemy as fight goes on
+      (let [new-player (enemy-attack player enemy)]
         (if (<= (first (:health new-player)) 0)
           [new-player enemy]
-          (fight-loop new-player map-stack loc-info enemy en-h en-dmg en-weak false)))
-      (let [[new-player new-en-h] (player-attack-menu player map-stack loc-info enemy en-h en-dmg en-weak pl-dmg)]
+          (fight-loop new-player map-stack loc-info (assoc enemy :first? false))))
+      (let [[new-player new-enemy] (player-attack-menu player map-stack loc-info enemy pl-dmg)]
         (pause-screen1)
-        (if (<= new-en-h 0)
-          [new-player enemy]
-          (fight-loop new-player map-stack loc-info enemy new-en-h en-dmg en-weak true))))))
+        (if (<= (:health new-enemy) 0)
+          [new-player new-enemy]
+          (fight-loop new-player map-stack loc-info (assoc new-enemy :first? true)))))))
 
 (defn print-fight-start [player map-stack loc-info enemy]
   (clear-screen)
   (println (str " You arrive at " (get-loc-desc player map-stack loc-info) ".\n"))
   (pause-screen1)
-  (println (str " " (first enemy) " jumps out and attacks you!\n"))
+  (println (str " " (:desc enemy) " jumps out and attacks you!\n"))
   (pause-screen1)
   (println " FIGHT!\n")
-  (pause-screen1)
-  (pause))
+  (pause-screen3)
 
 (defn did-player-win? [player enemy]
   (if (<= (first (:health player)) 0)
@@ -845,7 +849,7 @@
       (System/exit 0))
     (do 
       (clear-screen)
-      (println (str " You killed " (first enemy) "!"))
+      (println (str " You killed " (:desc enemy) "!"))
       (println " You gained a health potion!\n")
       (pause-screen1)
       (pause)
@@ -853,24 +857,26 @@
       (assoc player :hp (inc (:hp player)) :moved? false))))
 
 (defn get-enemy-info [player map-stack loc-info]
-    (let [rand-enemy-index (rand-int (count (get-loc-enemy player map-stack loc-info)))]
-      (let [enemy-type (nth (get-loc-enemy player map-stack loc-info) rand-enemy-index)
-            en-h (int (* 0.4 (last (:health player))))
-            en-dmg (int (* 0.4 (:damage player)))]
-        (let [rand-desc-index (rand-int (count (:desc enemy-type)))]
-          (let [enemy (nth (:desc enemy-type) rand-desc-index)
-                en-weak (:weak enemy-type)
-                en-goes-first? (even? (count (vals (:inv player))))]
-            ;{:desc (first enemy) :attack-desc (second enemy) :dmg-type (last enemy) :health en-h :dmg en-dmg :first? en-goes-first?}
-            [enemy en-h en-dmg en-weak en-goes-first?])))))
+  (let [enemy (first (shuffle (:desc (first (shuffle (get-loc-enemy player map-stack loc-info))))))
+        en-h (int (* 0.4 (last (:health player))))
+        en-dmg (int (* 0.4 (:damage player)))
+        en-weak (:weak (first (shuffle (get-loc-enemy player map-stack loc-info))))
+        en-goes-first? (even? (count (vals (:inv player))))]
+    {:desc (first enemy) 
+     :attack-desc (second enemy) 
+     :dmg-type (last enemy) 
+     :weak en-weak 
+     :health en-h 
+     :damage en-dmg 
+     :first? en-goes-first?}))
 
 (defn fight-menu [player map-stack loc-info]
   ;are we fighting?
   (if (and (:moved? player) 
            (< (rand-int 10) 4))
-    (let [[enemy en-h en-dmg en-weak en-goes-first?] (get-enemy-info player map-stack loc-info)]
+    (let [enemy (get-enemy-info player map-stack loc-info)]
       (print-fight-start player map-stack loc-info enemy)
-      (let [[new-player enemy] (fight-loop player map-stack loc-info enemy en-h en-dmg en-weak en-goes-first?)]
+      (let [[new-player enemy] (fight-loop player map-stack loc-info enemy)]
         (did-player-win? new-player enemy)))
     player))
 
