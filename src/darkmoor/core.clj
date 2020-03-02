@@ -25,6 +25,10 @@
   (println " Hit ENTER to continue.")
   (read-line))
 
+(defn pause-screen5 []
+  "pauses thread for 5 seconds"
+  (Thread/sleep 5000))
+
 (defn pause-screen3 []
   "pauses thread for 3 seconds"
   (Thread/sleep 3000))
@@ -88,6 +92,21 @@
 
 (defn open-you-died []
   (with-open [rdr (io/reader "resources/you-died.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-fight []
+  (with-open [rdr (io/reader "resources/fight.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-you-win []
+  (with-open [rdr (io/reader "resources/you-win.txt")]
+    (doseq [line (line-seq rdr)]
+      (println line))))
+
+(defn open-sword2 []
+  (with-open [rdr (io/reader "resources/sword2.txt")]
     (doseq [line (line-seq rdr)]
       (println line))))
 
@@ -592,10 +611,11 @@
   (print (str " " (:desc enemy) "\n \u2665 " (:health enemy) "\n \u2718 " (:damage enemy)))
   (println (str "\n Weak to " (apply str (interpose ", " (:weak enemy))) "."))
   (let [pl-dmg (get-player-extra-dmg player (:weak enemy))]
-    (print (str "\n\n THE HERO OF DARKMOOR"  "\n \u2665 " (first (:health player)) "/" (second (:health player)) "\n \u2718 " pl-dmg))
+    (print (str "\n\n The Hero of Darkmoor"  "\n \u2665 " (first (:health player)) "/" (second (:health player)) "\n \u2718 " pl-dmg))
     (let [pl-dmg-types (filter #(and (not (nil? %)) (not= "" %)) (get-player-dmg-types player))]
-      (println (str "\n Damage type: " (apply str (interpose ", " pl-dmg-types))))
-      (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n"))))
+      (println (str "\n Damage type: " (apply str (interpose ", " pl-dmg-types)) "\n"))
+      (open-sword2)
+      (println))))
 
 (defn get-new-player-health [player enemy hit-chance]
   (cond 
@@ -608,12 +628,10 @@
                                  (last (:health player))])))
 
 (defn print-enemy-attack [player enemy hit-chance]
-  (pause-screen1)
   (cond
     (= hit-chance 0) (println (str " Miss! You take 0 " (:dmg-type enemy) " damage.\n"))
     (= hit-chance 9) (println (str " Critical hit! You take " (int (* 1.5 (:damage enemy))) " " (:dmg-type enemy) " damage.\n"))
     :else (println (str " Hit! You take " (:damage enemy) " " (:dmg-type enemy) " damage.\n")))
-  (pause-screen1)
   (pause))
 
 (defn enemy-attack [player enemy]
@@ -745,15 +763,15 @@
       (= command :unequip) (fight-inv-menu (unequip-item-hand player item-id) map-stack loc-info enemy))))
 
 (defn player-attack-drink-potion [player enemy]
-  (println " You drink the potion, and immediately feel a little better.\n\n")
-  (pause)
+  (println "\n You drink the potion, and immediately feel a little better. \n")
+  (pause-screen2)
   (clear-screen) 
   (print-enemy-player-stats (drink-hp player) enemy)
   (drink-hp player))
 
 (defn get-new-enemy-health [enemy pl-dmg hit-chance]
   (cond
-    (= hit-chance 0) (:health enemy)
+    (= hit-chance 0) enemy
     (= hit-chance 9) (assoc enemy :health (- (:health enemy) 
                                              (int (* 1.5 pl-dmg))))
     :else (assoc enemy :health (- (:health enemy) 
@@ -774,10 +792,10 @@
       (= 0 hit-chance) (println " Miss! Your hit goes wide and you do 0 damage.")
       (= 9 hit-chance) (println (str " Critical hit! You do " (int (* 1.5 pl-dmg)) " damage."))
       :else (println (str " Hit! You do " pl-dmg " damage.")))
-    (if (> pl-dmg (:damage player))
+    (if (and (not= 0 hit-chance) 
+             (> pl-dmg (:damage player)))
       (bonus-weapon-dmg player enemy pl-dmg))
-    (pause-screen1)
-    (pause)
+    (pause-screen2)
     [player (get-new-enemy-health enemy pl-dmg hit-chance)]))
 
 (defn print-player-attack-menu [player]
@@ -834,12 +852,10 @@
 
 (defn print-fight-start [player map-stack loc-info enemy]
   (clear-screen)
-  (println (str " You arrive at " (get-loc-desc player map-stack loc-info) ".\n"))
-  (pause-screen1)
+  (open-fight)
+  (println (str "\n You arrive at " (get-loc-desc player map-stack loc-info) ".\n"))
   (println (str " " (:desc enemy) " jumps out and attacks you!\n"))
-  (pause-screen1)
-  (println " FIGHT!\n")
-  (pause-screen3)
+  (pause-screen5))
 
 (defn did-player-win? [player enemy]
   (if (<= (first (:health player)) 0)
@@ -849,10 +865,10 @@
       (System/exit 0))
     (do 
       (clear-screen)
-      (println (str " You killed " (:desc enemy) "!"))
-      (println " You gained a health potion!\n")
-      (pause-screen1)
-      (pause)
+      (open-you-win)
+      (println (str "\n You killed " (:desc enemy) "!"))
+      (println " You gained a health potion!")
+      (pause-screen5)
       (clear-screen)
       (assoc player :hp (inc (:hp player)) :moved? false))))
 
