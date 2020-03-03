@@ -18,7 +18,7 @@ What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Fin
 
 ### Loot cool new weapons and armor!
 Customize your character and do extra damage to certain enemies with over 40 unique items!
-![pink-loot](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-loot.png)
+![pink-inv](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-inv.png)
 
 ### Fight 30 unique enemies!
 Punch A Creepy Child Holding a Cursed Doll and A Werewolf Drink a Pina Colada in the face!
