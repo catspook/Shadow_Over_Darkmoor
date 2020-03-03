@@ -1,6 +1,6 @@
 # The Shadow Over Darkmoor
 
-![Welcome](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/tree/master/docs/pink-welcome.png)
+![Welcome](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-welcome.png)
 
 Over the last few weeks, travel to and from the town of Darkmoor has trickled to a halt, save for a few refugees who
 whisper of necromancy and other horrors. These murmerings have reached the Queen's ears, and she has sent you
