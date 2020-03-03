@@ -12,8 +12,7 @@ The Shadow Over Darkmoor is a text-based roguelike adventure game set in the fic
 Darkmoor. It runs off of the terminal (untested on Windows) and has a very gentle learning curve.
 
 ### Travel to over 100 unique locations!
-What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Find out!\*
-\* Interior cell descriptions are currently under construction
+What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Find out! (Interior cell descriptions are still WIP)
 ![pink-main](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-main.png)
 
 ### Loot cool new weapons and armor!
@@ -34,6 +33,7 @@ Darkmoor uses [Leiningen](https://leiningen.org/) to handle the builds/dependenc
 Source code can be run by running ```$ lein run``` anywhere in Darkmoor's file system.
 
 To build a standalone jar run ```$ lein compile; lein uberjar```
+
 This jar can then be ran with the command: ```$ java -jar target/uberjar/darkmoor-0.2.0-SNAPSHOT-standalone.jar```
 
 ## Acknowledgements
