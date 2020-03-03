@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.2.0] - 2020-03
 ### Changed
 CODE:
 * Rewritten code to be cleaner, more effecient

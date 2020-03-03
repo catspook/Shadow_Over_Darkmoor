@@ -1,48 +1,59 @@
 # The Shadow Over Darkmoor
 
-CURRENTLY UNDERGOING A COMPLETE REWRITE! Better code and improved gameplay coming very soon.
+Over the last few weeks, travel to and from the town of Darkmoor has trickled to a halt, save for a few refugees who
+whisper of necromancy and other horrors. These murmerings have reached the Queen's ears, and she has sent you
+to find the truth and rescue the town of Darkmoor from its fate.
 
-After hearing rumors of necromancers ransacking towns, our protagonist returns home to find their 
-village already annhilated. Vowing revenge, the protagonist makes their way through the village to find the person
-or people responsible for the attack and destroy them. Along the way, the protagonist will find plenty of weapons,
-armor, and clues, as well as opponents--both living and dead--to defeat. 
+You arrive in Darkmoor as darkness falls. Your mission is simple: survive.
 
 The Shadow Over Darkmoor is a text-based roguelike adventure game set in the fictonal village of
-Darkmoor, and features over 100 unique areas, over 250 interactable items to discover, and over 50 enemies
-to fight. Darkmoor runs off of the terminal and has a very gentle learning curve--gameplay is explained as the 
+Darkmoor, and features 30 unique enemies, nearly 40 unique items, and over 100 unique locations to explore. 
+Darkmoor runs off of the terminal and has a very gentle learning curve--gameplay is explained as the 
 player progresses through the storyline.
 
-Darkmoor is also customizable! To add more enemies, locations, or items to the game, 
-copy and alter the code structure used in 'enemies.clj' and lines 560-575 of 'core.clj', 'objects.clj', and 
-'locations.clj'. 
+Darkmoor is also customizable! To add more enemies, locations, or items to the game, alter the data files in 
+src/darkmoor/model. 
+
+## 03/2020 Update
+CODE:
+* Complete rewrite--much cleaner, more effecient
+* Game data structures easier to keep track of
+* Data structures contain much more information
+
+ENEMIES and FIGHTING:
+* Enemies take extra damage from their damage weaknesses
+* Enemies no longer hard-coded to locations, instead have % chance of appearing
+* No longer option to run away from combat
+* Enemy stats scale with player
+
+LOOT and INVENTORY:
+* Damage-dealing items now have a 'damage type' as well
+* Loot description has replaced location description
+* Loot and inventory inaccessable if empty
+* Armor can't be double equipped anymore
+* Health potions are dropped by enemies, and heal % of health
+
+UI:
+* New UI for moving, looting, inventory, and fighting
+* Much smoother experience
+* Can "see" nearby locations before moving there
+* No longer have option to open empty inventory or loot menu
+* Game won't let you move past playable area anymore
 
 ## Build Tool
 
 Darkmoor uses [Leiningen](https://leiningen.org/) to handle the builds/dependencies.
 
-## Code
+Source code can be run by running ```$ lein run``` anywhere in Darkmoor's file system.
 
-The code is located in 'src/darkmoor/core.clj', and requires text documents found in
-the 'resources' file.
-
-Source code can be run without compilation by running ```$ lein run```
-anywhere in Darkmoor's file system. This won't be as fast as running it off of a 
-standalone jar.
-
-To build a standalone jar run ```$ lein compile; lein uberjar```. This jar can then be ran
-with the command: ```$ java -jar target/uberjar/darkmoor-0.1.0-SNAPSHOT-standalone.jar```
+To build a standalone jar run ```$ lein compile; lein uberjar```
+This jar can then be ran with the command: ```$ java -jar target/uberjar/darkmoor-0.2.0-SNAPSHOT-standalone.jar```
 
 ## Acknowledgements
 
-Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who helped me get this off the ground.
+Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who originally helped me get this off the ground.
 
-All ASCII art taken from: 
-
-patorjk.com/software/taag
-
-www.asciiart.eu/
-
-ascii.co.uk/
+ASCII art taken from: [asciiart.eu](https://www.asciiart.eu/mythology/skeletons), [Text To Ascii Art Generator](patorjk.com/software/taag)
 
 ## License
 

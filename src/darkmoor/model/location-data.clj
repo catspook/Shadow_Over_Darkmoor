@@ -1,5 +1,6 @@
 (in-ns 'darkmoor.core)
-(load "enemies")
+
+(load "model/enemy-data")
 
 ;LEVEL BUILDING___________________________________________________________
 

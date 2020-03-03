@@ -1,10 +1,11 @@
 (in-ns 'darkmoor.core)
-(load "objects")
+
+(load "model/objects-data")
 
 (def init-player
   {:health [10 10] ; [current health remaining, total health pool]
    :damage 8   ; amount of total damage done per attack 
-   :eq {:head nil  ; name of item equipped in this slot
+   :eq {:head nil  ; id of item equipped in this slot
         :neck nil
         :shoulders nil
         :body 1
@@ -14,7 +15,6 @@
         :r-hand 2
         :l-hand nil
         :potion nil}
-   ;FIXME put in monad
    :row (rand-int 4) ; coordinates of player's position
    :col (rand-int 3)
    :moved? true
