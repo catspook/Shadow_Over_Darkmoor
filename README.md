@@ -1,6 +1,7 @@
 # The Shadow Over Darkmoor
 
-![Welcome.](/docs/pink-welcome.png?raw=true)
+![Welcome](/docs/pink-welcome.png)
+
 Over the last few weeks, travel to and from the town of Darkmoor has trickled to a halt, save for a few refugees who
 whisper of necromancy and other horrors. These murmerings have reached the Queen's ears, and she has sent you
 to find the truth and rescue the town of Darkmoor from its fate.
