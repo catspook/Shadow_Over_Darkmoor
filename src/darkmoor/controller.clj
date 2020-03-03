@@ -168,7 +168,7 @@
 (defn fight-menu [player map-stack loc-info]
   ;are we fighting?
   (if (and (:moved? player) 
-           (< (rand-int 10) 4))
+           (< (rand-int 10) 5))
     (let [enemy (get-enemy-info player map-stack loc-info)]
       (print-fight-start player map-stack loc-info enemy)
       (let [[new-player enemy] (fight-loop player map-stack loc-info enemy)]
