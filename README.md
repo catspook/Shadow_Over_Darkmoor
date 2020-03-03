@@ -1,5 +1,8 @@
 # The Shadow Over Darkmoor
 
+The Shadow Over Darkmoor is a text-based roguelike adventure game set in the fictonal village of
+Darkmoor. It runs off of the terminal (untested on Windows) and has a very gentle learning curve.
+
 ![pink-welcome](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-welcome.png)
 
 Over the last few weeks, travel to and from the town of Darkmoor has trickled to a halt, save for a few refugees who
@@ -7,9 +10,6 @@ whisper of necromancy and other horrors. These murmerings have reached the Queen
 to find the truth and rescue the town of Darkmoor from its fate.
 
 You arrive in Darkmoor as darkness falls. Your mission is simple: survive.
-
-The Shadow Over Darkmoor is a text-based roguelike adventure game set in the fictonal village of
-Darkmoor. It runs off of the terminal (untested on Windows) and has a very gentle learning curve.
 
 ### Travel to over 100 unique locations!
 What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Find out! (Interior cell descriptions are still WIP)
