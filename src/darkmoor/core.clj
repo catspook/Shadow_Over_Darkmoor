@@ -996,7 +996,7 @@
         [n s e w] (valid-directions player map-stack loc-info)
         inv? (inv-not-empty? player)
         hp? (> (:hp player) 0)]
-    (let [cant-move (remove nil? (flatten (for [dir (list n s e w)] (if (false? (first dir)) (second dir)))))]
+    (let [cant-move (remove nil? (flatten (for [dir (list n s e w)] (if (false? (first dir)) (last dir)))))]
       (print-main-menu player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?)
       (let [input (read-line)]
         (cond 

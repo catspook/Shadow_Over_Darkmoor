@@ -1,22 +1,24 @@
-
- _                                                                                                  
-- - /, /,       ,,
-  )/ )/ )       ||
-  )__)__)  _-_  ||  _-_  /'\\ \\/\\/\\  _-_
- ~)__)__) || \\ || ||   || || || || || || \\
-  )  )  ) ||/   || ||   || || || || || ||/  
- /-_/-_/  \\,/  \\ \\,/ \\,/  \\ \\ \\ \\,/  <>
-
-
-It is a chilly fall afternoon. Thin, watery light filters down to you through the canopy of orange and yellow leaves above your head. 
-You are on your way home--you're a soldier, and it's been too long since you had a break. Worrying rumours about a cult of necromancers 
-attacking villagers have reached your post and you set out as soon as you could for your home village of Darkmoor.
-
-The acrid scent hits you first--the smell of smoke, and death. You're too late. You grip your standard-issue sword tightly. 
-
-Someone will pay for this. 
+  _                                                                                                  
+ - - /, /,       ,,
+   )/ )/ )       ||
+   )__)__)  _-_  ||  _-_  /'\\ \\/\\/\\  _-_
+  ~)__)__) || \\ || ||   || || || || || || \\
+   )  )  ) ||/   || ||   || || || || || ||/  
+  /-_/-_/  \\,/  \\ \\,/ \\,/  \\ \\ \\ \\,/  <>
 
 
+ It is a chilly fall afternoon. A thin drizzle falls around you as you trudge down the lane on your way 
+ to the small town of Darkmoor. Darkmoor is known to wizards and academics for its archives of arcane knowledge 
+ and ancient cemetary--both of which have attracted more...unwelcome visitors in the past.
+
+ Over the last few weeks, travel to and from Darkmoor has trickled to a halt, save for a few refugees who
+ whisper of necromancy and other horrors. These murmerings have reached the Queen's ears, and she has sent you 
+ to find the truth and rescue the town of Darkmoor from its fate.
+
+ You arrive in Darkmoor as darkness falls. A low whispered chanting fills your ears, and shambling figures 
+ hide just beyond the edge of sight.
+ 
+ Your mission is simple: survive.
 
 
 

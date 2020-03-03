@@ -1,30 +1,36 @@
- ,,                         ,                    ,,                 
-||          ;             ||                    ||   _             
-||/\\  /'\\ \\/\/\       =||=  /'\\       -_-_  ||  < \, '\\/\\ <> 
-|| || || || || | |        ||  || ||       || \\ ||  /-||  || ;'    
-|| || || || || | |        ||  || ||       || || || (( ||  ||/      
-\\ |/ \\,/  \\/\\/        \\, \\,/        ||-'  \\  \/\\  |/    <> 
-  _/                                      |/             (         
-                                          '               -_-      
+  ,,                         ,                    ,,                 
+ ||          ;             ||                    ||   _             
+ ||/\\  /'\\ \\/\/\       =||=  /'\\       -_-_  ||  < \, '\\/\\ <> 
+ || || || || || | |        ||  || ||       || \\ ||  /-||  || ;'    
+ || || || || || | |        ||  || ||       || || || (( ||  ||/      
+ \\ |/ \\,/  \\/\\/        \\, \\,/        ||-'  \\  \/\\  |/    <> 
+   _/                                      |/             (         
+                                           '               -_-      
+ 
+ COMMANDS
 
-As you make your way through the village, you will find weapons, armor, and clues to help you on your way. Use the commands listed below to 
-search for interesting objects and look through your inventory. Make sure you pay attention to the objects at each location you visit--
-your life may depend on it.
+ Most commands are single characters, such as 'x' or 'l'. Press the key that corresponds with the command, then hit 'ENTER'.
 
-Enemies will attack you as you reach their location. During combat, you will be able to drink any health potions that you've picked up. You 
-also have the option to run away to a safe place, but your opponent will be able to take one last attack as you leave. When combat begins, a 
-menu will appear with the available commands.
+ MOVING
+ 
+ You can move North, South, East, or West from most locations by typing 'n', 's', 'e', or 'w'. The game will inform you if
+ you cannot move a certain direction. Some locations lead to other levels to explore: the game will give you the option to
+ exit or enter one of these areas by typing 'x'.
 
-To win, find the person responsible for the attack on your village and destroy them.
+ LOOTING AND INVENTORY
+ 
+ Each location has weapons and armor you can add to your inventory and equip. Type 'l' to see what you can loot at your current
+ location, and type 'i' to access your inventory. To specify a certain item in your commands, type the item's ID number after
+ the letter command ('a1' or 'e24'). You can equip 2 weapons at a time; if you try to equip more, the last weapon equipped will
+ be replaced with the new one.
 
-*damage bonuses against certain monsters
-*health potions
-*equip/unequip
-*Id
+ FIGHTING
 
-Press 'h' at any time to display this menu again.
+ Sometimes enemies will attack you as you move to a new location. Enemies will always be weaker than you, but healing is limited
+ so don't underestimate them! When you defeat an enemy, you will gain a Health Potion that can restore 25% of your health.
+ 
+ DAMAGE TYPES
 
-
-
-
+ Enemies have certain types of damages they are particularly weak to. These will be displayed on the screen when fighting. You will
+ do 10% extra damage to an enemy for every item you have equipped that your enemy is weak to.
 
