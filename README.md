@@ -53,7 +53,7 @@ This jar can then be ran with the command: ```$ java -jar target/uberjar/darkmoo
 
 Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who originally helped me get this off the ground.
 
-ASCII art taken from: [asciiart.eu](https://www.asciiart.eu/mythology/skeletons), [Text To Ascii Art Generator](patorjk.com/software/taag)
+ASCII art taken from: [asciiart.eu](https://www.asciiart.eu/mythology/skeletons), [Text To Ascii Art Generator](https://patorjk.com/software/taag)
 
 ## License
 
