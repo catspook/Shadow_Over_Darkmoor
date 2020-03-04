@@ -20,7 +20,7 @@ Customize your character and do extra damage to certain enemies with over 40 uni
 ![pink-inv](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-inv.png)
 
 ### Fight 30 unique enemies!
-Punch A Creepy Child Holding a Cursed Doll and A Werewolf Drink a Pina Colada in the face!
+Punch A Creepy Child Holding a Cursed Doll and A Werewolf Drinking a Pina Colada in the face!
 ![pink-enemy](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-enemy.png)
 
 Darkmoor is also customizable! To add more enemies, locations, or items to the game, alter the data files in 
