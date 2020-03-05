@@ -246,19 +246,25 @@
 ;FIGHT: get player damage and damage types
 
 (defn get-player-dmg-types [player]
-  (for [v (vals (:eq player))] (:d-type (get-item v))))
+  "returns a list of the damage types belonging to the player's
+   equipped items."
+  (for [eq-item (vals (:eq player))] (:d-type (get-item eq-item))))
 
 (defn count-dmg-matches [player en-weak]
-   (reduce (fn [cnt val] (if val (inc cnt) cnt)) 
+   "Returns a count of the number of items the player has equipped whose
+    damage type matches an enemy weakness."
+   (reduce (fn [matches val] (if val (inc matches) matches)) 
           0
-          (for [pl (get-player-dmg-types player) en en-weak] (= pl en))))
+          (for [pl-dmg-type (get-player-dmg-types player) en en-weak] (= pl-dmg-type en))))
 
 (defn get-player-extra-dmg [player en-weak]
-  (let [extra-dmg-percent (int (/ (* 10 (count-dmg-matches player en-weak)) 100))]
-    (let [extra-dmg (* (:damage player) extra-dmg-percent)]
-      (if (< extra-dmg 1)
-        (+ 1 (:damage player))
-        (+ extra-dmg (:damage player))))))
+  "Adds a 10% damage bonus to the player for every item equipped whose damage type
+   matches an enemy weakness."
+  (let [extra-dmg-percent (/ (count-dmg-matches player en-weak) 10)]
+    (if (pos? extra-dmg-percent)
+      (int (+ (:damage player) 
+              (* extra-dmg-percent (:damage player))))
+      (:damage player))))
 
 ;FIGHT: set player health
 

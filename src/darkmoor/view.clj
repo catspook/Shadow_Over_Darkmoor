@@ -384,13 +384,6 @@
     (print-enemy-attack player enemy hit-chance)
     (get-new-player-health player enemy hit-chance)))
 
-(defn bonus-weapon-dmg [player enemy pl-dmg]
-  (print (str " " (:desc enemy) " takes "))
-  (if (> pl-dmg (:damage player))
-    (print (str (int (* 1.5 (- pl-dmg (:damage player))))))
-    (print (str (- pl-dmg (:damage player)))))
-  (print " bonus weapon damage!\n"))
-
 (defn player-attack [player enemy pl-dmg]
   (println " You attack!") 
   (let [hit-chance (rand-int 10)] 
@@ -399,9 +392,9 @@
       (= hit-chance 0) (println " Miss! Your hit goes wide and you do 0 damage.")
       (= hit-chance 9) (println (str " Critical hit! You do " (int (* 1.5 pl-dmg)) " damage."))
       :else (println (str " Hit! You do " pl-dmg " damage.")))
-    (if (and (not= 0 hit-chance) 
+    (if (and (pos? hit-chance) 
              (> pl-dmg (:damage player)))
-      (bonus-weapon-dmg player enemy pl-dmg))
+      (println (str " " (:desc enemy) " takes bonus weapon damage!")))
     (pause-screen2)
     [player (get-new-enemy-health enemy pl-dmg hit-chance)]))
 
