@@ -28,7 +28,7 @@
   (get-in loc-info [(get-player-loc player map-stack) :exit]))
 
 (defn inv-not-empty? [player] 
-  (not-every? true? (for [v (vals (:inv player))] (= v 0))))
+  (not-every? true? (for [v (vals (:inv player))] (zero? v))))
 
 ;set player health
 
@@ -105,7 +105,7 @@
     ;check if input is at that loc 
     (if (is-item-in-inv? player id-num)
       ;check if item is "in stock" 
-      (if (> (get-inv-item-count player id-num) 0)
+      (if (pos? (get-inv-item-count player id-num))
         id-num
         nil)
       nil)))
@@ -263,7 +263,7 @@
 ;FIGHT: set player health
 
 (defn get-new-player-health [player enemy hit-chance]
-  (cond 
+  (cond
     (= hit-chance 0) player
     (= hit-chance 9) (assoc player :health [(- (first (:health player)) 
                                                (int (* 1.5 (:damage enemy)))) 
@@ -349,9 +349,9 @@
   ;are thee non-zero values in loot?
   (if (some true? 
             (for [v (vals (get-loc-loot player map-stack loc-info))]
-              (if (not= 0 v) 
-                true 
-                false)))
+                 (if (not= 0 v) 
+                   true 
+                   false)))
     [true (:yes (get-loc-loot-desc player map-stack loc-info))]
     [false (:no (get-loc-loot-desc player map-stack loc-info))]))
 

@@ -108,7 +108,7 @@
 (defn print-item [player k]
   (let [item (get-item k)]
     ;only print if item count is > 0
-    (if (> (get-inv-item-count player k) 0)
+    (if (pos? (get-inv-item-count player k))
       (do
 
         ;is it equipped?
@@ -194,7 +194,7 @@
 (defn print-loot [player map-stack loc-info k]
   (let [item (get-item k)]
     ;only print if item count is > 0
-    (if (> (get-loot-item-count player map-stack loc-info k) 0)
+    (if (pos? (get-loot-item-count player map-stack loc-info k))
       (do
 
         ;print item id
@@ -221,7 +221,7 @@
             (print (str "+" (:health item)))
             (if (< (:health item) 10) (print " ")))
           (do
-            (print (str "-" (:health item)))
+            (print (str (:health item)))
             (if (> (:health item) -10) (print " "))))
 
         (print "      ")
@@ -232,7 +232,7 @@
             (print (str "+" (:damage item)))
             (if (< (:damage item) 10) (print " ")))
           (do
-            (print (str "-" (:damage item)))
+            (print (str (:damage item)))
             (if (> (:damage item) -10) (print " "))))
 
         ;print item damage type
@@ -293,7 +293,7 @@
 (defn print-fight-item [player k]
   (let [item (get-item k)]
     ;only print if item count is > 0 and it's a weapon
-    (if (and (> (get-inv-item-count player k) 0)
+    (if (and (pos? (get-inv-item-count player k))
              (= :hand (get-item-slot k)))
       (do
 
@@ -396,8 +396,8 @@
   (let [hit-chance (rand-int 10)] 
     (pause-screen1)
     (cond
-      (= 0 hit-chance) (println " Miss! Your hit goes wide and you do 0 damage.")
-      (= 9 hit-chance) (println (str " Critical hit! You do " (int (* 1.5 pl-dmg)) " damage."))
+      (= hit-chance 0) (println " Miss! Your hit goes wide and you do 0 damage.")
+      (= hit-chance 9) (println (str " Critical hit! You do " (int (* 1.5 pl-dmg)) " damage."))
       :else (println (str " Hit! You do " pl-dmg " damage.")))
     (if (and (not= 0 hit-chance) 
              (> pl-dmg (:damage player)))
@@ -410,7 +410,7 @@
   (if (inv-has-weapons? player)
     (println " w Switch out a weapon")
     (println " You have no other weapons to switch to."))
-  (if (> (:hp player) 0)
+  (if (pos? (:hp player))
     (println (str " p Drink a health potion (" (:hp player) " remaining)"))
     (println " You are out of health potions."))
   (println " h Help!\n q Quit the game\n\n"))
@@ -423,7 +423,7 @@
   (pause-screen5))
 
 (defn did-player-win? [player enemy]
-  (if (<= (first (:health player)) 0)
+  (if (not (pos? (first (:health player))))
     (do
       (clear-screen)
       (open-you-died)
