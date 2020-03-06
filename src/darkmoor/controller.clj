@@ -212,6 +212,8 @@
           :else (parse-main-input player map-stack loc-info))))))
 
 (defn main-menu [player map-stack loc-info]
+  "Calls fight menu, then calls function to get user input, and calls appropriate
+   function based on input."
   (let [new-player (fight-menu player map-stack loc-info)]
     (let [command (parse-main-input new-player map-stack loc-info)]
       (case command

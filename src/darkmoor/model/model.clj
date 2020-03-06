@@ -186,6 +186,9 @@
         (set-r-hand new-stats-player id)))))
 
 (defn equip-item [player id]
+  "Adds an item id to an item slot in player's equipped list
+   and updates player stats. If slot is not open, unequips 
+   item in slot before adding item stats to player."
   (let [item-slot (get-item-slot id)]
     ;because :hand is another map, we need special function
     (if (= item-slot :hand)
@@ -246,7 +249,7 @@
 ;FIGHT: get player damage and damage types
 
 (defn get-player-dmg-types [player]
-  "returns a list of the damage types belonging to the player's
+  "Returns a list of the damage types belonging to the player's
    equipped items."
   (for [eq-item (vals (:eq player))] (:d-type (get-item eq-item))))
 
@@ -259,7 +262,8 @@
 
 (defn get-player-extra-dmg [player en-weak]
   "Adds a 10% damage bonus to the player for every item equipped whose damage type
-   matches an enemy weakness."
+   matches an enemy weakness.
+   Returns updated player damage."
   (let [extra-dmg-percent (/ (count-dmg-matches player en-weak) 10)]
     (if (pos? extra-dmg-percent)
       (int (+ (:damage player) 
