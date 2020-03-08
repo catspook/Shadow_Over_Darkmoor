@@ -13,33 +13,26 @@
   (read-line))
 
 (defn pause-screen5 []
-  "pauses game for 5 seconds"
   (Thread/sleep 5000))
 
 (defn pause-screen3 []
-  "pauses game for 3 seconds"
   (Thread/sleep 3000))
 
 (defn pause-screen2 []
-  "pauses game for 2 seconds"
   (Thread/sleep 2000))
 
 (defn pause-screen1-5 []
-  "pauses game for 1.5 seconds"
   (Thread/sleep 1500))
 
 (defn pause-screen1 []
-  "pauses game for 1 second"
   (Thread/sleep 1000))
 
 ;DISPLAY RESOURCE FILES__________________________________
 
 (defn clear-screen []
-  "clears screen using ANSI escape sequence"
   (print (str (char 27) "[2J"))) 
 
 (defn open-title []
-  "opens title sequence, pauses screen for time to read it, then clears screen"
   (clear-screen)
   (with-open [rdr (io/reader "resources/title.txt")]
     (doseq [line (line-seq rdr)]
@@ -56,7 +49,6 @@
   (clear-screen))
 
 (defn open-intro []
-  "opens intro paragraph, pauses screen, then clears screen"
   (with-open [rdr (io/reader "resources/intro.txt")]
     (doseq [line (line-seq rdr)]
       (println line)))
@@ -105,7 +97,9 @@
 
 ;PRINT INVENTORY MENU______________________
 
-(defn print-item [player k]
+(defn print-inv [player k]
+  "Prints item information: is it equipped?, id, name, count,
+   health, damage, damage type, adding spaces to print in line."
   (let [item (get-item k)]
     ;only print if item count is > 0
     (if (pos? (get-inv-item-count player k))
@@ -164,6 +158,8 @@
         (println (str "      " (:d-type item)))))))
 
 (defn print-inv-menu [player]
+  "Prints inventory menu. Calculates player health and damage, and calls 
+   print-inv on every item in player's inventory."
   (open-inv-menu)
   (print (str "                 "
               "| \u2665 " 
@@ -186,12 +182,14 @@
   (open-inv-menu-end)
   (println "\n\n EQUIPPED . ID . ITEM NAME                     . HEALTH . DAMAGE . DAMAGE TYPE")
   (println " -----------------------------------------------------------------------------")
-  (doseq [k (keys (:inv player))] (print-item player k))
+  (doseq [k (keys (:inv player))] (print-inv player k))
   (println))
 
 ;PRINT LOOT MENU____________________________________ 
 
 (defn print-loot [player map-stack loc-info k]
+  "Prints item information: id, name, count, health, damage, 
+   damage type, adding spaces to print in line."
   (let [item (get-item k)]
     ;only print if item count is > 0
     (if (pos? (get-loot-item-count player map-stack loc-info k))
@@ -239,6 +237,8 @@
         (println (str "      " (:d-type item)))))))
 
 (defn print-loot-menu [player map-stack loc-info]
+  "Prints loot menu. Calculates player health and damage, and calls 
+   print-loot on every item at location."
   (open-loot-menu)
   (print (str "             "
               "| \u2665 " 
@@ -267,6 +267,8 @@
 ;PRINT FIGHT MENU and DISPLAY___________________________
 
 (defn print-enemy-player-stats [player enemy]
+  "Prints enemy name, health, damage, weaknesses, and
+   player health, damage, damage types."
   (clear-screen)
   (print (str " " (:desc enemy) "\n \u2665 " (:health enemy) "\n \u2718 " (:damage enemy)))
   (println (str "\n Weak to " (apply str (interpose ", " (:weak enemy))) "."))
@@ -278,19 +280,16 @@
       (println))))
 
 (defn print-enemy-attack [player enemy hit-chance]
+  "Prints result of enemy attack (miss, hit, crit hit, damge taken & type)"
   (cond
     (= hit-chance 0) (println (str " Miss! You take 0 " (:dmg-type enemy) " damage.\n"))
     (= hit-chance 9) (println (str " Critical hit! You take " (int (* 1.5 (:damage enemy))) " " (:dmg-type enemy) " damage.\n"))
     :else (println (str " Hit! You take " (:damage enemy) " " (:dmg-type enemy) " damage.\n")))
   (pause))
 
-(defn enemy-attack [player enemy]
-  (println (str " " (:attack-desc enemy)))
-  (let [hit-chance (rand-int 10)]
-    (print-enemy-attack player enemy hit-chance)
-    (get-new-player-health player enemy hit-chance)))
-
+;FIXME this should be combined with print-item 
 (defn print-fight-item [player k]
+  "Similar to print-inv, but only acts on weapons."
   (let [item (get-item k)]
     ;only print if item count is > 0 and it's a weapon
     (if (and (pos? (get-inv-item-count player k))
@@ -344,7 +343,9 @@
         ;print item damage type
         (println (str "      " (:d-type item)))))))
 
+;FIXME this should be added to print-inv-menu
 (defn print-fight-inv-menu [player enemy]
+  "Prints fight inventory menu, adding in enemy weaknesses"
   (open-inv-menu)
   (print (str "                 "
               "| \u2665 " 
@@ -378,12 +379,6 @@
   (print-enemy-player-stats (drink-hp player) enemy)
   (drink-hp player))
 
-(defn enemy-attack [player enemy]
-  (println (str " " (:attack-desc enemy)))
-  (let [hit-chance (rand-int 10)]
-    (print-enemy-attack player enemy hit-chance)
-    (get-new-player-health player enemy hit-chance)))
-
 (defn player-attack [player enemy pl-dmg]
   (println " You attack!") 
   (let [hit-chance (rand-int 10)] 
@@ -409,6 +404,7 @@
   (println " h Help!\n q Quit the game\n\n"))
 
 (defn print-fight-start [player map-stack loc-info enemy]
+  "Called as soon as fight spawns."
   (clear-screen)
   (open-fight)
   (println (str "\n You arrive at " (get-loc-desc player map-stack loc-info) ".\n"))
@@ -416,6 +412,7 @@
   (pause-screen5))
 
 (defn did-player-win? [player enemy]
+  "Calls either open-you-died and ends game, or open-you-win and continues game."
   (if (not (pos? (first (:health player))))
     (do
       (clear-screen)
@@ -433,6 +430,7 @@
 ;PRINT MAIN MENU__________________________________________________________
 
 (defn print-main-menu [player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?]
+  "Gathers information about player location and prints nicely to screen."
   (println (str " You are at " (get-loc-desc player map-stack loc-info)))
   (println)
   (if enter?
