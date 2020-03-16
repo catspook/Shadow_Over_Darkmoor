@@ -75,7 +75,7 @@
                      :loot-desc {:yes "Yes loot" :no "no loot"}
                      :get-loot-from :temple-loot ;pull items from this master list of items
                      :enemy [cultist]  ;list of possible enemies at this cell
-                     :exit {:row 1 :col 0 :old-map-name "THE ABBEY OF THE DAWN "}} ;optional -- if player can go back a map at this cell, list what coords they should go back to
+                     :exit {:row 1 :col 1 :old-map-name "THE ABBEY OF THE DAWN "}} ;optional -- if player can go back a map at this cell, list what coords they should go back to
                   ;  :enter                               optional -- if player can go to a new map at this cell, list new map name and what coords they should start at
    :temple-cellar-1 {:desc "temple basement 1"
                      :loot {}
@@ -203,7 +203,7 @@
              :loot-desc {:yes "Yes loot" :no "no loot"}
              :get-loot-from :graveyard-loot
              :enemy [skele cultist werewolf]
-             :exit {:row 1 :col 1 :old-map-name "DARKMOOR VILLAGE"}}
+             :exit {:row 1 :col 0 :old-map-name "DARKMOOR VILLAGE"}}
    :grave-2 {:desc "graveyard 2"
              :loot {}
              :loot-desc {:yes "Yes loot" :no "no loot"}
@@ -284,7 +284,7 @@
                   :loot-desc {:yes "Yes loot" :no "no loot"}
                   :get-loot-from :armory-loot
                   :enemy [townsfolk]
-                  :exit {:row 0 :col 4 :old-map-name "DARKMOOR VILLAGE"}}
+                  :exit {:row 0 :col 3 :old-map-name "DARKMOOR VILLAGE"}}
    :armory-8 {:desc "armory 8"
                   :loot {}
                   :loot-desc {:yes "Yes loot" :no "no loot"}
@@ -322,7 +322,7 @@
                     :loot-desc {:yes "Yes loot" :no "no loot"}
                     :get-loot-from :wizard-tower-loot
                     :enemy [wizard]
-                    :exit {:row 2 :col 2 :old-map-name "DARKMOOR VILLAGE"}}
+                    :exit {:row 2 :col 0 :old-map-name "DARKMOOR VILLAGE"}}
    :wizard-tower-6 {:desc "wizard-tower 6"
                     :loot {}
                     :loot-desc {:yes "Yes loot" :no "no loot"}
@@ -380,7 +380,7 @@
              :loot-desc {:yes "Yes loot" :no "no loot"}
              :get-loot-from :haunted-house-loot
              :enemy [ghost]
-             :exit {:row 3 :col 2 :old-map-name "DARKMOOR VILLAGE"}}
+             :exit {:row 2 :col 2 :old-map-name "DARKMOOR VILLAGE"}}
 
    ;archive
    :archive-0 {:desc "archive 0"
@@ -403,7 +403,7 @@
              :loot-desc {:yes "Yes loot" :no "no loot"}
              :get-loot-from :archive-loot
              :enemy [werewolf ghost]
-             :exit {:row 3 :col 4 :old-map-name "DARKMOOR VILLAGE"}}
+             :exit {:row 0 :col 2 :old-map-name "DARKMOOR VILLAGE"}}
    :archive-4 {:desc "archive 4"
              :loot {}
              :loot-desc {:yes "Yes loot" :no "no loot"}
@@ -436,7 +436,7 @@
             :loot-desc {:yes "Yes loot" :no "no loot"}
             :get-loot-from :cave-loot
             :enemy [werewolf skele ghost cultist]
-            :exit {:row 3 :col 0 :old-map-name "DARKMOOR VILLAGE"}}
+            :exit {:row 3 :col 1 :old-map-name "DARKMOOR VILLAGE"}}
    :cave-1 {:desc "cave 1"
             :loot {}
             :loot-desc {:yes "Yes loot" :no "no loot"}
@@ -565,7 +565,7 @@
                :loot-desc {:yes "Yes loot" :no "no loot"}
                :get-loot-from :tavern-loot
                :enemy [skele townsfolk] 
-               :exit {:row 1 :col 4 :old-map-name "DARKMOOR VILLAGE"}}
+               :exit {:row 2 :col 3 :old-map-name "DARKMOOR VILLAGE"}}
    :tavern-11 {:desc "tavern 11"
                :loot {}
                :loot-desc {:yes "Yes loot" :no "no loot"}
