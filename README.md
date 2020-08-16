@@ -12,7 +12,9 @@ to find the truth and rescue the town of Darkmoor from its fate.
 You arrive in Darkmoor as darkness falls. Your mission is simple: survive.
 
 ### Travel to over 100 unique locations!
-What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Find out! (Interior cell descriptions are still WIP)
+What's inside A House Wreathed in Shadows or The Tower of Archmage Cerberus? Find out!
+Now featuring maps, so you always know where you are! 
+(Interior cell descriptions are still WIP)
 ![pink-main](https://raw.githubusercontent.com/catspook/Shadow_Over_Darkmoor/master/doc/pink-main.png)
 
 ### Loot cool new weapons and armor!
@@ -42,31 +44,8 @@ Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who originally he
 
 ASCII art taken from: [asciiart.eu](https://www.asciiart.eu/mythology/skeletons), [Text To Ascii Art Generator](https://patorjk.com/software/taag)
 
-## 03/2020 Update
-CODE:
-* Complete rewrite--much cleaner, more effecient
-* Game data structures easier to keep track of
-* Data structures contain much more information
-
-ENEMIES and FIGHTING:
-* Enemies take extra damage from their damage weaknesses
-* Enemies no longer hard-coded to locations, instead have % chance of appearing
-* No longer option to run away from combat
-* Enemy stats scale with player
-
-LOOT and INVENTORY:
-* Damage-dealing items now have a 'damage type' as well
-* Loot description has replaced location description
-* Loot and inventory inaccessable if empty
-* Armor can't be double equipped anymore
-* Health potions are dropped by enemies, and heal % of health
-
-UI:
-* New UI for moving, looting, inventory, and fighting
-* Much smoother experience
-* Can "see" nearby locations before moving there
-* No longer have option to open empty inventory or loot menu
-* Game won't let you move past playable area anymore
+## Updates 
+See `CHANGELOG` for details.
 
 ## License
 

@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.2.1] - 2020-08
+### Changed
+- Changed menu to include a "map" option, that displays the layout of the current area
+- Added a text file for every area map
+
 ## [0.2.0] - 2020-03
 ### Changed
 CODE:
