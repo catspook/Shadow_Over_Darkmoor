@@ -1,0 +1,27 @@
+             __________________________________
+           =(__    _____      __    ____   ____)=
+             |                                |
+             | THE GRAVEYARD OF DAWN'S ENDING |
+             |                                |
+             |                N               |
+             |                |               |
+             |          W <---O---> E         |
+             |                |               |
+             |                S               |
+             |                                |
+             |           :         :          | 
+             |   Grave 6 : Grave 7 : Grave 8  | 
+             |           : (enter) :          |
+             |    .....     .....     .....   |  
+             |           :         :          |
+             |   Grave 3 : Grave 4 : Grave 5  | 
+             |           :         :          |
+             |    .....     .....     .....   |  
+             |           :         :          |
+             |   Grave 0 : Grave 1 : Grave 2  | 
+             |           : (exit)  :          |
+             |                                |
+             |        Enter the Crypts        |
+             |    Exit to Darkmoor Village    |
+             |__    ___   __    ____     _____|
+           =(__________________________________)=

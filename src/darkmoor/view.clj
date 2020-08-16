@@ -48,6 +48,14 @@
   (pause)
   (clear-screen))
 
+(defn open-map [player map-stack loc-info]
+  (clear-screen)
+  (with-open [rdr (io/reader (get-loc-map player map-stack loc-info))]
+    (doseq [line (line-seq rdr)]
+      (println line))
+    (pause)
+    (clear-screen)))
+
 (defn open-intro []
   (with-open [rdr (io/reader "resources/intro.txt")]
     (doseq [line (line-seq rdr)]
@@ -431,8 +439,7 @@
 
 (defn print-main-menu [player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?]
   "Gathers information about player location and prints nicely to screen."
-  (println (str " You are at " (get-loc-desc player map-stack loc-info)))
-  (println)
+  (println (str " You are at " (get-loc-desc player map-stack loc-info) "\n"))
   (if enter?
     (println (str " x  You can enter " enter? " from here.\n")))
   (if exit?
@@ -457,15 +464,14 @@
 
   (println (str "    \u2665 " (first (:health player)) "/" (last (:health player))))
   (if hp?
-    (println (str " p  Drink a Health Potion (" (:hp player) " remaining)"))
-    (println (str " You are out of Health Potions.")))
-  (println)
+    (println (str " p  Drink a Health Potion (" (:hp player) " remaining)\n"))
+    (println (str " You are out of Health Potions.\n")))
   (println (str "    \u2718 " (:damage player)))
   (if inv?
     (println " i  Open your inventory")
     (println " Your inventory is empty."))
 
   (println "\n <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>\n")
+  (println " m  Open your map")
   (println " h  Help!")
-  (println " q  Quit the game")
-  (println))
+  (println " q  Quit the game\n"))

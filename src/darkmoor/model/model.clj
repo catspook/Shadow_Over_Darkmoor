@@ -10,6 +10,9 @@
   "Get name of player's current location, based on cell coordinates"
   (get-in (first map-stack) [(:row player) (:col player)]))
 
+(defn get-loc-map [player map-stack loc-info]
+  (get-in loc-info [(get-player-loc player map-stack) :map]))
+
 (defn get-loc-desc [player map-stack loc-info]
   (get-in loc-info [(get-player-loc player map-stack) :desc]))
 

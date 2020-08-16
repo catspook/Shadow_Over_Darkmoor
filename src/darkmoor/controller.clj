@@ -210,6 +210,7 @@
       (print-main-menu player map-stack loc-info enter? exit? loot? n s e w cant-move inv? hp?)
       (let [input (read-line)]
         (cond 
+          (= input "m") :map
           (and enter? 
                (= input "x")) :enter
           (and exit? 
@@ -238,6 +239,7 @@
   (let [new-player (fight-menu player map-stack loc-info)]
     (let [command (parse-main-input new-player map-stack loc-info)]
       (case command
+        :map (do (open-map player map-stack loc-info) (main-menu (assoc new-player :moved? false) map-stack loc-info))
         :enter (let [[enter-player enter-map-stack] (enter-loc new-player map-stack loc-info)]
                  [enter-player enter-map-stack loc-info])
         :exit (let [[exit-player exit-map-stack] (exit-loc new-player map-stack loc-info)]
