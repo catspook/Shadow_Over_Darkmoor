@@ -104,7 +104,7 @@
               :get-loot-from :temple-loot
               :map "resources/map-temple.txt"
               :enemy [cultist ghost]
-              :exit {:row 1 :col 2 :old-map-name "DARKMOOR VILLAGE"}}
+              :exit {:row 1 :col 1 :old-map-name "DARKMOOR VILLAGE"}}
    :temple-1 {:desc "temple 1"
               :loot {}
               :loot-desc {:yes "Yes loot" :no "no loot"}
