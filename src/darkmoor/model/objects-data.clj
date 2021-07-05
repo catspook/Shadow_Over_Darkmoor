@@ -4,6 +4,52 @@
 ;a mix of general objects and specialized objects for player to find at locations
 ; the function place-obj is called from each location below
 
+(def brass-knuckles
+  {
+   :id 41
+   :name "Bloody Brass Knuckles"
+   :slot :body
+   :health 0
+   :damage 5
+   :d-type "BLUDGEONING"})
+
+(def scale-mail
+  {
+   :id 40
+   :name "Standard Issue Scale Mail"
+   :slot :body
+   :health 5
+   :damage 0
+   :d-type ""})
+
+
+(def ragged-leathers 
+  {
+   :id 39
+   :name "Ragged Leathers"
+   :slot :body
+   :health 5
+   :damage 0
+   :d-type ""})
+
+(def acolyte-robe
+  {
+   :id 38
+   :name "Acolyte's Robe"
+   :slot :body
+   :health 5
+   :damage 0
+   :d-type ""})
+
+(def frost-staff 
+  {
+   :id 37
+   :name "Staff of Frostbite"
+   :slot :hand 
+   :health 0 
+   :damage 5
+   :d-type "ARCANE"})
+
 (def wood-axe 
   {
    :id 36
@@ -16,7 +62,7 @@
 (def leather-armor
   {
    :id  35
-   :name "Cracked Leather Armor" 
+   :name "Studded Leather Armor" 
    :slot :body 
    :health 10
    :damage 0
@@ -271,7 +317,7 @@
    :name "Arcane Dagger"
    :slot :hand
    :health 0
-   :damage 10 
+   :damage 6 
    :d-type "ARCANE"})
 
 (def hunt-knife
@@ -298,7 +344,7 @@
    :name "Wand of Shadows"
    :slot :hand
    :health 0
-   :damage 2 
+   :damage 5 
    :d-type "NECROTIC"})
 
 (def necro-amulet 
@@ -310,31 +356,17 @@
    :damage 2 
    :d-type "NECROTIC"})
 
-(def hp
-  {:name "HEALTH POTION"
-   :hp true})
-
 (def starting-sword
   {
    :id 2
-   :name "HAND-ME-DOWN SWORD"
+   :name "Blunted Sword"
    :slot :hand
    :health 0
    :damage 3 
    :d-type "SLASHING"})
 
-(def starting-clothes
-  {
-   :id 1
-   :name "TRAVELING CLOTHES"
-   :slot :body 
-   :health 5
-   :damage 0
-   :d-type ""})
-
 (def id-obj 
   {
-   1 starting-clothes
    2 starting-sword
    3 necro-amulet
    4 necro-wand 
@@ -369,13 +401,18 @@
    33 flame-shield 
    34 cult-dagger 
    35 leather-armor 
-   36 wood-axe})
+   36 wood-axe
+   37 frost-staff
+   38 acolyte-robe
+   39 ragged-leathers
+   40 scale-mail
+   41 brass-knuckles})
 
 (def loot-types
   {:temple-loot [holy-shield holy-armor holy-ring holy-mace arcane-dagger cult-robe]
    :graveyard-loot [wood-axe cult-dagger femur half-plate leather-armor cult-robe severed-arm]
    :armory-loot [half-plate flail pole-axe guard-chainmail speed-boots silver-sword warhammer great-axe spike-shield spike-gloves spike-shoulders]
-   :wizard-tower-loot [flame-shield scepter arcane-dagger speed-boots necro-wand necro-amulet]
+   :wizard-tower-loot [flame-shield scepter arcane-dagger speed-boots necro-wand necro-amulet frost-staff]
    :haunted-house-loot [wood-axe butcher-gloves silver-sword hunt-knife hunt-bow leather-armor great-axe warhammer scythe]
    :archive-loot [hunt-knife hunt-bow cult-dagger half-plate cult-robe chair-leg femur]
    :cave-loot [necro-wand necro-amulet severed-arm silver-sword cult-robe half-plate femur cult-dagger leather-armor]
