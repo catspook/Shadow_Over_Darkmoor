@@ -569,13 +569,13 @@
 (def loot-types
   {
    :temple-loot [holy-ring holy-armor holy-shield acolyte-robe holy-mace flame-shield]
-   :graveyard-loot [necrotic-amulet necrotic-wand cult-dagger embalming-knife femur severed-arm]
-   :armory-loot [spear starting-sword great-axe warhammer guard-chainmail scale-mail flail spiked-shield]
+   :graveyard-loot [necro-amulet necro-wand cult-dagger embalming-knife femur severed-arm]
+   :armory-loot [spear starting-sword great-axe warhammer guard-chainmail scale-mail flail spike-shield]
    :wizard-tower-loot [scepter flame-staff frost-staff cult-robe ice-knife]
-   :haunted-house-loot [spiked-shoulders spiked-goves necrotic-amulet]
+   :haunted-house-loot [spike-shoulders spike-gloves necro-amulet]
    :archive-loot [archive-book stiletto]
    :mansion-loot [scimitar rapier duelist-armor ]
-   :stables-loot [leather-armor hunter-bow hunter-knife]
+   :stables-loot [leather-armor hunt-bow hunt-knife]
    :store-loot [rum broken-bottle butcher-knife butcher-gloves speed-boots]
    :tavern-loot [moonshine rum broken-bottle chair-leg]
    :garden-loot [poison-dagger poison-bow poison-necklace]

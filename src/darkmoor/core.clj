@@ -31,7 +31,7 @@
 (defn print-class-choice []
   (println "CHOOSE YOUR CLASS")
   (println)
-  (println "p, s, h, n, b?"))
+  (println "paladin, sorcerer, hunter, necromancer?"))
 
 (defn parse-class-input [init-player]
   (clear-screen)
@@ -42,7 +42,6 @@
       (= input "s") (integrate-class-info init-player sorcerer)
       (= input "h") (integrate-class-info init-player hunter)
       (= input "n") (integrate-class-info init-player necromancer)
-      (= input "b") (integrate-class-info init-player brawler)
       :else (parse-class-input init-player))))
 
 (defn -main []
