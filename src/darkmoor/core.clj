@@ -19,19 +19,30 @@
 
 ; this should be abstracted out of this module
 
+(defn integrate-class-info [init-player class-choice]
+  (pause)
+  (clear-screen)
+  (assoc init-player :class class-choice 
+                     :health (:init-health class-choice)
+                     :damage (:init-damage class-choice)
+                     :eq (:init-eq class-choice) 
+                     :inv (:init-inv class-choice)))
+
 (defn print-class-choice []
-  (print "p, s, h, n, b?"))
+  (println "CHOOSE YOUR CLASS")
+  (println)
+  (println "p, s, h, n, b?"))
 
 (defn parse-class-input [init-player]
   (clear-screen)
   (print-class-choice)
   (let [input (read-line)]
     (cond
-      (= input "p") (assoc init-player :class paladin :eq (:init-eq paladin) :inv (:init-inv paladin))
-      (= input "s") (assoc init-player :class sorcerer :eq (:init-eq sorcerer) :inv (:init-inv sorcerer))
-      (= input "h") (assoc init-player :class hunter :eq (:init-eq hunter) :inv (:init-inv hunter))
-      (= input "n") (assoc init-player :class necromancer :eq (:init-eq necromancer) :inv (:init-inv necromancer))
-      (= input "b") (assoc init-player :class brawler :eq (:init-eq brawler) :inv (:init-inv brawler))
+      (= input "p") (integrate-class-info init-player paladin)
+      (= input "s") (integrate-class-info init-player sorcerer)
+      (= input "h") (integrate-class-info init-player hunter)
+      (= input "n") (integrate-class-info init-player necromancer)
+      (= input "b") (integrate-class-info init-player brawler)
       :else (parse-class-input init-player))))
 
 (defn -main []
@@ -43,7 +54,6 @@
     (loop [player init-player-with-class map-stack init-map-stack loc-info init-loc-info]
       (let [updated-loc-info (put-loot-in-new-locs player map-stack loc-info)]
         (do 
-          (print (:class player))
           (clear-screen)
           (let [[new-player new-map-stack new-loc-info] (main-menu player map-stack updated-loc-info)]
             (recur new-player new-map-stack new-loc-info)))))))

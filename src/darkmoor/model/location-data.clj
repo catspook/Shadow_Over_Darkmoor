@@ -671,7 +671,7 @@
                :loot {}
                :loot-desc {:yes "You find some hunting supplies among the piles of manure and tack." 
                            :no "You'd rather not search the manure piles for loot."}
-               :get-loot-from :gen-loot
+               :get-loot-from :stables-loot
                :map "resources/map-darkmoor.txt"
                :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :temple  {:desc "The Derelict Temple of the Dawn" 
@@ -728,56 +728,56 @@
              :loot {}
              :loot-desc {:yes "There are still unburnt goods within the wreckage." 
                          :no "A piece of leather armor crumbles as you pick it up."}
-             :get-loot-from :gen-loot
+             :get-loot-from :haunted-house-loot
              :map "resources/map-darkmoor.txt"
              :enemy [werewolf ghost]}
    :square    {:desc "Darkmoor's Town Square"
                :loot {}
                :loot-desc {:yes "An abandoned wagon still holds some market goods."
                            :no "The market square lies empty and deserted."}
-               :get-loot-from :gen-loot
+               :get-loot-from :store-loot
                :map "resources/map-darkmoor.txt"
                :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :docks    {:desc "The Rickety Darkmoor Docks"
               :loot {}
               :loot-desc {:yes "Some gear, encrusted with fish guts, lies on a half-rotted board." 
                           :no "You see old fishing rods and moldy rope."}
-              :get-loot-from :gen-loot
+              :get-loot-from :store-loot
               :map "resources/map-darkmoor.txt"
               :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :cages   {:desc "A Pile of Chains and Cages"
              :loot {}
              :loot-desc {:yes "There's some abandoned gear inside a human-sized cage." 
                          :no "The cages lie empty, except for manacles and scattered bones."}
-             :get-loot-from :gen-loot
+             :get-loot-from :cult-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :alch-garden    {:desc "A Tiny Alchemical Garden"
                     :loot {}
                     :loot-desc {:yes "There are a few offerings inside a circle of red toadstools." 
                                 :no "The circle of toadstools lies empty."}
-                    :get-loot-from :gen-loot
+                    :get-loot-from :garden-loot
                     :map "resources/map-darkmoor.txt"
                     :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :market   {:desc "The Abandoned Market Stalls"
               :loot {}
               :loot-desc {:yes "Rain-soaked goods still lie inside the faded stalls." 
                           :no "The rain has wrecked all the remaining goods you can find."}
-              :get-loot-from :gen-loot
+              :get-loot-from :store-loot
               :map "resources/map-darkmoor.txt"
               :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :mansion   {:desc "The Magistrate's Looted Mansion"
                :loot {}
                :loot-desc {:yes "You pull some items from the pile of rubble blocking the door."
                            :no "You find a severed arm inside the rubble pile, and step away."}
-               :get-loot-from :gen-loot
+               :get-loot-from :mansion-loot
                :map "resources/map-darkmoor.txt"
                :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :cave    {:desc "A Yawning Cave Mouth"
              :loot {}
              :loot-desc {:yes "The body of a warrior lies at the cave mouth, their gear intact." 
                          :no "You've already stripped the warrior's corpse of any useful gear."}
-             :get-loot-from :cave-loot
+             :get-loot-from :outside-loot
              :map "resources/map-darkmoor.txt"
              :enemy [cultist skele werewolf ghost]
              :enter {:goto cave-map
@@ -787,14 +787,14 @@
              :loot {}
              :loot-desc {:yes "A malevolent presence bears down upon you as you take the offerings off of the shrine." 
                          :no "Only offerings of congealed blood and carved bone remain."}
-             :get-loot-from :gen-loot
+             :get-loot-from :cult-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :archive {:desc "The Mouldering Darkmoor Archive"
              :loot {}
              :loot-desc {:yes "You find something interesting hidden behind a thorny rosebush." 
                          :no "There is nothing here but torn pages drifting outside the Archive's entrance."}
-             :get-loot-from :gen-loot
+             :get-loot-from :archive-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]
              :enter {:goto archive-map
@@ -804,14 +804,14 @@
              :loot {}
              :loot-desc {:yes "You see something glinting from the silty streambed." 
                          :no "The brook only holds sickly minnows and bits of gnawed bone."}
-             :get-loot-from :gen-loot
+             :get-loot-from :outside-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :orchard  {:desc "An Overgrown Orchard"
              :loot {}
              :loot-desc {:yes "You feel something inside the knot of an old, gnarled tree." 
                          :no "You find only rotten apples under the gnardled trees."}
-             :get-loot-from :gen-loot
+             :get-loot-from :outside-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :tavern  {:desc "The Run-Down 'Hungry Hag Tavern'" 
@@ -828,6 +828,6 @@
              :loot {} 
              :loot-desc {:yes "You tear open the scarecrow and find a stash of loot hidden inside." 
                          :no "The torn scarecrow holds only brittle stalks of dry wheat."}
-             :get-loot-from :gen-loot
+             :get-loot-from :outside-loot
              :map "resources/map-darkmoor.txt"
              :enemy [townsfolk cultist wizard werewolf ghost skele]}})
