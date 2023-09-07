@@ -2,7 +2,7 @@
 
 (load "model/enemy-data")
 (load "model/objects-data")
-(load "model/location-data")
+(load "model/location/location-data")
 (load "model/model")
 
 ;PAUSE__________________________________________________________

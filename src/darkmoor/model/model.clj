@@ -1,7 +1,8 @@
 (in-ns 'darkmoor.core)
 
-(load "model/enemy-data") (load "model/objects-data")
-(load "model/location-data")
+(load "model/enemy-data") 
+(load "model/objects-data")
+(load "model/location/location-data")
 
 ;GENERAL: helper functions
 

@@ -1,11 +1,11 @@
 ; The Shadow Over Darkmoor
-; copywright (c) CMR 2019-2020 
+; copywright (c) Casper Rutz 2019-2023 
 
 (in-ns 'darkmoor.core)
 
 (load "model/enemy-data")
 (load "model/objects-data")
-(load "model/location-data")
+(load "model/location/location-data")
 (load "model/model")
 (load "view")
 
