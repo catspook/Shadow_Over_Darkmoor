@@ -40,7 +40,7 @@ This jar can then be ran with the command: ```$ java -jar target/uberjar/darkmoo
 
 ## Acknowledgements
 
-Thanks to my wife, [Thea Leake](https://github.com/thea-leake) who originally helped me get this off the ground. Check out her [Halloween Banqui game](https://github.com/thea-leake/graveyard), featuring pixel art by me!
+Thanks to my parter, [Thea Leake](https://github.com/thea-leake) who originally helped me get this off the ground way back when I was just learning to code. Check out her [Halloween Banqui game](https://github.com/thea-leake/graveyard), featuring pixel art by me!
 
 ASCII art taken from: [asciiart.eu](https://www.asciiart.eu/mythology/skeletons), [Text To Ascii Art Generator](https://patorjk.com/software/taag)
 
