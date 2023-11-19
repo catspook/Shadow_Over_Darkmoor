@@ -1,5 +1,5 @@
 ; The Shadow Over Darkmoor
-; copywright (c) CMR 2019-2020 
+; (c) Casper Rutz 2019-2023
 
 (ns darkmoor.core
   (:require [clojure.java.io :as io])
@@ -14,8 +14,6 @@
 (load "model/model")
 (load "view")
 (load "controller")
-
-;MAIN
 
 (defn -main []
   (open-title)

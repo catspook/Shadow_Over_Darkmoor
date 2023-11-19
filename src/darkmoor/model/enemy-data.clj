@@ -1,8 +1,8 @@
 (in-ns 'darkmoor.core)
 
-;ENEMY DESCRIPTIONS
-; includes: :weak -- damage types the creature is weak to
-;           :desc -- list of descriptions for each enemy of that type (name, fighing description, and damage type)
+; ENEMY DESCRIPTIONS
+; weak: damage types the creature is weak to
+; desc: name, fighing description, and damage type
 
 (def wizard 
   {:weak ["BLUDGEONING" "PIERCING" "NECROTIC"]

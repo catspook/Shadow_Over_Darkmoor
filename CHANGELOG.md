@@ -1,5 +1,26 @@
 # Change Log
 
+TODO:
+- refactor "hand" functions: use :hand slot instead 
+- damage bonus for eq weapons with matching weaknesses: maybe add flat bonus, or bonus to weapon damage instead of total dmg? 
+- make player damage a range instead of flat value
+- make enemy damage and health a range instead of flat value 
+- randomize how much loot can be at locations
+- make slot visible on inv menu
+- only list damage types you have when fighting once
+- reduce enemy and items with weaknesses & special dmg types
+- remove pauses after fighting
+
+Longer TODO:
+- add items that grant resistances to dmg types
+
+## [0.3.1] - 10-11 2023
+Refactoring Model: 
+- Moved location data out of main model file and into sub-folders instead. Each level gets its own folder now.
+- Moved helper functions in model.clj to their own file
+- Removed unncessary comments or made comments less verbose
+- Refactored functions in model.clj to be  more concise
+
 ## [0.2.1] - 2020-08
 ### Changed
 - Changed menu to include a "map" option, that displays the layout of the current area

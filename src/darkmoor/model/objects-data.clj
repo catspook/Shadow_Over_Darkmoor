@@ -1,8 +1,7 @@
 (in-ns 'darkmoor.core)
 
 ;OBJECT DATA____________________________________________________________________________
-;a mix of general objects and specialized objects for player to find at locations
-; the function place-obj is called from each location below
+; objects for player to find at locations or on enemies
 
 (def wood-axe 
   {
