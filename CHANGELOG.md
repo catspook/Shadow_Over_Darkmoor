@@ -1,18 +1,21 @@
 # Change Log
 
 TODO:
-- refactor "hand" functions: use :hand slot instead 
 - damage bonus for eq weapons with matching weaknesses: maybe add flat bonus, or bonus to weapon damage instead of total dmg? 
 - make player damage a range instead of flat value
 - make enemy damage and health a range instead of flat value 
 - randomize how much loot can be at locations
-- make slot visible on inv menu
+- make slot visible on inv menu?
 - only list damage types you have when fighting once
 - reduce enemy and items with weaknesses & special dmg types
 - remove pauses after fighting
 
 Longer TODO:
 - add items that grant resistances to dmg types
+- add two-handed weapons
+
+## [0.3.2] - 24-11-2023
+Removed "-Hand" functions from Model
 
 ## [0.3.1] - 10-11 2023
 Refactoring Model: 

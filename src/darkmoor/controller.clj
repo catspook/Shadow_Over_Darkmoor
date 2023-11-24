@@ -129,8 +129,8 @@
     (case command
       :exit    player 
       :help    (do (open-help) (fight-inv-menu player map-stack loc-info enemy))
-      :equip   (fight-inv-menu (equip-item-hand player item-id) map-stack loc-info enemy)
-      :unequip (fight-inv-menu (unequip-item-hand player item-id) map-stack loc-info enemy))))
+      :equip   (fight-inv-menu (equip-item player item-id) map-stack loc-info enemy)
+      :unequip (fight-inv-menu (unequip-item player item-id) map-stack loc-info enemy))))
 
 (defn parse-player-attack-input [player]
   "Getting and parsing user input for player-attack-menu"
