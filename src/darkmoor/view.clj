@@ -115,10 +115,9 @@
 
         ;is it equipped?
        (if (= (:slot item) :hand)
-          (if (or (item-eq-in-r-hand? player k)
-                  (item-eq-in-l-hand? player k))
-            (print " ********   ")
-            (print "            "))
+          (if (get-id-in-hand player k) 
+              (print " ********   ")
+              (print "            "))
           ;get the id of the eq slot that's the
           (if (is-item-eq? player (get-item-slot k) k)
             (print " ********   ")
@@ -304,9 +303,7 @@
              (= :hand (get-item-slot k)))
       (do
 
-        ;is it equipped?
-        (if (or (item-eq-in-r-hand? player k)
-                (item-eq-in-l-hand? player k))
+        (if (get-id-in-hand player k) 
           (print " ********   ")
           (print "            "))
 

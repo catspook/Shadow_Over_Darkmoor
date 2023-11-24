@@ -13,8 +13,6 @@
         :fingers nil
         :boots nil
         :hand [2 nil]
-        :r-hand 2
-        :l-hand nil
         :potion nil} 
    :row (rand-int 4) ; player's positon
    :col (rand-int 3)
