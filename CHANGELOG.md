@@ -1,18 +1,23 @@
 # Change Log
 
 TODO:
-- damage bonus for eq weapons with matching weaknesses: maybe add flat bonus, or bonus to weapon damage instead of total dmg? 
-- make player damage a range instead of flat value
-- make enemy damage and health a range instead of flat value 
-- randomize how much loot can be at locations
+- damage bonus for eq weapons with matching weaknesses: add bonus to weapon damage instead of total dmg 
 - make slot visible on inv menu?
-- only list damage types you have when fighting once
-- reduce enemy and items with weaknesses & special dmg types
 - remove pauses after fighting
+- fix dmg type being #{nil ""} when you don't have any dmg type that an enemy is weak to
 
 Longer TODO:
-- add items that grant resistances to dmg types
+- implement strong/weak enemies
+- make player damage a range instead of flat value
 - add two-handed weapons
+
+## [0.3.3] - 29-11-2023
+- randomize how much loot can be at locations
+- make enemy damage and health a range instead of flat value 
+- reduce number of weaknesses in enemies
+- added more objects
+- added resistances to enemy data, but not to game logic
+- added fire and poison damage types
 
 ## [0.3.2] - 24-11-2023
 Removed "-Hand" functions from Model
