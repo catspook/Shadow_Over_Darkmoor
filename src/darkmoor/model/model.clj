@@ -178,7 +178,7 @@
 ;FIGHT
 
 (defn get-player-dmg-types [player]
-  (for [eq-item (vals (:eq player))] (:d-type (get-item eq-item))))
+  (list (set (for [eq-item (vals (:eq player))] (:d-type (get-item eq-item))))))
 
 (defn count-dmg-matches [player en-weak]
   ; returns number of equipped items that have a damage type the current enemy is weak to
@@ -186,11 +186,11 @@
           0
           (for [pl-dmg-type (get-player-dmg-types player) en en-weak] (= pl-dmg-type en))))
 
-(defn get-player-extra-dmg [player en-weak]
+(defn get-player-extra-dmg [player en-weak] 
   ; adds 5% dmg bonus to player for every item equipped that has a damage type the current enemy is weak to
-  (let [extra-dmg-percent (/ (* (count-dmg-matches player en-weak) 5) 100)]
+  (let [extra-dmg-decimal (/ (* (count-dmg-matches player en-weak) 5) 100)]
     (int (* (:damage player) 
-       (+ extra-dmg-percent 1)))))
+       (+ extra-dmg-decimal 1)))))
 
 (defn get-new-player-health [player enemy hit-chance]
   (let [current-health (first (:health player))
@@ -219,18 +219,41 @@
     ; normal hit
     :else (assoc enemy :health (- (:health enemy) pl-dmg))))
 
+(defn calculate-enemy-health [start additional]
+; as percentage of player's damage
+  (let [n (rand-int additional)]
+    (/ (+ start n) 100)))
+
+(defn generate-enemy-health [enemy-strength]
+  (cond 
+    (= enemy-strength :weak) (calculate-enemy-health 80 20) ; 80-100%
+    (= enemy-strength :normal) (calculate-enemy-health 100 50) ; 100-149%
+    (= enemy-strength :strong) (calculate-enemy-health 150 50))) ; 150-199%
+
+(defn calculate-enemy-dmg [start additional]
+; as percentage of player's damage
+  (let [n (rand-int additional)]
+    (/ (+ start n) 100)))
+
+(defn generate-enemy-dmg [enemy-strength]
+  (cond
+    (= enemy-strength :weak) (calculate-enemy-dmg 20 10) ; 20-29%
+    (= enemy-strength :normal) (calculate-enemy-dmg 30 10) ; 30-39%
+    (= enemy-strength :strong) (calculate-enemy-dmg 40 10))) ; 40-49%
+
 (defn get-enemy-info [player map-stack loc-info]
   (let [enemy (first (shuffle (:desc (first (shuffle (get-loc-enemy player map-stack loc-info))))))
-        en-h (int (* 1.5 (:damage player)))
-        en-dmg (int (* 0.3 (:damage player)))
+        player-dmg (:damage player)
+        en-h (int (* (generate-enemy-health :normal) player-dmg))
+        en-dmg (int (* (generate-enemy-dmg :normal) player-dmg))
         en-weak (:weak (first (shuffle (get-loc-enemy player map-stack loc-info))))
         en-goes-first? (even? (count (vals (:inv player))))]
     {:desc (first enemy) 
      :attack-desc (second enemy) 
      :dmg-type (last enemy) 
      :weak en-weak 
-     :health en-h 
-     :damage en-dmg 
+     :health (if (= en-h player-dmg) (+ 1 en-h) en-h) 
+     :damage (if (= en-dmg player-dmg) (- 1 en-dmg) en-dmg) 
      :first? en-goes-first?}))
 
 ; MOVEMENT
@@ -288,12 +311,21 @@
 
 ; SET LOCATION LOOT
 
+(defn generate-loot-amt []
+; 1 (10%), 2 (50%), 3 (30%), 4 (10%)
+  (let [n (rand-int 100)]
+   (cond
+     (< n 10) 1 
+     (and (>= n 10) (< n 60)) 2 
+     (and (>= n 60) (< n 90)) 3
+     (>= n 90) 4)))
+
 (defn put-loot-in-new-locs [player map-stack loc-info]
   (let [player-loc (get-player-loc player map-stack)
         get-loot-from (get-in loc-info [player-loc :get-loot-from])]
     ; get-loot-from is nil if loc already has loot
     (if get-loot-from
-      (let [loot-locs (take 2 (shuffle (get-loot-from loot-types)))
+      (let [loot-locs (take (generate-loot-amt) (shuffle (get-loot-from loot-types)))
             loot-ids (map last (map first loot-locs))
             loc-with-loot (assoc-in loc-info [player-loc :loot] (zipmap loot-ids (repeat 2 1)))]
         (assoc-in loc-with-loot [player-loc :get-loot-from] nil))

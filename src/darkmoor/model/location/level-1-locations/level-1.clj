@@ -108,7 +108,7 @@
                  :loot {}
                  :loot-desc {:yes "There are a few offerings inside a circle of red toadstools." 
                              :no "The circle of toadstools lies empty."}
-                 :get-loot-from :gen-loot
+                 :get-loot-from :alchemy-loot
                  :map "resources/map-darkmoor.txt"
                  :enemy [townsfolk cultist wizard werewolf ghost skele]}
    :market {:desc "The Abandoned Market Stalls"

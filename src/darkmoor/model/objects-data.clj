@@ -3,6 +3,78 @@
 ;OBJECT DATA____________________________________________________________________________
 ; objects for player to find at locations or on enemies
 
+(def poison-ring
+  {
+    :id 44
+    :name "Assassin's Ring"
+    :slot :finger
+    :health 2
+    :damage 2
+    :d-type "POISON"})
+
+(def fire-wand
+  {
+    :id 43
+    :name "Wand of Fire"
+    :slot :hand
+    :health 0
+    :damage 7
+    :d-type "FIRE"})
+
+(def holy-robe
+  {
+    :id 42
+    :name "Blessed Robe"
+    :slot :body
+    :health 10
+    :damage 2
+    :d-type "RADIANT"})
+
+(def cult-armor
+  {
+    :id 41
+    :name "Cultist's Eldritch Armor"
+    :slot :body
+    :health 20
+    :damage 2
+    :d-type "NECROTIC"})
+
+(def poison-dagger
+  {
+    :id 40
+    :name "Poisoned dagger"
+    :slot :hand
+    :health 0
+    :damage 5
+    :d-type "POISON"})
+
+(def poison-bow
+  {
+    :id 39
+    :name "Bow and Poisoned Arrows"
+    :slot :hand
+    :health 3
+    :damage 7
+    :d-type "POISON"})
+
+(def torch
+  {
+    :id 38
+    :name "Lit Torch"
+    :slot :hand
+    :health 1
+    :damage 5
+    :d-type "FIRE"})
+
+(def cult-robe
+  {
+    :id 37
+    :name "Cultist's Blood-Soaked Robe"
+    :slot :body
+    :health 10
+    :damage 3
+    :d-type "NECROTIC"})
+
 (def wood-axe 
   {
    :id 36
@@ -24,7 +96,7 @@
 (def cult-dagger 
   {
    :id 34
-   :name "Cultist's Eldrich Dagger"
+   :name "Cultist's Cursed Dagger"
    :slot :hand
    :health 0 
    :damage 5 
@@ -37,7 +109,7 @@
    :slot :hand 
    :health 3
    :damage 1 
-   :d-type "ARCANE"})
+   :d-type "FIRE"})
 
 (def butcher-gloves 
   {
@@ -111,10 +183,10 @@
    :damage 0
    :d-type ""})
 
-(def cult-robe 
+(def wizard-robe 
   {
    :id 24
-   :name "Cultist's Enchanted Robe"
+   :name "Wizard's Enchanted Robe"
    :slot :body 
    :health 10 
    :damage 3 
@@ -127,7 +199,7 @@
    :slot :hand
    :health 0
    :damage 6 
-   :d-type "SLASHING"})
+   :d-type "ARCANE"})
 
 (def severed-arm 
   {
@@ -136,7 +208,7 @@
    :slot :hand
    :health 0
    :damage 5 
-   :d-type "NECROTIC"})
+   :d-type "BLUDGEONING"})
 
 (def warhammer
   {
@@ -270,7 +342,7 @@
    :name "Arcane Dagger"
    :slot :hand
    :health 0
-   :damage 10 
+   :damage 7
    :d-type "ARCANE"})
 
 (def hunt-knife
@@ -316,7 +388,7 @@
 (def starting-sword
   {
    :id 2
-   :name "HAND-ME-DOWN SWORD"
+   :name "Hand-Me-Down Sword"
    :slot :hand
    :health 0
    :damage 3 
@@ -325,7 +397,7 @@
 (def starting-clothes
   {
    :id 1
-   :name "TRAVELING CLOTHES"
+   :name "Traveling Clothes"
    :slot :body 
    :health 5
    :damage 0
@@ -356,7 +428,7 @@
    21 warhammer 
    22 severed-arm 
    23 silver-sword 
-   24 cult-robe 
+   24 wizard-robe 
    25 guard-chainmail 
    26 pole-axe 
    27 flail 
@@ -368,17 +440,32 @@
    33 flame-shield 
    34 cult-dagger 
    35 leather-armor 
-   36 wood-axe})
+   36 wood-axe
+   37 cult-robe
+   38 torch
+   39 poison-bow
+   40 poison-dagger
+   41 cult-armor
+   42 holy-robe
+   43 fire-wand
+   44 poison-ring})
 
 (def loot-types
-  {:temple-loot [holy-shield holy-armor holy-ring holy-mace arcane-dagger cult-robe]
-   :graveyard-loot [wood-axe cult-dagger femur half-plate leather-armor cult-robe severed-arm]
+  {:temple-loot [holy-shield holy-armor holy-ring holy-mace holy-robe]
+                 ; holy
+   :wizard-tower-loot [flame-shield scepter arcane-dagger speed-boots wizard-robe fire-wand]
+                       ; arcane
+   :tavern-loot [chair-leg broken-bottle rum moonshine wood-axe butcher-gloves torch]
+   :alchemy-loot [poison-bow poison-dagger poison-ring]
+                  ; poison
+   :haunted-house-loot [femur severed-arm silver-sword poison-dagger poison-bow scythe poison-ring necro-amulet torch necro-wand flame-shield]
+                        ; grave + poison + cult
+   :cave-loot [necro-wand necro-amulet severed-arm cult-robe cult-dagger cult-armor torch leather-armor half-plate spike-gloves spike-shoulders]
+               ; grave + cult
+   :graveyard-loot [wood-axe cult-dagger femur half-plate leather-armor cult-robe severed-arm torch]
+                    ; grave
    :armory-loot [half-plate flail pole-axe guard-chainmail speed-boots silver-sword warhammer great-axe spike-shield spike-gloves spike-shoulders]
-   :wizard-tower-loot [flame-shield scepter arcane-dagger speed-boots necro-wand necro-amulet]
-   :haunted-house-loot [wood-axe butcher-gloves silver-sword hunt-knife hunt-bow leather-armor great-axe warhammer scythe]
-   :archive-loot [hunt-knife hunt-bow cult-dagger half-plate cult-robe chair-leg femur]
-   :cave-loot [necro-wand necro-amulet severed-arm silver-sword cult-robe half-plate femur cult-dagger leather-armor]
-   :tavern-loot [chair-leg broken-bottle rum moonshine wood-axe]
-   :gen-loot [wood-axe leather-armor flame-shield femur severed-arm cult-dagger butcher-gloves 
-              flail pole-axe guard-chainmail warhammer great-axe hunt-knife hunt-bow broken-bottle 
-              holy-ring necro-amulet necro-wand spike-gloves spike-shoulders spike-shield silver-sword cult-robe scythe speed-boots]})
+                 ; fighter 
+   :archive-loot [wizard-robe speed-boots arcane-dagger guard-chainmail warhammer silver-sword]
+                  ; fighter + arcane
+   :gen-loot [wood-axe leather-armor butcher-gloves hunt-knife hunt-bow scythe torch]})
